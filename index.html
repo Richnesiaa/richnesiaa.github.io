@@ -27,18 +27,17 @@
             width: 100%;
         }
         .tally-table th, .tally-table td {
-            border: 1px solid #4B5563; /* Tailwind gray-600 */
-            padding: 0.5rem;
+            border: 1px solid #374151; /* Tailwind gray-700 */
+            padding: 0.4rem;
         }
         .tally-table th {
             background-color: #F3F4F6; /* Tailwind gray-100 */
         }
         .tally-table td[contenteditable="true"] {
-            background-color: #FEF3C7; /* Tailwind amber-50 - highlight editable */
             transition: background-color 0.2s;
         }
         .tally-table td[contenteditable="true"]:focus {
-            background-color: #FEF3C7; /* Tailwind amber-200 */
+            background-color: #FEF3C7 !important; /* Tailwind amber-100 */
             outline: 2px solid #ea580c; /* Tailwind orange-600 */
             outline-offset: -2px;
         }
@@ -54,7 +53,7 @@
             opacity: 1;
         }
 
-        /* Print Styles: Hanya tampilkan label saat fitur print browser aktif */
+        /* Print Styles */
         @media print {
             body { background-color: white !important; margin: 0; padding: 0; }
             @page { margin: 0; size: auto; }
@@ -74,7 +73,7 @@
         </div>
     </header>
 
-    <!-- VIEW: BERANDA (FORM INPUT & TABEL POTONG) -->
+    <!-- VIEW: BERANDA (FORM INPUT & TABEL POTONG/KARKAS) -->
     <div id="view-home" class="p-4 block animate-fade-in">
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <h2 class="text-gray-700 font-bold mb-4 border-b pb-2 flex items-center gap-2">
@@ -165,11 +164,11 @@
             <div class="flex gap-2 items-start mb-3 bg-amber-50 p-3 rounded-lg border border-amber-200">
                 <i class="fa-solid fa-circle-info text-amber-500 mt-0.5 text-sm"></i>
                 <p class="text-[11px] text-amber-800 leading-tight">
-                    Ketuk angka pada tabel kuning untuk <b>edit langsung</b>. Ubah jadi <b class="text-red-600">0</b> untuk menghapus baris data.
+                    Ketuk angka pada tabel untuk <b>edit langsung</b>. Ubah jadi <b class="text-red-600">0</b> untuk menghapus baris data.
                 </p>
             </div>
 
-            <!-- Wadah Tabel Potong -->
+            <!-- Wadah Tabel Potong Tally Catatan Tangan -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-300 overflow-hidden mb-4">
                 <div class="overflow-x-auto p-0" id="tableContainer">
                     <!-- Tabel Tally dirender disini via JS -->
@@ -232,7 +231,7 @@
         <div class="flex gap-2 items-start mb-3 bg-amber-50 p-3 rounded-lg border border-amber-200">
             <i class="fa-solid fa-circle-info text-amber-500 mt-0.5 text-sm"></i>
             <p class="text-[11px] text-amber-800 leading-tight">
-                Ketuk angka/teks pada tabel kuning untuk <b>edit langsung</b>. Hapus "Kandang" / jadi <b class="text-red-600">0</b> untuk menghapus baris.
+                Ketuk angka/teks pada tabel untuk <b>edit langsung</b>. Hapus "Kandang" / jadi <b class="text-red-600">0</b> untuk menghapus baris.
             </p>
         </div>
 
@@ -316,7 +315,7 @@
         </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION (3 Menu Utama) -->
+    <!-- BOTTOM NAVIGATION -->
     <nav class="fixed bottom-0 w-full max-w-md bg-white border-t border-gray-200 pb-safe z-30 flex">
         <button onclick="switchTab('home')" id="nav-home" class="flex-1 py-3 flex flex-col items-center justify-center text-orange-600 font-bold transition-colors">
             <i class="fa-solid fa-house mb-1 text-lg"></i>
@@ -348,7 +347,6 @@
             <div class="p-5">
                 <p class="text-xs text-gray-500 mb-3 text-center">Preview Struk Cetak Thermal / Infrared:</p>
                 
-                <!-- Preview Label Struk Belanja / Infrared -->
                 <div class="border-2 border-dashed border-gray-400 p-4 rounded-lg bg-yellow-50/40 mb-5 text-xs font-mono text-gray-800 shadow-inner">
                     <div class="text-center font-bold text-sm border-b border-dashed border-gray-400 pb-2 mb-2 uppercase tracking-wide">
                         *** RPA AUTO KARKAS ***<br>
@@ -399,9 +397,9 @@
         </div>
     </div>
 
-</div> <!-- PENUTUP max-w-md -->
+</div>
 
-<!-- AREA CETAK KHUSUS (Hanya Terlihat Saat Melakukan Print) -->
+<!-- AREA CETAK KHUSUS -->
 <div id="actualPrintArea" class="hidden print:block bg-white text-black p-4 w-full h-full font-sans">
     <div id="printLabelsContainer">
         <!-- Generated dynamically via JS -->
@@ -419,7 +417,6 @@
     let bagianList = [];
     let customBagianList = [];
 
-    // KATEGORI BAGIAN DEFAULT
     const DEFAULT_BAGIAN = ['Kepala Utuh', 'Ceker', 'Usus', 'Ati', 'Ampela', 'Sisa Jantung', 'Dada', 'Paha', 'Sayap', 'Kulit', 'Kerongkongan', 'Brutu'];
 
     function loadCustomBagian() {
@@ -441,7 +438,6 @@
         const allCats = getAllBagianCategories();
         const currentVal = selectedCategory || selectEl.value || allCats[0];
 
-        // Render Pills
         let pillsHtml = '';
         allCats.forEach(cat => {
             const isSelected = cat === currentVal;
@@ -452,7 +448,6 @@
         });
         pillsContainer.innerHTML = pillsHtml;
 
-        // Render Dropdown Options
         let selectHtml = '';
         allCats.forEach((cat, idx) => {
             selectHtml += `<option value="${cat}">${idx + 1}. ${cat}</option>`;
@@ -501,7 +496,6 @@
         showToast(`Bagian "${namaBaru}" ditambahkan`);
     }
 
-    // SELEKSI KATEGORI BAGIAN AYAM VIA PILL
     function selectBagianCategory(cat) {
         const selectEl = document.getElementById('inputJenisBagian');
         if (selectEl) {
@@ -514,7 +508,6 @@
         renderBagianCategories(cat);
     }
 
-    // TOAST NOTIFICATION UTILITY
     function showToast(message, isError = false) {
         const toast = document.getElementById('toast');
         if (!toast) return;
@@ -535,7 +528,6 @@
         }, 2000);
     }
 
-    // NAVIGATION LOGIC
     function switchTab(tab) {
         const views = {
             home: document.getElementById('view-home'),
@@ -574,7 +566,6 @@
         }
     }
 
-    // INLINE EDIT KEY PRESS CONTROL
     function restrictKey(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -584,7 +575,6 @@
         return true;
     }
 
-    // MODAL AND PRINTING
     function closeModal() {
         const modal = document.getElementById('labelModal');
         if (modal) modal.classList.add('hidden');
@@ -595,7 +585,6 @@
         closeModal();
     }
 
-    // AUTO KALKULASI BERAT BERSIH
     function hitungBeratBersih() {
         const kotor = parseFloat(document.getElementById('inputBeratKotor').value) || 0;
         const keranjang = parseInt(document.getElementById('inputKeranjang').value) || 0;
@@ -612,7 +601,6 @@
         }
     }
 
-    // DATA GROUPING FOR PIVOT TABLE
     function getGroupedData(targetDate) {
         const filtered = dataList.filter(d => d.tanggal === targetDate);
         const groups = {};
@@ -645,7 +633,6 @@
         return { groups, sortedKeys, maxRows, filteredData: filtered };
     }
 
-    // RENDER PIVOT TABLE (POTONG AYAM)
     function renderTable() {
         const container = document.getElementById('tableContainer');
         if (!container) return;
@@ -665,32 +652,60 @@
             return;
         }
 
-        let html = `<table class="tally-table text-xs text-gray-800 w-full min-w-max text-center">
+        // Tanggal Input Header di atas tabel
+        let html = `
+        <div class="bg-gray-100 p-2 text-center border-b border-gray-400 font-bold text-xs text-gray-800">
+            (Tanggal Input: ${targetDate})
+        </div>
+        <table class="tally-table text-xs text-gray-800 w-full min-w-max text-center">
             <thead>
-                <tr>`;
+                <tr class="bg-gray-100">
+                    <th rowspan="2" class="font-bold text-gray-700 bg-gray-200 min-w-[50px] align-middle text-center border-r border-gray-400">No</th>
+        `;
         
+        // Header Baris 1: (Grade A) (Berat kg)
         sortedKeys.forEach(k => {
-            html += `<th class="font-bold text-gray-700 whitespace-nowrap min-w-[80px]">${groups[k].label}</th>`;
+            html += `<th colspan="2" class="font-bold text-gray-800 border-b border-gray-400 py-2">(${groups[k].label})</th>`;
+        });
+        html += `</tr><tr class="bg-gray-50 text-[11px] text-gray-700">`;
+
+        // Header Baris 2: (Jumlah Pcs) | Berat Per timbang
+        sortedKeys.forEach(() => {
+            html += `
+                <th class="font-semibold px-2 py-1 bg-amber-100/70 border-r border-gray-300">(Jumlah Pcs)</th>
+                <th class="font-semibold px-2 py-1 bg-amber-50">Berat Per timbang</th>
+            `;
         });
         html += `</tr></thead><tbody>`;
 
+        // Baris-baris Data Timbangan
         for (let i = 0; i < maxRows; i++) {
             html += `<tr>`;
+            html += `<td class="font-bold text-gray-500 bg-gray-50 text-center border-r border-gray-400">${i + 1}</td>`;
             sortedKeys.forEach(k => {
                 const item = groups[k].items[i];
                 if (item) {
-                    html += `<td contenteditable="true" inputmode="decimal" data-id="${item.id}" onblur="handleEdit(this)" onkeypress="return restrictKey(event)" class="font-semibold text-orange-900 bg-amber-50/50">${item.totalKg}</td>`;
+                    html += `
+                        <td contenteditable="true" inputmode="numeric" data-id="${item.id}" data-field="pcs" onblur="handleEdit(this)" onkeypress="return restrictKey(event)" class="font-semibold text-gray-800 bg-amber-50/70 border-r border-gray-300 px-2 py-1.5">${item.pcs}</td>
+                        <td contenteditable="true" inputmode="decimal" data-id="${item.id}" data-field="totalKg" onblur="handleEdit(this)" onkeypress="return restrictKey(event)" class="font-bold text-orange-900 bg-amber-50 px-2 py-1.5">${item.totalKg}</td>
+                    `;
                 } else {
-                    html += `<td></td>`;
+                    html += `
+                        <td class="border-r border-gray-300"></td>
+                        <td></td>
+                    `;
                 }
             });
             html += `</tr>`;
         }
 
-        html += `</tbody><tfoot><tr class="bg-gray-100">`;
+        // Baris Total di paling bawah (Sesuai Catatan Tangan: (Total))
+        html += `</tbody><tfoot><tr class="bg-orange-100 font-extrabold border-t-2 border-gray-600">`;
+        html += `<td class="bg-orange-200 text-orange-900 p-2 text-center border-r border-gray-400 text-xs font-bold">(Total)</td>`;
+        
         let grandTotalAll = 0;
         let grandPcsAll = 0;
-        
+
         sortedKeys.forEach(k => {
             const sumTotal = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
             const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
@@ -698,19 +713,24 @@
             grandPcsAll += sumPcs;
             
             html += `
-                <td class="font-extrabold text-orange-900 border-t-2 border-orange-500 p-2 leading-tight">
-                    <div class="text-[10px] text-gray-500 font-normal">Tot: ${sumPcs} ekor</div>
-                    ${Math.round(sumTotal * 100) / 100} <span class="text-[9px] font-normal">kg</span>
-                </td>`;
+                <td class="text-orange-900 border-r border-gray-400 p-2 text-center">
+                    <div class="text-[9px] text-gray-500 font-normal uppercase">(Pcs)</div>
+                    ${sumPcs}
+                </td>
+                <td class="text-orange-900 p-2 text-center">
+                    <div class="text-[9px] text-gray-500 font-normal uppercase">(Kg)</div>
+                    ${Math.round(sumTotal * 100) / 100}
+                </td>
+            `;
         });
         
         html += `</tr></tfoot></table>`;
         
         html += `
-            <div class="p-3 bg-orange-50 flex justify-between items-center border-t border-orange-100">
-                <span class="text-xs font-bold text-orange-800">TOTAL KESELURUHAN</span>
+            <div class="p-3 bg-orange-50 flex justify-between items-center border-t border-orange-200">
+                <span class="text-xs font-bold text-orange-800 uppercase tracking-wide">(Total Keseluruhan)</span>
                 <div class="text-right">
-                    <div class="text-xs text-orange-600 font-bold">${grandPcsAll} Ekor</div>
+                    <div class="text-xs text-orange-700 font-bold">${grandPcsAll} Ekor</div>
                     <div class="text-sm text-orange-900 font-extrabold">${Math.round(grandTotalAll * 100) / 100} Kg</div>
                 </div>
             </div>
@@ -719,20 +739,21 @@
         container.innerHTML = html;
     }
 
-    // INLINE EDITING BERAT BERSIH (POTONG)
+    // INLINE EDITING UNTUK PCS MAUPUN BERAT TIMBANGAN
     function handleEdit(cell) {
         const id = cell.getAttribute('data-id');
+        const field = cell.getAttribute('data-field') || 'totalKg';
         const index = dataList.findIndex(d => d.id === id);
         if (index === -1) return;
 
         let valString = cell.innerText.replace(/[^0-9.]/g, '');
         const newValue = parseFloat(valString) || 0;
         
-        if (newValue <= 0) {
+        if (newValue <= 0 && field === 'pcs') {
              dataList.splice(index, 1);
              showToast('Data dihapus', true);
         } else {
-             dataList[index].totalKg = newValue;
+             dataList[index][field] = field === 'pcs' ? Math.round(newValue) : newValue;
              showToast('Data diperbarui');
         }
 
@@ -740,37 +761,80 @@
         renderTable();
     }
 
-    // EXPORT TO EXCEL POTONG / KARKAS
     function exportExcel() {
         const targetDate = document.getElementById('filterTanggalPotong').value;
-        const { filteredData } = getGroupedData(targetDate);
+        const { groups, sortedKeys, maxRows, filteredData } = getGroupedData(targetDate);
 
         if (filteredData.length === 0) {
              showToast('Tidak ada data untuk diexport!', true);
              return;
         }
 
-        const exportData = filteredData.map((d, index) => ({
-            'No': index + 1,
-            'Tanggal Input': d.tanggal,
-            'Nama Kandang': d.namaKandang,
-            'Asal Daerah Kandang': d.alamatKandang,
-            'Grade Karkas': d.grade,
-            'Berat/Ekor (Kg)': d.berat,
-            'Jumlah Pcs': d.pcs,
-            'Berat Kotor (Kg)': d.beratKotor,
-            'Jml Keranjang': d.keranjang,
-            'Berat Keranjang (Kg)': d.beratKeranjang,
-            'Netto Bersih (Kg)': d.totalKg
-        }));
+        const aoa = [];
+        
+        // Baris 1: Tanggal Input
+        aoa.push([`(Tanggal Input: ${targetDate})`]);
+        aoa.push([]); // Baris kosong
 
-        const ws = XLSX.utils.json_to_sheet(exportData);
+        // Baris 3: Header Utama Group Grade & Berat kg
+        const h1 = ['(Total) / No'];
+        const merges = [
+            { s: { r: 2, c: 0 }, e: { r: 3, c: 0 } } // Merge vertikal kolom No
+        ];
+
+        let colIndex = 1;
+        sortedKeys.forEach(k => {
+            h1.push(`(${groups[k].label})`, '');
+            merges.push({ s: { r: 2, c: colIndex }, e: { r: 2, c: colIndex + 1 } });
+            colIndex += 2;
+        });
+        aoa.push(h1);
+
+        // Baris 4: Sub-Header (Jumlah Pcs) & Berat Per timbang
+        const h2 = [''];
+        sortedKeys.forEach(() => {
+            h2.push('(Jumlah Pcs)', 'Berat Per timbang');
+        });
+        aoa.push(h2);
+
+        // Baris-baris Data
+        for (let i = 0; i < maxRows; i++) {
+            const row = [i + 1];
+            sortedKeys.forEach(k => {
+                const item = groups[k].items[i];
+                if (item) {
+                    row.push(item.pcs, item.totalKg);
+                } else {
+                    row.push('', '');
+                }
+            });
+            aoa.push(row);
+        }
+
+        // Baris Total di Paling Bawah (Sesuai gambar)
+        const totalRow = ['(Total)'];
+        sortedKeys.forEach(k => {
+            const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
+            const sumTotal = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
+            totalRow.push(sumPcs, Math.round(sumTotal * 100) / 100);
+        });
+        aoa.push(totalRow);
+
+        const ws = XLSX.utils.aoa_to_sheet(aoa);
+        ws['!merges'] = merges;
+
+        // Atur Lebar Kolom Excel
+        const colWidths = [{ wch: 12 }];
+        sortedKeys.forEach(() => {
+            colWidths.push({ wch: 15 }, { wch: 18 });
+        });
+        ws['!cols'] = colWidths;
+
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Laporan_Karkas");
+        XLSX.utils.book_append_sheet(wb, ws, "Tally_Karkas");
         XLSX.writeFile(wb, `Laporan_RPA_Karkas_${targetDate}.xlsx`);
     }
 
-    // KIRIM WA LAPORAN POTONG / KARKAS
     function kirimWA() {
         const targetDate = document.getElementById('filterTanggalPotong').value;
         const { groups, sortedKeys } = getGroupedData(targetDate);
@@ -783,7 +847,7 @@
         const dateObj = new Date(targetDate);
         const dateFormatted = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
-        let message = `*Laporan Data Karkas Ayam*\nTanggal: ${dateFormatted}\n\n`;
+        let message = `*Laporan Data Karkas Ayam*\n*(Tanggal Input: ${dateFormatted})*\n\n`;
         let totalBeratSemua = 0;
         let totalPcsSemua = 0;
 
@@ -795,14 +859,14 @@
             totalBeratSemua += sumBerat;
             totalPcsSemua += sumPcs;
 
-            message += `*${label}*\n`;
-            message += `- Ekor: ${sumPcs}\n`;
-            message += `- Netto: ${Math.round(sumBerat * 100)/100} Kg\n\n`;
+            message += `*(${label})*\n`;
+            message += `• (Jumlah Pcs): ${sumPcs} ekor\n`;
+            message += `• Berat Per timbang: ${Math.round(sumBerat * 100)/100} Kg\n\n`;
         });
 
-        message += `*TOTAL KESELURUHAN*\n`;
-        message += `Total Ekor: ${totalPcsSemua}\n`;
-        message += `Total Netto: ${Math.round(totalBeratSemua * 100)/100} Kg`;
+        message += `*(Total Keseluruhan)*\n`;
+        message += `• Total Pcs: ${totalPcsSemua} ekor\n`;
+        message += `• Total Berat: ${Math.round(totalBeratSemua * 100)/100} Kg`;
 
         const phoneNumber = '6282317165861';
         const encoded = encodeURIComponent(message);
@@ -858,7 +922,7 @@
         html += `</tbody>
             <tfoot>
                 <tr class="bg-orange-100">
-                    <td colspan="2" class="text-right font-bold text-orange-800 px-2 py-2">GRAND TOTAL:</td>
+                    <td colspan="2" class="text-right font-bold text-orange-800 px-2 py-2">(Total):</td>
                     <td class="text-center font-extrabold text-orange-900">${totalEkor}</td>
                     <td class="text-center font-extrabold text-orange-900">${Math.round(totalBerat * 100)/100}</td>
                 </tr>
@@ -868,7 +932,6 @@
         container.innerHTML = html;
     }
 
-    // INLINE EDITING KEDATANGAN
     function handleEditKedatangan(cell) {
         const id = cell.getAttribute('data-id');
         const field = cell.getAttribute('data-field');
@@ -899,7 +962,6 @@
         renderTableKedatangan();
     }
 
-    // EXPORT EXCEL KEDATANGAN
     function exportKedatanganExcel() {
         const targetDate = document.getElementById('inputTanggalKedatangan').value;
         const filtered = kedatanganList.filter(d => d.tanggal === targetDate);
@@ -975,7 +1037,7 @@
         html += `</tbody>
             <tfoot>
                 <tr class="bg-orange-100">
-                    <td colspan="2" class="text-right font-bold text-orange-800 px-2 py-2">TOTAL BERAT:</td>
+                    <td colspan="2" class="text-right font-bold text-orange-800 px-2 py-2">(Total):</td>
                     <td class="text-center font-extrabold text-orange-900">${Math.round(grandTotalBerat * 100) / 100} kg</td>
                     <td></td>
                 </tr>
@@ -985,7 +1047,6 @@
         container.innerHTML = html;
     }
 
-    // INLINE EDIT BAGIAN
     function handleEditBagian(cell) {
         const id = cell.getAttribute('data-id');
         const index = bagianList.findIndex(d => d.id === id);
@@ -1006,7 +1067,6 @@
         renderTableBagian();
     }
 
-    // HAPUS ITEM BAGIAN
     function deleteBagian(id) {
         const index = bagianList.findIndex(d => d.id === id);
         if (index !== -1) {
@@ -1017,7 +1077,6 @@
         }
     }
 
-    // EXPORT EXCEL BAGIAN AYAM
     function exportBagianExcel() {
         const targetDate = document.getElementById('inputTanggalBagian').value;
         const filtered = bagianList.filter(d => d.tanggal === targetDate);
@@ -1040,7 +1099,6 @@
         XLSX.writeFile(wb, `Laporan_Bagian_Ayam_${targetDate}.xlsx`);
     }
 
-    // KIRIM WA LAPORAN BAGIAN AYAM
     function kirimWABagian() {
         const targetDate = document.getElementById('inputTanggalBagian').value;
         const filtered = bagianList.filter(d => d.tanggal === targetDate);
@@ -1053,7 +1111,7 @@
         const dateObj = new Date(targetDate);
         const dateFormatted = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
-        let message = `*Laporan Data Bagian Ayam*\nTanggal: ${dateFormatted}\n\n`;
+        let message = `*Laporan Data Bagian Ayam*\n*(Tanggal Input: ${dateFormatted})*\n\n`;
         let totalBerat = 0;
 
         const groupSummary = {};
@@ -1067,16 +1125,14 @@
             message += `• *${jenis}*: ${Math.round(groupSummary[jenis] * 100) / 100} Kg\n`;
         });
 
-        message += `\n*TOTAL KESELURUHAN*: ${Math.round(totalBerat * 100) / 100} Kg`;
+        message += `\n*(Total Keseluruhan)*: ${Math.round(totalBerat * 100) / 100} Kg`;
 
         const phoneNumber = '6282317165861';
         const encoded = encodeURIComponent(message);
         window.open(`https://wa.me/${phoneNumber}?text=${encoded}`, '_blank');
     }
 
-    // FORM SUBMIT BERANDA / POTONG
     document.addEventListener('DOMContentLoaded', () => {
-        // Load data dari LocalStorage
         const savedData = localStorage.getItem(STORAGE_KEY);
         if (savedData) {
             try { dataList = JSON.parse(savedData); } catch (e) { console.error(e); }
@@ -1095,42 +1151,20 @@
                 parsed.forEach(item => {
                     if (item.jenis && item.berat !== undefined) {
                         bagianList.push(item);
-                    } else {
-                        // Migrasi struktur data lama
-                        const legacyCategories = [
-                            { key: 'kepala', name: 'Kepala Utuh' },
-                            { key: 'ceker', name: 'Ceker' },
-                            { key: 'usus', name: 'Usus' },
-                            { key: 'ati', name: 'Ati' },
-                            { key: 'ampela', name: 'Ampela' }
-                        ];
-                        legacyCategories.forEach(cat => {
-                            if (item[cat.key] && item[cat.key] > 0) {
-                                bagianList.push({
-                                    id: 'bagian_' + Date.now().toString() + '_' + Math.random().toString(36).substr(2, 4),
-                                    tanggal: item.tanggal,
-                                    jenis: cat.name,
-                                    berat: item[cat.key]
-                                });
-                            }
-                        });
                     }
                 });
             } catch (e) { console.error(e); }
         }
 
-        // Set tanggal hari ini ke semua input
         const today = new Date().toLocaleDateString('en-CA');
         if (document.getElementById('inputTanggal')) document.getElementById('inputTanggal').value = today;
         if (document.getElementById('filterTanggalPotong')) document.getElementById('filterTanggalPotong').value = today;
         if (document.getElementById('inputTanggalKedatangan')) document.getElementById('inputTanggalKedatangan').value = today;
         if (document.getElementById('inputTanggalBagian')) document.getElementById('inputTanggalBagian').value = today;
 
-        // Load custom categories and render
         loadCustomBagian();
         renderBagianCategories();
 
-        // Initial render for all tables
         renderTable();
         renderTableKedatangan();
         renderTableBagian();
@@ -1176,7 +1210,6 @@
                 dataList.push(newData);
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
 
-                // Update Modal Preview & Struk Print Format Infrared Belanja
                 document.getElementById('previewTanggal').innerText = tanggal;
                 document.getElementById('previewGrade').innerText = `${grade} (${berat} kg)`;
                 document.getElementById('previewPcs').innerText = `${pcs} Ekor`;
@@ -1209,7 +1242,6 @@
                 }
                 document.getElementById('printLabelsContainer').innerHTML = printContainerHtml;
 
-                // Reset fields
                 document.getElementById('inputPcs').value = '';
                 document.getElementById('inputBeratKotor').value = '';
                 document.getElementById('inputKeranjang').value = '';
@@ -1283,3 +1315,5 @@
         }
     });
 </script>
+</body>
+</html>
