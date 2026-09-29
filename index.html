@@ -1007,8 +1007,8 @@
             return;
         }
 
-        let msg = `*📊 LAPORAN POTONG KARKAS 📊*\n`;
-        msg += `🗓️ *Tanggal:* ${targetDate}\n`;
+        let msg = `*LAPORAN POTONG KARKAS*\n`;
+        msg += `*Tanggal:* ${targetDate}\n`;
         msg += `--------------------------------\n\n`;
         msg += `*RINCIAN PER GRADE:*\n`;
         
@@ -1020,14 +1020,14 @@
             const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
             grandPcs += sumPcs;
             grandBerat += sumTotal;
-            msg += `🔹 *Grade ${groups[k].grade} (${groups[k].berat} kg)*\n`;
+            msg += `- *Grade ${groups[k].grade} (${groups[k].berat} kg)*\n`;
             msg += `   └ ${sumPcs} Ekor  |  ${Math.round(sumTotal * 100) / 100} Kg\n\n`;
         });
 
         msg += `--------------------------------\n`;
-        msg += `*📈 TOTAL KESELURUHAN*\n`;
-        msg += `🐔 *Total Ekor  :* ${grandPcs} Ekor\n`;
-        msg += `⚖ *Total Berat :* ${Math.round(grandBerat * 100) / 100} Kg`;
+        msg += `*TOTAL KESELURUHAN*\n`;
+        msg += `*Total Ekor  :* ${grandPcs} Ekor\n`;
+        msg += `*Total Berat :* ${Math.round(grandBerat * 100) / 100} Kg`;
         
         window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
     }
@@ -1275,18 +1275,18 @@
 
         const rataRata = totalEkor > 0 ? (totalBerat / totalEkor).toFixed(2) : 0;
 
-        let msg = `*🚛 LAPORAN KEDATANGAN AYAM 🚛*\n`;
-        msg += `🗓️ *Tanggal :* ${tgl}\n`;
-        msg += `⏰ *Jam     :* ${jam}\n`;
-        msg += `🏢 *Kandang :* ${kandang}\n`;
+        let msg = `*LAPORAN KEDATANGAN AYAM*\n`;
+        msg += `*Tanggal :* ${tgl}\n`;
+        msg += `*Jam     :* ${jam}\n`;
+        msg += `*Kandang :* ${kandang}\n`;
         msg += `--------------------------------\n\n`;
         msg += `*RINCIAN TIMBANGAN:*\n`;
         msg += rincian;
         msg += `\n--------------------------------\n`;
-        msg += `*📈 RINGKASAN*\n`;
-        msg += `🐔 *Total Ekor  :* ${totalEkor} Ekor\n`;
-        msg += `⚖️ *Total Berat :* ${Math.round(totalBerat * 100)/100} Kg\n`;
-        msg += `📊 *Rata-rata   :* ${rataRata} Kg/Ekor`;
+        msg += `*RINGKASAN*\n`;
+        msg += `*Total Ekor  :* ${totalEkor} Ekor\n`;
+        msg += `*Total Berat :* ${Math.round(totalBerat * 100)/100} Kg\n`;
+        msg += `*Rata-rata   :* ${rataRata} Kg/Ekor`;
         
         window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
     }
@@ -1369,18 +1369,18 @@
         const filtered = bagianList.filter(d => d.tanggal === targetDate);
         if (filtered.length === 0) { showToast('Tidak ada data!', true); return; }
         
-        let msg = `*🍗 LAPORAN BAGIAN AYAM 🍗*\n`;
-        msg += `🗓️ *Tanggal:* ${targetDate}\n`;
+        let msg = `*LAPORAN BAGIAN AYAM*\n`;
+        msg += `*Tanggal:* ${targetDate}\n`;
         msg += `--------------------------------\n\n`;
         
         let total = 0;
         filtered.forEach(d => { 
-            msg += `🔸 *${d.jenis}* : ${d.berat} Kg\n`; 
+            msg += `- *${d.jenis}* : ${d.berat} Kg\n`; 
             total += d.berat; 
         });
         
         msg += `\n--------------------------------\n`;
-        msg += `*📈 TOTAL BERAT :* ${Math.round(total * 100)/100} Kg`;
+        msg += `*TOTAL BERAT :* ${Math.round(total * 100)/100} Kg`;
         
         window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
     }
