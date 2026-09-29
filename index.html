@@ -3,49 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RPA Auto</title>
+    <title>RPA Auto - Sistem Rumah Potong Ayam</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- FontAwesome -->
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- SheetJS (Excel Export) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <style>
-        /* Sembunyikan scrollbar untuk tampilan mobile yang lebih bersih */
+        /* Custom scrollbar styling */
         ::-webkit-scrollbar {
-            width: 0px;
+            width: 5px;
+            height: 5px;
             background: transparent;
         }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
         
-        /* Tabel gaya catatan tangan (tally) */
+        /* Table styling & responsive grid fixes */
         .tally-table {
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             width: 100%;
+            white-space: nowrap;
         }
         .tally-table th, .tally-table td {
-            border: 1px solid #374151; /* Tailwind gray-700 */
-            padding: 0.4rem;
+            border-right: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.6rem 0.75rem;
+            text-align: center;
         }
         .tally-table th {
-            background-color: #F3F4F6; /* Tailwind gray-100 */
+            background-color: #f8fafc;
         }
         .tally-table td[contenteditable="true"] {
-            transition: background-color 0.2s;
+            transition: all 0.2s ease;
+            min-width: 65px;
+            cursor: pointer;
         }
         .tally-table td[contenteditable="true"]:focus {
-            background-color: #FEF3C7 !important; /* Tailwind amber-100 */
-            outline: 2px solid #ea580c; /* Tailwind orange-600 */
+            background-color: #fef3c7 !important;
+            outline: 2px solid #ea580c;
             outline-offset: -2px;
+            border-radius: 4px;
         }
 
-        /* Notifikasi Toast */
+        /* Toast animation styling */
         #toast {
-            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-            transform: translate(-50%, 100%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+            transform: translate(-50%, -100%);
             opacity: 0;
         }
         #toast.show {
@@ -53,137 +68,157 @@
             opacity: 1;
         }
 
-        /* Print Styles */
+        /* Category pills scrollbar */
+        .category-scroll {
+            scrollbar-width: thin;
+        }
+
         @media print {
             body { background-color: white !important; margin: 0; padding: 0; }
             @page { margin: 0; size: auto; }
         }
     </style>
 </head>
-<body class="bg-gray-200 text-gray-800 font-sans antialiased">
+<body class="bg-gray-100 text-gray-800 font-sans antialiased min-h-screen">
 
-<div class="max-w-md mx-auto bg-gray-50 shadow-xl min-h-screen relative pb-24 print:hidden">
+<div class="max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto bg-gray-50 min-h-screen relative pb-28 shadow-2xl print:hidden border-x border-gray-200">
     
-    <!-- Header Utama -->
-    <header class="bg-orange-600 text-white p-4 shadow-md sticky top-0 z-20 flex items-center gap-3">
-        <i class="fa-solid fa-kiwi-bird text-2xl"></i>
-        <div>
-            <h1 class="text-lg font-bold leading-tight">RPA Auto</h1>
-            <p class="text-xs text-orange-100 opacity-90">Rumah Potong Ayam</p>
+    <!-- HEADER UTAMA WITH CUSTOM CHICKEN HEAD SVG LOGO -->
+    <header class="bg-gradient-to-r from-orange-600 to-amber-600 text-white p-4 shadow-lg sticky top-0 z-20 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <!-- SVG Logo Kepala Ayam (Chicken Head Logo) -->
+            <div class="w-10 h-10 bg-white/10 rounded-xl p-1 flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-inner shrink-0">
+                <svg class="w-8 h-8 text-white drop-shadow" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Jengger Merah (Comb) -->
+                    <path d="M38 30C32 18 20 22 23 32C17 26 10 32 14 40C18 46 28 44 34 42" fill="#EF4444" stroke="#B91C1C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Kepala Ayam (Chicken Head Contour) -->
+                    <path d="M34 38C34 38 42 30 55 33C68 36 72 48 70 60C68 72 58 82 45 82C35 82 28 75 28 65C28 55 34 38 34 38Z" fill="#F97316"/>
+                    <!-- Paruh (Beak) -->
+                    <path d="M68 46L88 52L69 60Z" fill="#FBBF24" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/>
+                    <!-- Gelambir Merah (Wattle) -->
+                    <path d="M66 60C72 66 70 76 62 74C56 72 60 62 66 60Z" fill="#EF4444" stroke="#B91C1C" stroke-width="1.5"/>
+                    <!-- Mata (Eye) -->
+                    <circle cx="52" cy="46" r="4.5" fill="#0F172A"/>
+                    <circle cx="53.5" cy="44.5" r="1.5" fill="#FFFFFF"/>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-xl font-black tracking-tight leading-none text-white">RPA Auto</h1>
+                <p class="text-[11px] text-orange-100 font-medium opacity-90 mt-0.5">Sistem Tally & Manajemen Karkas Ayam</p>
+            </div>
         </div>
+        <span class="text-[10px] bg-orange-700/60 backdrop-blur-sm text-orange-100 px-2.5 py-1 rounded-full border border-orange-400/30 font-semibold tracking-wide uppercase">
+            v3.2 Live
+        </span>
     </header>
 
     <!-- VIEW: BERANDA (FORM INPUT & TABEL POTONG/KARKAS) -->
-    <div id="view-home" class="p-4 block animate-fade-in">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-            <h2 class="text-gray-700 font-bold mb-4 border-b pb-2 flex items-center gap-2">
-                <i class="fa-solid fa-pen-to-square text-orange-500"></i> Input Data Karkas
+    <div id="view-home" class="p-4 md:p-6 block space-y-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-5">
+            <h2 class="text-gray-800 font-bold mb-4 border-b border-gray-100 pb-3 flex items-center gap-2 text-base">
+                <i class="fa-solid fa-pen-to-square text-orange-500 text-lg"></i> Input Data Karkas
             </h2>
             
             <form id="inputForm" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Tanggal</label>
-                    <input type="date" id="inputTanggal" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Tanggal Potong</label>
+                    <input type="date" id="inputTanggal" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition">
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Kandang</label>
-                        <input type="text" id="inputNamaKandang" required placeholder="Cth: Kandang A" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Nama Kandang</label>
+                        <input type="text" id="inputNamaKandang" required placeholder="Cth: Kandang A" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Alamat Kandang</label>
-                        <input type="text" id="inputAlamatKandang" required placeholder="Cth: Desa Sumber" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Alamat Kandang</label>
+                        <input type="text" id="inputAlamatKandang" required placeholder="Cth: Desa Sumber" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Grade Ayam</label>
-                        <select id="inputGrade" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Grade Ayam</label>
+                        <select id="inputGrade" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition">
                             <option value="A">Grade A</option>
                             <option value="B">Grade B</option>
                             <option value="C">Grade C</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Berat Ayam (kg)</label>
-                        <input type="number" id="inputBerat" min="0.1" step="0.1" inputmode="decimal" required placeholder="Cth: 1.5" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Ukuran / Berat Ayam (kg)</label>
+                        <input type="number" id="inputBerat" min="0.1" step="0.1" inputmode="decimal" required placeholder="Cth: 1.5" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <div class="flex justify-between items-center mb-1">
-                            <label class="block text-xs font-semibold text-gray-600">Jumlah Ekor (Pcs)</label>
-                            <button type="button" onclick="openCalcPcsModal()" class="text-[11px] text-orange-600 hover:text-orange-700 font-semibold flex items-center gap-1 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-200 active:scale-95 transition">
+                            <label class="block text-xs font-semibold text-gray-700">Jumlah Ekor (Pcs)</label>
+                            <button type="button" onclick="openCalcModal('inputPcs')" class="text-[11px] text-orange-600 hover:text-orange-700 font-semibold flex items-center gap-1 bg-orange-50 hover:bg-orange-100 px-2 py-0.5 rounded-lg border border-orange-200 active:scale-95 transition">
                                 <i class="fa-solid fa-calculator text-[10px]"></i> Hitung
                             </button>
                         </div>
-                        <input type="number" id="inputPcs" min="1" step="1" inputmode="numeric" required placeholder="Cth: 20" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        <input type="number" id="inputPcs" min="1" step="1" inputmode="numeric" required placeholder="Cth: 20" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Berat Timbang Kotor (kg)</label>
-                        <input type="number" id="inputBeratKotor" min="0.1" step="0.1" inputmode="decimal" required placeholder="Cth: 35.5" oninput="hitungBeratBersih()" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Berat Timbang Kotor (kg)</label>
+                        <input type="number" id="inputBeratKotor" min="0.1" step="0.1" inputmode="decimal" required placeholder="Cth: 35.5" oninput="hitungBeratBersih()" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition">
                     </div>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Jumlah Keranjang</label>
-                        <input type="number" id="inputKeranjang" min="1" step="1" inputmode="numeric" required placeholder="Cth: 2" oninput="hitungBeratBersih()" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Jumlah Keranjang</label>
+                        <input type="number" id="inputKeranjang" min="1" step="1" inputmode="numeric" required placeholder="Cth: 2" oninput="hitungBeratBersih()" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Berat 1 Keranjang (kg)</label>
-                        <input type="number" id="inputBeratKeranjang" min="0.1" step="0.1" inputmode="decimal" required placeholder="Cth: 1.5" oninput="hitungBeratBersih()" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Berat 1 Keranjang (kg)</label>
+                        <input type="number" id="inputBeratKeranjang" min="0.1" step="0.1" inputmode="decimal" required placeholder="Cth: 1.5" oninput="hitungBeratBersih()" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition">
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-orange-700 mb-1">Berat Bersih (kg) - Otomatis</label>
-                    <input type="number" id="inputTotalKg" readonly required placeholder="Otomatis dihitung" class="w-full p-2.5 bg-orange-100 border border-orange-300 rounded-lg text-sm font-bold text-orange-800 outline-none cursor-not-allowed">
-                    <p class="text-[10px] text-gray-400 mt-1">*Berat Kotor dikurangi (Jml Keranjang × Berat Keranjang)</p>
+                <div class="bg-amber-50/80 p-3 rounded-xl border border-amber-200">
+                    <label class="block text-xs font-bold text-amber-900 mb-1">Berat Bersih / Netto (kg) - Otomatis</label>
+                    <input type="number" id="inputTotalKg" readonly required placeholder="Otomatis dihitung" class="w-full p-2.5 bg-white border border-amber-300 rounded-lg text-base font-black text-amber-900 outline-none cursor-not-allowed shadow-inner">
+                    <p class="text-[11px] text-amber-700 mt-1 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-info text-amber-500"></i> Formulasi: Berat Kotor - (Jumlah Keranjang × Berat Keranjang)
+                    </p>
                 </div>
 
-                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold py-3.5 rounded-xl shadow-md transition-all mt-4 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-floppy-disk"></i> Simpan Data
+                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 active:scale-98 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-orange-600/20 transition-all flex items-center justify-center gap-2 text-sm tracking-wide">
+                    <i class="fa-solid fa-floppy-disk text-base"></i> Simpan Data Karkas
                 </button>
             </form>
         </div>
 
-        <!-- Tabel Data Potong & Export -->
-        <div class="mt-6 border-t pt-4">
-            <h2 class="text-gray-700 font-bold mb-3 flex items-center gap-2 text-sm">
+        <div class="space-y-3">
+            <h2 class="text-gray-800 font-bold flex items-center gap-2 text-base">
                 <i class="fa-solid fa-table-list text-orange-600"></i> Tabel & Laporan Karkas
             </h2>
 
-            <!-- Filter Tanggal -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-3 mb-3 flex items-center gap-3">
-                <div class="bg-orange-100 text-orange-600 p-2 rounded-lg"><i class="fa-solid fa-calendar-day"></i></div>
-                <div class="flex-1">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-3 flex items-center gap-3">
+                <div class="bg-orange-100 text-orange-600 p-2.5 rounded-lg shrink-0"><i class="fa-solid fa-calendar-day text-lg"></i></div>
+                <div class="flex-1 min-w-0">
                     <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider">Filter Tanggal Karkas</label>
-                    <input type="date" id="filterTanggalPotong" class="w-full bg-transparent text-sm font-bold text-gray-700 outline-none" onchange="renderTable()">
+                    <input type="date" id="filterTanggalPotong" class="w-full bg-transparent text-sm font-bold text-gray-800 outline-none" onchange="renderTable()">
                 </div>
             </div>
 
-            <div class="flex gap-2 items-start mb-3 bg-amber-50 p-3 rounded-lg border border-amber-200">
-                <i class="fa-solid fa-circle-info text-amber-500 mt-0.5 text-sm"></i>
-                <p class="text-[11px] text-amber-800 leading-tight">
-                    Ketuk angka pada tabel untuk <b>edit langsung</b>. Ubah jadi <b class="text-red-600">0</b> untuk menghapus baris data.
+            <div class="flex gap-2 items-start bg-amber-50 p-3 rounded-xl border border-amber-200">
+                <i class="fa-solid fa-lightbulb text-amber-500 mt-0.5 text-sm shrink-0"></i>
+                <p class="text-[11px] text-amber-800 leading-relaxed">
+                    Ketuk angka pada tabel untuk <b>edit langsung</b>. Ubah nilai Pcs jadi <b class="text-red-600">0</b> untuk menghapus baris data tersebut.
                 </p>
             </div>
 
-            <!-- Wadah Tabel Potong Tally Catatan Tangan -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-300 overflow-hidden mb-4">
-                <div class="overflow-x-auto p-0" id="tableContainer">
-                    <!-- Tabel Tally dirender disini via JS -->
-                </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto w-full" id="tableContainer"></div>
             </div>
 
-            <!-- Tombol Export Potong -->
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="exportExcel()" class="bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold py-3 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
-                    <i class="fa-solid fa-file-excel"></i> Export Excel
+            <div class="grid grid-cols-2 gap-3 pt-1">
+                <button onclick="exportExcel()" class="bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-bold py-3 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-file-excel text-base"></i> Export Excel
                 </button>
                 <button onclick="kirimWA()" class="bg-[#25D366] hover:bg-[#20bd5a] active:scale-95 text-white font-bold py-3 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
                     <i class="fa-brands fa-whatsapp text-lg"></i> Kirim WA
@@ -192,237 +227,243 @@
         </div>
     </div>
 
-    <!-- VIEW: KEDATANGAN AYAM -->
-    <div id="view-kedatangan" class="p-4 hidden animate-fade-in">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-4">
-            <h2 class="text-gray-700 font-bold mb-4 border-b pb-2 flex items-center gap-2">
-                <i class="fa-solid fa-truck text-orange-500"></i> Input Kedatangan Ayam
+    <!-- VIEW: KEDATANGAN -->
+    <div id="view-kedatangan" class="p-4 md:p-6 hidden space-y-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-5">
+            <h2 class="text-gray-800 font-bold mb-4 border-b border-gray-100 pb-3 flex items-center gap-2 text-base">
+                <i class="fa-solid fa-truck text-orange-500 text-lg"></i> Input Kedatangan Ayam (Tally)
             </h2>
             
             <form id="formKedatangan" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Tanggal Kedatangan</label>
-                    <input type="date" id="inputTanggalKedatangan" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition" onchange="renderTableKedatangan()">
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Kandang</label>
-                        <input type="text" id="inputNamaKandangKedatangan" required placeholder="Cth: Kandang B" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Tanggal Terima</label>
+                        <input type="date" id="inputTanggalKedatangan" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition" onchange="renderTableKedatangan()">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Alamat Kandang</label>
-                        <input type="text" id="inputAlamatKandangKedatangan" required placeholder="Cth: Desa Sindang" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Jam Kedatangan</label>
+                        <input type="time" id="inputJamKedatangan" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Berat Ayam Total (kg)</label>
-                        <input type="number" id="inputBeratKedatangan" min="0.1" step="0.1" inputmode="decimal" required placeholder="Cth: 150.5" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Nama Kandang</label>
+                        <input type="text" id="inputNamaKandangKedatangan" required placeholder="Cth: Kandang B" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition" onchange="renderTableKedatangan()">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Jumlah Ekor</label>
-                        <input type="number" id="inputEkorKedatangan" min="1" step="1" inputmode="numeric" required placeholder="Cth: 100" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                        <label class="block text-xs font-semibold text-gray-700 mb-1">Alamat Kandang</label>
+                        <input type="text" id="inputAlamatKandangKedatangan" required placeholder="Cth: Desa Sindang" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition" onchange="renderTableKedatangan()">
                     </div>
                 </div>
 
-                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold py-3.5 rounded-xl shadow-md transition-all mt-4 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-download"></i> Simpan Kedatangan
+                <div class="bg-orange-50/70 p-3.5 rounded-xl border border-orange-200">
+                    <label class="block text-xs font-bold text-orange-900 mb-2">Tambah Timbang / Per Baris (Maks. 10 Baris)</label>
+                    <div class="grid grid-cols-2 gap-2 mb-2.5">
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600 mb-1">Jumlah Ekor (Opsional)</label>
+                            <input type="number" id="inputBarisEkor" min="0" step="1" inputmode="numeric" placeholder="Cth: 10" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-orange-500">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold text-gray-600 mb-1">Berat (kg)</label>
+                            <input type="number" id="inputBarisBerat" min="0.1" step="0.1" inputmode="decimal" placeholder="Cth: 15.5" class="w-full p-2 bg-white border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-orange-500">
+                        </div>
+                    </div>
+                    <button type="button" onclick="tambahBarisKedatangan()" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5 active:scale-98">
+                        <i class="fa-solid fa-plus"></i> Tambah ke Tabel (1 Baris)
+                    </button>
+                </div>
+
+                <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 active:scale-98 text-white font-bold py-3.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm tracking-wide">
+                    <i class="fa-solid fa-floppy-disk text-base"></i> Simpan Sesi Kedatangan
                 </button>
             </form>
         </div>
 
-        <div class="flex gap-2 items-start mb-3 bg-amber-50 p-3 rounded-lg border border-amber-200">
-            <i class="fa-solid fa-circle-info text-amber-500 mt-0.5 text-sm"></i>
-            <p class="text-[11px] text-amber-800 leading-tight">
-                Ketuk angka/teks pada tabel untuk <b>edit langsung</b>. Hapus "Kandang" / jadi <b class="text-red-600">0</b> untuk menghapus baris.
-            </p>
-        </div>
+        <div class="space-y-3">
+            <div class="flex gap-2 items-start bg-amber-50 p-3 rounded-xl border border-amber-200">
+                <i class="fa-solid fa-lightbulb text-amber-500 mt-0.5 text-sm shrink-0"></i>
+                <p class="text-[11px] text-amber-800 leading-relaxed">
+                    Ketuk angka pada tabel untuk <b>edit langsung</b>. Nilai Ekor boleh dikosongkan.
+                </p>
+            </div>
 
-        <!-- Tabel Kedatangan -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-300 overflow-hidden mb-4">
-            <div class="overflow-x-auto p-0" id="tableKedatanganContainer">
-                <!-- Tabel dirender via JS -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="p-3 bg-gray-100 border-b border-gray-200 text-xs font-bold text-gray-700 flex flex-col justify-between gap-1">
+                    <span id="labelHeaderInfo" class="text-orange-900">Tanggal Terima: - | Jam: -</span>
+                    <span id="labelHeaderKandang" class="text-gray-600">Kandang: -</span>
+                </div>
+                <div class="overflow-x-auto w-full" id="tableKedatanganContainer"></div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 pt-1">
+                <button onclick="exportKedatanganExcel()" class="bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-bold py-3 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-file-excel text-base"></i> Export Excel
+                </button>
+                <button onclick="kirimWAKedatangan()" class="bg-[#25D366] hover:bg-[#20bd5a] active:scale-95 text-white font-bold py-3 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> Kirim WA
+                </button>
             </div>
         </div>
-
-        <!-- Tombol Export Kedatangan -->
-        <button onclick="exportKedatanganExcel()" class="w-full bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold py-3.5 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
-            <i class="fa-solid fa-file-excel text-lg"></i> Export Excel Kedatangan
-        </button>
     </div>
 
-    <!-- VIEW: BAGIAN AYAM -->
-    <div id="view-bagian" class="p-4 hidden animate-fade-in">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-4 border-t-4 border-t-orange-500">
-            <h2 class="text-gray-700 font-bold mb-4 border-b pb-2 flex items-center justify-between">
-                <span class="flex items-center gap-2"><i class="fa-solid fa-drumstick-bite text-orange-500"></i> Input Bagian Ayam</span>
-                <button type="button" onclick="openTambahBagianModal()" class="text-xs bg-orange-100 hover:bg-orange-200 text-orange-700 px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 transition">
-                    <i class="fa-solid fa-plus text-[10px]"></i> Tambah Bagian
-                </button>
+    <!-- VIEW: BAGIAN -->
+    <div id="view-bagian" class="p-4 md:p-6 hidden space-y-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-5">
+            <h2 class="text-gray-800 font-bold mb-4 border-b border-gray-100 pb-3 flex items-center gap-2 text-base">
+                <i class="fa-solid fa-drumstick-bite text-orange-500 text-lg"></i> Input Bagian Ayam
             </h2>
             
             <form id="formBagian" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Tanggal</label>
-                    <input type="date" id="inputTanggalBagian" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition" onchange="renderTableBagian()">
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Tanggal</label>
+                    <input type="date" id="inputTanggalBagian" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition" onchange="renderTableBagian()">
+                </div>
+
+                <div>
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="block text-xs font-semibold text-gray-700">Pilih Jenis Bagian</label>
+                        <button type="button" onclick="openTambahBagianModal()" class="text-[11px] text-orange-600 hover:text-orange-700 font-bold flex items-center gap-1 active:scale-95 transition">
+                            <i class="fa-solid fa-circle-plus"></i> + Kategori Baru
+                        </button>
+                    </div>
+                    <!-- Pills Category selector -->
+                    <div class="flex flex-wrap gap-1.5 mb-2.5 max-h-36 overflow-y-auto p-2 bg-gray-50 border border-gray-200 rounded-xl category-scroll" id="bagianCategoryPills"></div>
+                    <select id="inputJenisBagian" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition" onchange="syncBagianPill(this.value)"></select>
                 </div>
 
                 <div>
                     <div class="flex justify-between items-center mb-1">
-                        <label class="block text-xs font-semibold text-gray-600">Pilih Jenis Bagian</label>
-                        <button type="button" onclick="openTambahBagianModal()" class="text-[11px] text-orange-600 hover:text-orange-700 font-semibold flex items-center gap-1">
-                            <i class="fa-solid fa-circle-plus"></i> + Kategori Baru
+                        <label class="block text-xs font-semibold text-gray-700">Berat Bagian (kg)</label>
+                        <button type="button" onclick="openCalcModal('inputBeratBagian')" class="text-[11px] text-orange-600 hover:text-orange-700 font-semibold flex items-center gap-1 bg-orange-50 hover:bg-orange-100 px-2 py-0.5 rounded-lg border border-orange-200 active:scale-95 transition">
+                            <i class="fa-solid fa-calculator text-[10px]"></i> Hitung
                         </button>
                     </div>
-                    <div class="flex flex-wrap gap-1.5 mb-2.5 max-h-36 overflow-y-auto p-1.5 bg-gray-50 border border-gray-200 rounded-lg" id="bagianCategoryPills">
-                        <!-- Dynamic Pills via JS -->
-                    </div>
-                    <select id="inputJenisBagian" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition" onchange="syncBagianPill(this.value)">
-                        <!-- Dynamic Options via JS -->
-                    </select>
+                    <input type="number" id="inputBeratBagian" min="0.01" step="0.01" inputmode="decimal" required placeholder="Cth: 12.5" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition">
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Berat Bagian (kg)</label>
-                    <input type="number" id="inputBeratBagian" min="0.01" step="0.01" inputmode="decimal" required placeholder="Cth: 12.5" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
-                </div>
-
-                <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 active:scale-95 text-white font-bold py-3.5 rounded-xl shadow-md transition-all mt-2 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-plus-circle"></i> Tambah Input Bagian
+                <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 active:scale-98 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-orange-600/20 transition-all flex items-center justify-center gap-2 text-sm tracking-wide">
+                    <i class="fa-solid fa-plus-circle text-base"></i> Tambah Input Bagian
                 </button>
             </form>
         </div>
 
-        <div class="flex gap-2 items-start mb-3 bg-amber-50 p-3 rounded-lg border border-amber-200">
-            <i class="fa-solid fa-circle-info text-amber-500 mt-0.5 text-sm"></i>
-            <p class="text-[11px] text-amber-800 leading-tight">
-                Ketuk angka berat pada tabel untuk <b>edit langsung</b>, atau klik ikon sampah untuk menghapus item.
-            </p>
-        </div>
-
-        <!-- Tabel Bagian -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-300 overflow-hidden mb-4">
-            <div class="p-0" id="tableBagianContainer">
-                <!-- Tabel dirender via JS -->
-            </div>
-        </div>
-
-        <!-- Tombol Export Bagian -->
-        <div class="grid grid-cols-2 gap-3">
-            <button onclick="exportBagianExcel()" class="bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold py-3 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
-                <i class="fa-solid fa-file-excel"></i> Export Excel
-            </button>
-            <button onclick="kirimWABagian()" class="bg-[#25D366] hover:bg-[#20bd5a] active:scale-95 text-white font-bold py-3 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
-                <i class="fa-brands fa-whatsapp text-lg"></i> Kirim WA
-            </button>
-        </div>
-    </div>
-
-    <!-- VIEW: TALLY MUAT (NAIK MOBIL) -->
-    <div id="view-tally" class="p-4 hidden animate-fade-in">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-4 border-t-4 border-t-blue-500">
-            <h2 class="text-gray-700 font-bold mb-4 border-b pb-2 flex items-center gap-2">
-                <i class="fa-solid fa-truck-loading text-blue-500"></i> Tally Muat (Naik Mobil)
-            </h2>
-            
-            <div class="flex gap-2 items-start mb-4 bg-blue-50 p-3 rounded-lg border border-blue-200">
-                <i class="fa-solid fa-circle-info text-blue-500 mt-0.5 text-sm"></i>
-                <p class="text-[11px] text-blue-800 leading-tight">
-                    Tandai karkas yang sudah dinaikkan ke mobil. Data diambil langsung dari <b>Input Karkas (Beranda)</b>.
+        <div class="space-y-3">
+            <div class="flex gap-2 items-start bg-amber-50 p-3 rounded-xl border border-amber-200">
+                <i class="fa-solid fa-lightbulb text-amber-500 mt-0.5 text-sm shrink-0"></i>
+                <p class="text-[11px] text-amber-800 leading-relaxed">
+                    Ketuk angka berat pada tabel untuk <b>edit langsung</b>.
                 </p>
             </div>
 
-            <!-- Filter Tanggal Tally -->
-            <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4 flex items-center gap-3">
-                <div class="bg-blue-100 text-blue-600 p-2 rounded-lg"><i class="fa-solid fa-calendar-day"></i></div>
-                <div class="flex-1">
-                    <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider">Pilih Tanggal</label>
-                    <input type="date" id="filterTanggalTally" class="w-full bg-transparent text-sm font-bold text-gray-700 outline-none" onchange="renderTableTally()">
-                </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="overflow-x-auto w-full" id="tableBagianContainer"></div>
             </div>
 
-            <!-- Summary Info -->
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <div class="bg-green-50 border border-green-100 p-3 rounded-lg text-center">
-                    <div class="text-[10px] text-green-600 font-bold uppercase">Total Sudah Muat</div>
-                    <div id="tallyTotalMuat" class="text-lg font-black text-green-700">0 Kg</div>
-                </div>
-                <div class="bg-orange-50 border border-orange-100 p-3 rounded-lg text-center">
-                    <div class="text-[10px] text-orange-600 font-bold uppercase">Sisa Belum Muat</div>
-                    <div id="tallySisaBelum" class="text-lg font-black text-orange-700">0 Kg</div>
-                </div>
-            </div>
-
-            <!-- Tabel Data Tally -->
-            <div class="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-200">
-                <div id="tableTallyContainer">
-                    <!-- Data Tally via JS -->
-                </div>
+            <div class="grid grid-cols-2 gap-3 pt-1">
+                <button onclick="exportBagianExcel()" class="bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-bold py-3 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-file-excel text-base"></i> Export Excel
+                </button>
+                <button onclick="kirimWABagian()" class="bg-[#25D366] hover:bg-[#20bd5a] active:scale-95 text-white font-bold py-3 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> Kirim WA
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION -->
-    <nav class="fixed bottom-0 w-full max-w-md bg-white border-t border-gray-200 pb-safe z-30 flex">
+    <!-- VIEW: TALLY -->
+    <div id="view-tally" class="p-4 md:p-6 hidden space-y-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-5 border-t-4 border-t-blue-500">
+            <h2 class="text-gray-800 font-bold mb-4 border-b border-gray-100 pb-3 flex items-center gap-2 text-base">
+                <i class="fa-solid fa-truck-loading text-blue-500 text-lg"></i> Tally Muat (Naik Mobil)
+            </h2>
+            
+            <div class="flex gap-2 items-start mb-4 bg-blue-50 p-3 rounded-xl border border-blue-200">
+                <i class="fa-solid fa-circle-info text-blue-500 mt-0.5 text-sm shrink-0"></i>
+                <p class="text-[11px] text-blue-800 leading-relaxed">
+                    Tandai karkas yang sudah dinaikkan ke mobil. Data otomatis disinkronkan dari <b>Input Karkas (Beranda)</b>.
+                </p>
+            </div>
+
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 mb-4 flex items-center gap-3">
+                <div class="bg-blue-100 text-blue-600 p-2.5 rounded-lg shrink-0"><i class="fa-solid fa-calendar-day text-lg"></i></div>
+                <div class="flex-1 min-w-0">
+                    <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider">Pilih Tanggal</label>
+                    <input type="date" id="filterTanggalTally" class="w-full bg-transparent text-sm font-bold text-gray-800 outline-none" onchange="renderTableTally()">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-emerald-50 border border-emerald-200 p-3.5 rounded-xl text-center shadow-sm">
+                    <div class="text-[10px] text-emerald-700 font-bold uppercase tracking-wider">Total Sudah Muat</div>
+                    <div id="tallyTotalMuat" class="text-xl font-black text-emerald-800 mt-0.5">0 Kg</div>
+                </div>
+                <div class="bg-orange-50 border border-orange-200 p-3.5 rounded-xl text-center shadow-sm">
+                    <div class="text-[10px] text-orange-700 font-bold uppercase tracking-wider">Sisa Belum Muat</div>
+                    <div id="tallySisaBelum" class="text-xl font-black text-orange-800 mt-0.5">0 Kg</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+                <div id="tableTallyContainer" class="overflow-x-auto w-full"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR (Fixed bottom nav bar, perfectly centered on all screen sizes) -->
+    <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-lg md:max-w-2xl lg:max-w-3xl bg-white border-t border-gray-200 z-30 flex shadow-2xl">
         <button onclick="switchTab('home')" id="nav-home" class="flex-1 py-3 flex flex-col items-center justify-center text-orange-600 font-bold transition-colors">
-            <i class="fa-solid fa-house mb-1 text-lg"></i>
+            <i class="fa-solid fa-house mb-1 text-base"></i>
             <span class="text-[10px] uppercase tracking-wide">Beranda</span>
         </button>
         <button onclick="switchTab('kedatangan')" id="nav-kedatangan" class="flex-1 py-3 flex flex-col items-center justify-center text-gray-400 font-medium transition-colors hover:text-orange-500">
-            <i class="fa-solid fa-truck mb-1 text-lg"></i>
+            <i class="fa-solid fa-truck mb-1 text-base"></i>
             <span class="text-[10px] uppercase tracking-wide">Datang</span>
         </button>
         <button onclick="switchTab('bagian')" id="nav-bagian" class="flex-1 py-3 flex flex-col items-center justify-center text-gray-400 font-medium transition-colors hover:text-orange-500">
-            <i class="fa-solid fa-drumstick-bite mb-1 text-lg"></i>
+            <i class="fa-solid fa-drumstick-bite mb-1 text-base"></i>
             <span class="text-[10px] uppercase tracking-wide">Bagian</span>
         </button>
         <button onclick="switchTab('tally')" id="nav-tally" class="flex-1 py-3 flex flex-col items-center justify-center text-gray-400 font-medium transition-colors hover:text-blue-500">
-            <i class="fa-solid fa-clipboard-check mb-1 text-lg"></i>
+            <i class="fa-solid fa-clipboard-check mb-1 text-base"></i>
             <span class="text-[10px] uppercase tracking-wide">Tally</span>
         </button>
     </nav>
 
-    <!-- TOAST NOTIFICATION -->
-    <div id="toast" class="fixed top-20 left-1/2 bg-gray-800 text-white px-5 py-2.5 rounded-full shadow-lg z-50 text-sm font-semibold flex items-center gap-2 pointer-events-none">
-        <i class="fa-solid fa-circle-check text-orange-400"></i>
+    <!-- TOAST BANNERS -->
+    <div id="toast" class="fixed top-5 left-1/2 bg-slate-900 text-white px-5 py-3 rounded-full shadow-2xl z-[60] text-xs font-bold flex items-center gap-2.5 pointer-events-none border border-slate-700">
+        <i class="fa-solid fa-circle-check text-orange-400 text-base"></i>
         <span id="toast-msg">Tersimpan</span>
     </div>
 
-    <!-- MODAL CETAK LABEL -->
-    <div id="labelModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 animate-fade-in print:hidden">
-        <div class="bg-white rounded-xl shadow-lg w-full max-w-sm overflow-hidden transform scale-100 transition-transform">
-            <div class="p-4 border-b bg-orange-50 flex justify-between items-center">
-                <h3 class="font-bold text-orange-800 flex items-center gap-2"><i class="fa-solid fa-receipt"></i> Struk Label Tersimpan!</h3>
-                <button onclick="closeModal()" class="text-gray-500 hover:text-red-500 text-lg"><i class="fa-solid fa-times"></i></button>
+    <!-- MODAL LABEL PREVIEW -->
+    <div id="labelModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 print:hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform scale-100 transition-transform">
+            <div class="p-4 border-b border-orange-100 bg-orange-50/80 flex justify-between items-center">
+                <h3 class="font-bold text-orange-900 text-sm flex items-center gap-2"><i class="fa-solid fa-receipt text-orange-600"></i> Struk Label Tersimpan!</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 text-lg transition-colors p-1"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-5">
                 <p class="text-xs text-gray-500 mb-3 text-center">Preview Struk Cetak Thermal / Infrared:</p>
-                
-                <div class="border-2 border-dashed border-gray-400 p-4 rounded-lg bg-yellow-50/40 mb-5 text-xs font-mono text-gray-800 shadow-inner">
-                    <div class="text-center font-bold text-sm border-b border-dashed border-gray-400 pb-2 mb-2 uppercase tracking-wide">
+                <div class="border-2 border-dashed border-gray-300 p-4 rounded-xl bg-amber-50/30 mb-5 text-xs font-mono text-gray-800 shadow-inner">
+                    <div class="text-center font-bold text-sm border-b border-dashed border-gray-300 pb-2 mb-2 uppercase tracking-wider text-gray-900">
                         *** RPA AUTO KARKAS ***<br>
                         <span class="text-[10px] text-gray-500 font-normal">STRUK LABEL KARKAS</span>
                     </div>
-                    <div class="space-y-1.5 border-b border-dashed border-gray-400 pb-2 mb-2">
+                    <div class="space-y-1.5 border-b border-dashed border-gray-300 pb-2 mb-2">
                         <div class="flex justify-between"><span class="text-gray-500">TANGGAL:</span><strong id="previewTanggal" class="text-gray-800"></strong></div>
                         <div class="flex justify-between"><span class="text-gray-500">GRADE:</span><strong id="previewGrade" class="text-gray-800"></strong></div>
                     </div>
-                    <div class="space-y-1.5 border-b border-dashed border-gray-400 pb-2 mb-2">
+                    <div class="space-y-1.5 border-b border-dashed border-gray-300 pb-2 mb-2">
                         <div class="flex justify-between text-sm"><span class="text-gray-600">JUMLAH PCS:</span><strong id="previewPcs" class="text-orange-700 font-bold"></strong></div>
                         <div class="flex justify-between text-base"><span class="text-gray-700 font-bold">NETTO (KG):</span><strong id="previewNetto" class="text-orange-700 font-black"></strong></div>
                     </div>
-                    <div class="text-[9px] text-center text-gray-400 uppercase pt-1 tracking-widest">
-                        * NAMA KANDANG TANPA CETAK *
-                    </div>
                 </div>
-
                 <div class="flex gap-2">
-                    <button onclick="printLabel()" class="flex-1 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold py-2.5 rounded-xl text-xs shadow transition flex items-center justify-center gap-1">
+                    <button onclick="printLabel()" class="flex-1 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-print"></i> Cetak Label
                     </button>
-                    <button onclick="closeModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-xl text-xs transition">
+                    <button onclick="closeModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-xl text-xs transition">
                         Tutup
                     </button>
                 </div>
@@ -431,76 +472,71 @@
     </div>
 
     <!-- MODAL TAMBAH BAGIAN BARU -->
-    <div id="tambahBagianModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 animate-fade-in print:hidden">
-        <div class="bg-white rounded-xl shadow-lg w-full max-w-xs overflow-hidden transform scale-100 transition-transform">
-            <div class="p-4 border-b bg-orange-50 flex justify-between items-center">
-                <h3 class="font-bold text-orange-800 text-sm flex items-center gap-2"><i class="fa-solid fa-square-plus text-orange-600"></i> Tambah Bagian Ayam</h3>
-                <button onclick="closeTambahBagianModal()" class="text-gray-500 hover:text-red-500 text-lg"><i class="fa-solid fa-times"></i></button>
+    <div id="tambahBagianModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 print:hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs overflow-hidden transform scale-100 transition-transform">
+            <div class="p-4 border-b border-orange-100 bg-orange-50/80 flex justify-between items-center">
+                <h3 class="font-bold text-orange-900 text-sm flex items-center gap-2"><i class="fa-solid fa-square-plus text-orange-600"></i> Tambah Bagian Ayam</h3>
+                <button onclick="closeTambahBagianModal()" class="text-gray-400 hover:text-red-500 text-lg transition-colors p-1"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form id="formTambahBagianBaru" onsubmit="saveBagianBaru(event)" class="p-4 space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Nama Bagian Baru</label>
-                    <input type="text" id="inputNamaBagianBaru" required placeholder="Cth: Fillet Dada / Paha Pentung" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Nama Bagian Baru</label>
+                    <input type="text" id="inputNamaBagianBaru" required placeholder="Cth: Fillet Dada / Paha Pentung" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
                 </div>
                 <div class="flex gap-2 pt-2">
-                    <button type="button" onclick="closeTambahBagianModal()" class="flex-1 py-2.5 rounded-lg border border-gray-300 text-gray-600 font-semibold text-xs hover:bg-gray-50">Batal</button>
-                    <button type="submit" class="flex-1 py-2.5 rounded-lg bg-orange-600 text-white font-semibold text-xs shadow-md hover:bg-orange-700">Simpan</button>
+                    <button type="button" onclick="closeTambahBagianModal()" class="flex-1 py-2.5 rounded-xl border border-gray-300 text-gray-600 font-semibold text-xs hover:bg-gray-50">Batal</button>
+                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-orange-600 text-white font-semibold text-xs shadow-md hover:bg-orange-700">Simpan</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL KALKULATOR JUMLAH EKOR -->
-    <div id="calcPcsModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 animate-fade-in print:hidden">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-xs overflow-hidden transform scale-100 transition-transform">
-            <div class="p-3.5 border-b bg-orange-50 flex justify-between items-center">
-                <h3 class="font-bold text-orange-800 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-calculator text-orange-600"></i> Hitung Jumlah Ekor
+    <!-- MODAL KALKULATOR KEYPAD -->
+    <div id="calcPcsModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 print:hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs overflow-hidden transform scale-100 transition-transform">
+            <div class="p-3.5 border-b border-orange-100 bg-orange-50/80 flex justify-between items-center">
+                <h3 class="font-bold text-orange-900 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-orange-600"></i> Kalkulator Quick Input
                 </h3>
                 <button type="button" onclick="closeCalcPcsModal()" class="text-gray-400 hover:text-red-500 text-lg transition-colors p-1">
-                    <i class="fa-solid fa-times"></i>
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             <div class="p-4 space-y-3">
-                <!-- Tampilan Layar Kalkulator -->
-                <div class="bg-gray-900 rounded-xl p-3 text-right font-mono text-white">
-                    <div id="calcExprDisplay" class="text-xs text-gray-400 h-4 overflow-hidden text-ellipsis whitespace-nowrap">0</div>
+                <div class="bg-slate-900 rounded-xl p-3 text-right font-mono text-white shadow-inner">
+                    <div id="calcExprDisplay" class="text-xs text-slate-400 h-4 overflow-hidden text-ellipsis whitespace-nowrap">0</div>
                     <div id="calcResultDisplay" class="text-2xl font-bold tracking-wider text-orange-400 h-8 overflow-hidden text-ellipsis">0</div>
                 </div>
 
-                <!-- Tombol Keypad Kalkulator -->
                 <div class="grid grid-cols-4 gap-1.5 text-sm font-bold">
-                    <button type="button" onclick="calcPcsClear()" class="bg-red-100 text-red-600 hover:bg-red-200 p-2.5 rounded-lg active:scale-95 transition">C</button>
-                    <button type="button" onclick="calcPcsBackspace()" class="bg-gray-100 text-gray-700 hover:bg-gray-200 p-2.5 rounded-lg active:scale-95 transition"><i class="fa-solid fa-backspace"></i></button>
-                    <button type="button" onclick="calcPcsAppend('/')" class="bg-orange-100 text-orange-700 hover:bg-orange-200 p-2.5 rounded-lg active:scale-95 transition">÷</button>
-                    <button type="button" onclick="calcPcsAppend('*')" class="bg-orange-100 text-orange-700 hover:bg-orange-200 p-2.5 rounded-lg active:scale-95 transition">×</button>
+                    <button type="button" onclick="calcPcsClear()" class="bg-red-100 text-red-700 hover:bg-red-200 p-2.5 rounded-xl active:scale-95 transition">C</button>
+                    <button type="button" onclick="calcPcsBackspace()" class="bg-gray-100 text-gray-700 hover:bg-gray-200 p-2.5 rounded-xl active:scale-95 transition"><i class="fa-solid fa-backspace"></i></button>
+                    <button type="button" onclick="calcPcsAppend('/')" class="bg-orange-100 text-orange-800 hover:bg-orange-200 p-2.5 rounded-xl active:scale-95 transition">÷</button>
+                    <button type="button" onclick="calcPcsAppend('*')" class="bg-orange-100 text-orange-800 hover:bg-orange-200 p-2.5 rounded-xl active:scale-95 transition">×</button>
 
-                    <button type="button" onclick="calcPcsAppend('7')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">7</button>
-                    <button type="button" onclick="calcPcsAppend('8')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">8</button>
-                    <button type="button" onclick="calcPcsAppend('9')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">9</button>
-                    <button type="button" onclick="calcPcsAppend('-')" class="bg-orange-100 text-orange-700 hover:bg-orange-200 p-2.5 rounded-lg active:scale-95 transition">-</button>
+                    <button type="button" onclick="calcPcsAppend('7')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">7</button>
+                    <button type="button" onclick="calcPcsAppend('8')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">8</button>
+                    <button type="button" onclick="calcPcsAppend('9')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">9</button>
+                    <button type="button" onclick="calcPcsAppend('-')" class="bg-orange-100 text-orange-800 hover:bg-orange-200 p-2.5 rounded-xl active:scale-95 transition">-</button>
 
-                    <button type="button" onclick="calcPcsAppend('4')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">4</button>
-                    <button type="button" onclick="calcPcsAppend('5')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">5</button>
-                    <button type="button" onclick="calcPcsAppend('6')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">6</button>
-                    <button type="button" onclick="calcPcsAppend('+')" class="bg-orange-100 text-orange-700 hover:bg-orange-200 p-2.5 rounded-lg active:scale-95 transition">+</button>
+                    <button type="button" onclick="calcPcsAppend('4')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">4</button>
+                    <button type="button" onclick="calcPcsAppend('5')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">5</button>
+                    <button type="button" onclick="calcPcsAppend('6')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">6</button>
+                    <button type="button" onclick="calcPcsAppend('+')" class="bg-orange-100 text-orange-800 hover:bg-orange-200 p-2.5 rounded-xl active:scale-95 transition">+</button>
 
-                    <button type="button" onclick="calcPcsAppend('1')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">1</button>
-                    <button type="button" onclick="calcPcsAppend('2')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">2</button>
-                    <button type="button" onclick="calcPcsAppend('3')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">3</button>
-                    <button type="button" onclick="calcPcsEqual()" class="bg-orange-500 text-white hover:bg-orange-600 row-span-2 p-2.5 rounded-lg flex items-center justify-center text-lg active:scale-95 transition">=</button>
+                    <button type="button" onclick="calcPcsAppend('1')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">1</button>
+                    <button type="button" onclick="calcPcsAppend('2')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">2</button>
+                    <button type="button" onclick="calcPcsAppend('3')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">3</button>
+                    <button type="button" onclick="calcPcsEqual()" class="bg-orange-600 text-white hover:bg-orange-700 row-span-2 p-2.5 rounded-xl flex items-center justify-center text-lg active:scale-95 transition shadow-md">=</button>
 
-                    <button type="button" onclick="calcPcsAppend('0')" class="col-span-2 bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">0</button>
-                    <button type="button" onclick="calcPcsAppend('00')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">00</button>
+                    <button type="button" onclick="calcPcsAppend('0')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">0</button>
+                    <button type="button" onclick="calcPcsAppend('00')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">00</button>
+                    <button type="button" onclick="calcPcsAppend('.')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl font-black active:scale-95 transition">.</button>
                 </div>
 
                 <div class="pt-2 flex gap-2">
-                    <button type="button" onclick="closeCalcPcsModal()" class="flex-1 py-2.5 rounded-xl border border-gray-300 text-gray-600 font-semibold text-xs hover:bg-gray-50 active:scale-95 transition">
-                        Batal
-                    </button>
-                    <button type="button" onclick="applyCalcPcsResult()" class="flex-1 py-2.5 rounded-xl bg-orange-600 text-white font-bold text-xs shadow-md hover:bg-orange-700 active:scale-95 transition flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-check"></i> Gunakan Hasil
-                    </button>
+                    <button type="button" onclick="closeCalcPcsModal()" class="flex-1 py-2.5 rounded-xl border border-gray-300 text-gray-600 font-semibold text-xs hover:bg-gray-50 active:scale-95 transition">Batal</button>
+                    <button type="button" onclick="applyCalcPcsResult()" class="flex-1 py-2.5 rounded-xl bg-orange-600 text-white font-bold text-xs shadow-md hover:bg-orange-700 active:scale-95 transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-check"></i> Gunakan</button>
                 </div>
             </div>
         </div>
@@ -508,41 +544,38 @@
 
 </div>
 
-<!-- AREA CETAK KHUSUS -->
+<!-- AREA CETAK PRINT OUT STYLES -->
 <div id="actualPrintArea" class="hidden print:block bg-white text-black p-4 w-full h-full font-sans">
-    <div id="printLabelsContainer">
-        <!-- Generated dynamically via JS -->
-    </div>
+    <div id="printLabelsContainer"></div>
 </div>
 
 <script>
+    // LocalStorage Keys
     const STORAGE_KEY = 'rpa_data_v3';
-    const STORAGE_KEY_KEDATANGAN = 'rpa_kedatangan_v1';
+    const STORAGE_KEY_KEDATANGAN = 'rpa_kedatangan_v2';
     const STORAGE_KEY_BAGIAN = 'rpa_bagian_v1';
     const STORAGE_KEY_CUSTOM_BAGIAN = 'rpa_custom_bagian_v1';
     
     let dataList = [];
     let kedatanganList = [];
+    let currentKedatanganRows = [];
     let bagianList = [];
     let customBagianList = [];
     
     let calcPcsInput = '';
+    let currentCalcTarget = 'inputPcs';
 
-    function openCalcPcsModal() {
-        const currentPcs = document.getElementById('inputPcs').value;
-        if (currentPcs && !isNaN(currentPcs) && parseFloat(currentPcs) > 0) {
-            calcPcsInput = currentPcs.toString();
-        } else {
-            calcPcsInput = '';
-        }
+    // Calculator Functions
+    function openCalcModal(targetId) {
+        currentCalcTarget = targetId;
+        const currentVal = document.getElementById(targetId).value;
+        calcPcsInput = (currentVal && !isNaN(currentVal) && parseFloat(currentVal) > 0) ? currentVal.toString() : '';
         updateCalcPcsDisplay();
-        const modal = document.getElementById('calcPcsModal');
-        if (modal) modal.classList.remove('hidden');
+        document.getElementById('calcPcsModal').classList.remove('hidden');
     }
 
     function closeCalcPcsModal() {
-        const modal = document.getElementById('calcPcsModal');
-        if (modal) modal.classList.add('hidden');
+        document.getElementById('calcPcsModal').classList.add('hidden');
     }
 
     function updateCalcPcsDisplay() {
@@ -551,33 +584,24 @@
         if (!exprEl || !resEl) return;
 
         exprEl.innerText = calcPcsInput || '0';
-
         let currentEval = 0;
         try {
             if (calcPcsInput) {
                 const sanitized = calcPcsInput.replace(/[^0-9+\-*/.]/g, '');
-                if (sanitized) {
-                    currentEval = Function('"use strict"; return (' + sanitized + ')')();
-                }
+                if (sanitized) currentEval = Function('"use strict"; return (' + sanitized + ')')();
             }
-        } catch (e) {
-            currentEval = 'Error';
-        }
+        } catch (e) { currentEval = 'Error'; }
 
         if (typeof currentEval === 'number' && !isNaN(currentEval)) {
-            resEl.innerText = Math.round(currentEval);
-        } else if (currentEval === 'Error') {
-            resEl.innerText = '...';
+            resEl.innerText = (currentCalcTarget === 'inputPcs') ? Math.round(currentEval) : parseFloat(currentEval.toFixed(2));
         } else {
-            resEl.innerText = '0';
+            resEl.innerText = currentEval === 'Error' ? '...' : '0';
         }
     }
 
     function calcPcsAppend(char) {
-        const operators = ['+', '-', '*', '/'];
-        const lastChar = calcPcsInput.slice(-1);
-        
-        if (operators.includes(char) && operators.includes(lastChar)) {
+        const ops = ['+', '-', '*', '/'];
+        if (ops.includes(char) && ops.includes(calcPcsInput.slice(-1))) {
             calcPcsInput = calcPcsInput.slice(0, -1) + char;
         } else {
             calcPcsInput += char;
@@ -585,15 +609,8 @@
         updateCalcPcsDisplay();
     }
 
-    function calcPcsClear() {
-        calcPcsInput = '';
-        updateCalcPcsDisplay();
-    }
-
-    function calcPcsBackspace() {
-        calcPcsInput = calcPcsInput.slice(0, -1);
-        updateCalcPcsDisplay();
-    }
+    function calcPcsClear() { calcPcsInput = ''; updateCalcPcsDisplay(); }
+    function calcPcsBackspace() { calcPcsInput = calcPcsInput.slice(0, -1); updateCalcPcsDisplay(); }
 
     function calcPcsEqual() {
         try {
@@ -602,13 +619,11 @@
                 if (sanitized) {
                     const result = Function('"use strict"; return (' + sanitized + ')')();
                     if (!isNaN(result)) {
-                        calcPcsInput = Math.round(result).toString();
+                        calcPcsInput = (currentCalcTarget === 'inputPcs') ? Math.round(result).toString() : parseFloat(result.toFixed(2)).toString();
                     }
                 }
             }
-        } catch (e) {
-            calcPcsInput = '';
-        }
+        } catch (e) { calcPcsInput = ''; }
         updateCalcPcsDisplay();
     }
 
@@ -618,37 +633,33 @@
             if (calcPcsInput) {
                 const sanitized = calcPcsInput.replace(/[^0-9+\-*/.]/g, '');
                 if (sanitized) {
-                    const evalResult = Function('"use strict"; return (' + sanitized + ')')();
-                    if (!isNaN(evalResult)) {
-                        finalVal = Math.round(evalResult);
-                    }
+                    const evalRes = Function('"use strict"; return (' + sanitized + ')')();
+                    if (!isNaN(evalRes)) finalVal = (currentCalcTarget === 'inputPcs') ? Math.round(evalRes) : parseFloat(evalRes.toFixed(2));
                 }
             }
-        } catch (e) {
-            finalVal = 0;
-        }
+        } catch (e) { finalVal = 0; }
 
         if (finalVal > 0) {
-            document.getElementById('inputPcs').value = finalVal;
-            showToast(`Jumlah ekor set: ${finalVal}`);
+            document.getElementById(currentCalcTarget).value = finalVal;
+            if (currentCalcTarget === 'inputBeratKotor' || currentCalcTarget === 'inputKeranjang' || currentCalcTarget === 'inputBeratKeranjang') {
+                hitungBeratBersih();
+            }
+            showToast(`Nilai diset: ${finalVal}`);
             closeCalcPcsModal();
         } else {
-            showToast('Hasil perhitungan tidak valid!', true);
+            showToast('Hasil tidak valid!', true);
         }
     }
 
+    // Default & Custom Bagian Ayam Categories
     const DEFAULT_BAGIAN = ['Kepala Utuh', 'Ceker', 'Usus', 'Ati', 'Ampela', 'Sisa Jantung', 'Dada', 'Paha', 'Sayap', 'Kulit', 'Kerongkongan', 'Brutu'];
 
     function loadCustomBagian() {
         const saved = localStorage.getItem(STORAGE_KEY_CUSTOM_BAGIAN);
-        if (saved) {
-            try { customBagianList = JSON.parse(saved); } catch(e) { customBagianList = []; }
-        }
+        if (saved) { try { customBagianList = JSON.parse(saved); } catch(e) { customBagianList = []; } }
     }
 
-    function getAllBagianCategories() {
-        return [...DEFAULT_BAGIAN, ...customBagianList];
-    }
+    function getAllBagianCategories() { return [...DEFAULT_BAGIAN, ...customBagianList]; }
 
     function renderBagianCategories(selectedCategory = null) {
         const pillsContainer = document.getElementById('bagianCategoryPills');
@@ -662,326 +673,152 @@
         allCats.forEach(cat => {
             const isSelected = cat === currentVal;
             const activeClass = isSelected 
-                ? 'bg-orange-500 text-white border-orange-500 font-bold shadow-sm' 
+                ? 'bg-orange-600 text-white border-orange-600 font-bold shadow-sm' 
                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100 font-medium';
             pillsHtml += `<button type="button" onclick="selectBagianCategory('${cat}')" class="cat-pill text-xs py-1.5 px-2.5 rounded-lg border transition-all text-center ${activeClass}">${cat}</button>`;
         });
         pillsContainer.innerHTML = pillsHtml;
 
         let selectHtml = '';
-        allCats.forEach((cat, idx) => {
-            selectHtml += `<option value="${cat}">${idx + 1}. ${cat}</option>`;
-        });
+        allCats.forEach((cat, idx) => { selectHtml += `<option value="${cat}">${idx + 1}. ${cat}</option>`; });
         selectEl.innerHTML = selectHtml;
         selectEl.value = currentVal;
     }
 
     function openTambahBagianModal() {
-        const modal = document.getElementById('tambahBagianModal');
-        if (modal) {
-            modal.classList.remove('hidden');
-            const input = document.getElementById('inputNamaBagianBaru');
-            input.value = '';
-            setTimeout(() => input.focus(), 100);
-        }
+        document.getElementById('tambahBagianModal').classList.remove('hidden');
+        document.getElementById('inputNamaBagianBaru').value = '';
+        setTimeout(() => document.getElementById('inputNamaBagianBaru').focus(), 100);
     }
-
-    function closeTambahBagianModal() {
-        const modal = document.getElementById('tambahBagianModal');
-        if (modal) modal.classList.add('hidden');
-    }
+    function closeTambahBagianModal() { document.getElementById('tambahBagianModal').classList.add('hidden'); }
 
     function saveBagianBaru(e) {
         e.preventDefault();
-        const input = document.getElementById('inputNamaBagianBaru');
-        const namaBaru = input.value.trim();
-        
+        const namaBaru = document.getElementById('inputNamaBagianBaru').value.trim();
         if (!namaBaru) return;
-
         const allCats = getAllBagianCategories();
-        const existingCat = allCats.find(c => c.toLowerCase() === namaBaru.toLowerCase());
-
-        if (existingCat) {
-            showToast(`Jenis "${existingCat}" sudah ada!`, true);
-            selectBagianCategory(existingCat);
+        if (allCats.find(c => c.toLowerCase() === namaBaru.toLowerCase())) {
+            showToast('Jenis bagian sudah ada!', true);
             closeTambahBagianModal();
             return;
         }
-
         customBagianList.push(namaBaru);
         localStorage.setItem(STORAGE_KEY_CUSTOM_BAGIAN, JSON.stringify(customBagianList));
-        
         renderBagianCategories(namaBaru);
         closeTambahBagianModal();
         showToast(`Bagian "${namaBaru}" ditambahkan`);
     }
 
-    function selectBagianCategory(cat) {
-        const selectEl = document.getElementById('inputJenisBagian');
-        if (selectEl) {
-            selectEl.value = cat;
-            syncBagianPill(cat);
-        }
-    }
-
-    function syncBagianPill(cat) {
-        renderBagianCategories(cat);
-    }
+    function selectBagianCategory(cat) { document.getElementById('inputJenisBagian').value = cat; renderBagianCategories(cat); }
+    function syncBagianPill(cat) { renderBagianCategories(cat); }
 
     function showToast(message, isError = false) {
         const toast = document.getElementById('toast');
         if (!toast) return;
-        const icon = toast.querySelector('i');
-        const msgEl = document.getElementById('toast-msg');
-        if (msgEl) msgEl.innerText = message;
-        
-        if (isError) {
-            toast.className = 'fixed top-20 left-1/2 bg-red-600 text-white px-5 py-2.5 rounded-full shadow-lg z-50 text-sm font-semibold flex items-center gap-2 pointer-events-none show';
-            if (icon) icon.className = 'fa-solid fa-circle-exclamation text-white';
-        } else {
-            toast.className = 'fixed top-20 left-1/2 bg-gray-800 text-white px-5 py-2.5 rounded-full shadow-lg z-50 text-sm font-semibold flex items-center gap-2 pointer-events-none show';
-            if (icon) icon.className = 'fa-solid fa-circle-check text-orange-400';
-        }
-
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 2000);
+        toast.className = `fixed top-5 left-1/2 ${isError ? 'bg-red-600 border-red-700' : 'bg-slate-900 border-slate-700'} text-white px-5 py-3 rounded-full shadow-2xl z-[60] text-xs font-bold flex items-center gap-2.5 pointer-events-none border show`;
+        document.getElementById('toast-msg').innerText = message;
+        setTimeout(() => toast.classList.remove('show'), 2200);
     }
 
     function switchTab(tab) {
-        const views = {
-            home: document.getElementById('view-home'),
-            kedatangan: document.getElementById('view-kedatangan'),
-            bagian: document.getElementById('view-bagian'),
-            tally: document.getElementById('view-tally')
-        };
-        const navs = {
-            home: document.getElementById('nav-home'),
-            kedatangan: document.getElementById('nav-kedatangan'),
-            bagian: document.getElementById('nav-bagian'),
-            tally: document.getElementById('nav-tally')
-        };
-
-        Object.keys(views).forEach(key => {
-            if (views[key]) views[key].classList.add('hidden');
-            if (navs[key]) {
-                navs[key].classList.remove('font-bold', 'text-orange-600', 'text-orange-500', 'text-blue-500');
-                navs[key].classList.add('text-gray-400', 'font-medium');
-            }
+        ['home', 'kedatangan', 'bagian', 'tally'].forEach(v => {
+            document.getElementById(`view-${v}`).classList.add('hidden');
+            const nav = document.getElementById(`nav-${v}`);
+            nav.classList.remove('font-bold', 'text-orange-600', 'text-orange-500', 'text-blue-500');
+            nav.classList.add('text-gray-400', 'font-medium');
         });
-
-        if (views[tab]) views[tab].classList.remove('hidden');
-        if (navs[tab]) {
-            navs[tab].classList.remove('text-gray-400', 'font-medium');
-            navs[tab].classList.add('font-bold');
-        }
-
-        if (tab === 'home') {
-            if (navs.home) navs.home.classList.add('text-orange-600');
-            renderTable();
-        } else if (tab === 'kedatangan') {
-            if (navs.kedatangan) navs.kedatangan.classList.add('text-orange-600');
-            renderTableKedatangan();
-        } else if (tab === 'bagian') {
-            if (navs.bagian) navs.bagian.classList.add('text-orange-500');
-            renderTableBagian();
-        } else if (tab === 'tally') {
-            if (navs.tally) navs.tally.classList.add('text-blue-500');
-            renderTableTally();
-        }
+        document.getElementById(`view-${tab}`).classList.remove('hidden');
+        const activeNav = document.getElementById(`nav-${tab}`);
+        activeNav.classList.remove('text-gray-400', 'font-medium');
+        activeNav.classList.add('font-bold');
+        if (tab === 'home') { activeNav.classList.add('text-orange-600'); renderTable(); }
+        else if (tab === 'kedatangan') { activeNav.classList.add('text-orange-600'); renderTableKedatangan(); }
+        else if (tab === 'bagian') { activeNav.classList.add('text-orange-500'); renderTableBagian(); }
+        else if (tab === 'tally') { activeNav.classList.add('text-blue-500'); renderTableTally(); }
     }
 
-    function restrictKey(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            e.target.blur();
-            return false;
-        }
-        return true;
-    }
-
-    function closeModal() {
-        const modal = document.getElementById('labelModal');
-        if (modal) modal.classList.add('hidden');
-    }
-
-    function printLabel() {
-        window.print();
-        closeModal();
-    }
+    function restrictKey(e) { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); return false; } return true; }
+    function closeModal() { document.getElementById('labelModal').classList.add('hidden'); }
+    function printLabel() { window.print(); closeModal(); }
 
     function hitungBeratBersih() {
         const kotor = parseFloat(document.getElementById('inputBeratKotor').value) || 0;
         const keranjang = parseInt(document.getElementById('inputKeranjang').value) || 0;
         const beratKeranjang = parseFloat(document.getElementById('inputBeratKeranjang').value) || 0;
-
         let bersih = kotor - (keranjang * beratKeranjang);
-        if (bersih < 0) bersih = 0;
-
-        const targetInput = document.getElementById('inputTotalKg');
-        if (kotor > 0) {
-            targetInput.value = bersih.toFixed(2);
-        } else {
-            targetInput.value = '';
-        }
+        document.getElementById('inputTotalKg').value = kotor > 0 ? Math.max(0, bersih).toFixed(2) : '';
     }
 
     function getGroupedData(targetDate) {
         const filtered = dataList.filter(d => d.tanggal === targetDate);
         const groups = {};
-        
         filtered.forEach(item => {
             const key = `${item.grade}_${item.berat}`;
-            if (!groups[key]) {
-                groups[key] = {
-                    label: `Grade ${item.grade} (${item.berat} kg)`,
-                    grade: item.grade,
-                    berat: item.berat,
-                    items: []
-                };
-            }
+            if (!groups[key]) groups[key] = { label: `Grade ${item.grade} (${item.berat} kg)`, grade: item.grade, berat: item.berat, items: [] };
             groups[key].items.push(item);
         });
-
-        const sortedKeys = Object.keys(groups).sort((a, b) => {
-            if (groups[a].grade !== groups[b].grade) {
-                return groups[a].grade.localeCompare(groups[b].grade);
-            }
-            return groups[a].berat - groups[b].berat;
-        });
-
+        const sortedKeys = Object.keys(groups).sort((a, b) => groups[a].grade !== groups[b].grade ? groups[a].grade.localeCompare(groups[b].grade) : groups[a].berat - groups[b].berat);
         let maxRows = 0;
-        sortedKeys.forEach(k => {
-            if (groups[k].items.length > maxRows) maxRows = groups[k].items.length;
-        });
-
+        sortedKeys.forEach(k => { if (groups[k].items.length > maxRows) maxRows = groups[k].items.length; });
         return { groups, sortedKeys, maxRows, filteredData: filtered };
     }
 
     function renderTable() {
         const container = document.getElementById('tableContainer');
         if (!container) return;
-
-        const filterInput = document.getElementById('filterTanggalPotong');
-        if (!filterInput) return;
-        const targetDate = filterInput.value;
-
+        const targetDate = document.getElementById('filterTanggalPotong').value;
         const { groups, sortedKeys, maxRows } = getGroupedData(targetDate);
 
         if (sortedKeys.length === 0) {
-            container.innerHTML = `
-                <div class="py-10 text-center flex flex-col items-center">
-                    <i class="fa-solid fa-folder-open text-4xl text-gray-300 mb-2"></i>
-                    <p class="text-sm text-gray-500 font-medium">Belum ada data potong di tanggal ini</p>
-                </div>`;
+            container.innerHTML = `<div class="py-12 text-center flex flex-col items-center justify-center p-4"><i class="fa-solid fa-folder-open text-4xl text-gray-300 mb-2"></i><p class="text-xs text-gray-500 font-semibold">Belum ada data potong karkas di tanggal ini</p></div>`;
             return;
         }
 
-        // Tanggal Input Header di atas tabel
-        let html = `
-        <div class="bg-gray-100 p-2 text-center border-b border-gray-400 font-bold text-xs text-gray-800">
-            (Tanggal Input: ${targetDate})
-        </div>
-        <table class="tally-table text-xs text-gray-800 w-full min-w-max text-center">
-            <thead>
-                <tr class="bg-gray-100">
-                    <th rowspan="2" class="font-bold text-gray-700 bg-gray-200 min-w-[50px] align-middle text-center border-r border-gray-400">No</th>
-        `;
-        
-        // Header Baris 1: (Grade A) (Berat kg)
-        sortedKeys.forEach(k => {
-            html += `<th colspan="2" class="font-bold text-gray-800 border-b border-gray-400 py-2">(${groups[k].label})</th>`;
-        });
+        let html = `<div class="bg-gray-100 p-2.5 text-center border-b border-gray-200 font-bold text-xs text-gray-800">(Tanggal Input: ${targetDate})</div><table class="tally-table text-xs text-gray-800 w-full text-center"><thead><tr class="bg-gray-100"><th rowspan="2" class="font-bold text-gray-700 bg-gray-200 border-r border-gray-300 w-10">No</th>`;
+        sortedKeys.forEach(k => { html += `<th colspan="2" class="font-bold text-gray-900 border-b border-gray-300 py-2 px-3 bg-amber-50/50">(${groups[k].label})</th>`; });
         html += `</tr><tr class="bg-gray-50 text-[11px] text-gray-700">`;
-
-        // Header Baris 2: (Jumlah Pcs) | Berat Per timbang
-        sortedKeys.forEach(() => {
-            html += `
-                <th class="font-semibold px-2 py-1 bg-amber-100/70 border-r border-gray-300">(Jumlah Pcs)</th>
-                <th class="font-semibold px-2 py-1 bg-amber-50">Berat Per timbang</th>
-            `;
-        });
+        sortedKeys.forEach(() => { html += `<th class="font-semibold px-3 py-1.5 bg-amber-100/70 border-r border-gray-300">(Pcs)</th><th class="font-semibold px-3 py-1.5 bg-amber-50/80">Berat (Kg)</th>`; });
         html += `</tr></thead><tbody>`;
 
-        // Baris-baris Data Timbangan
         for (let i = 0; i < maxRows; i++) {
-            html += `<tr>`;
-            html += `<td class="font-bold text-gray-500 bg-gray-50 text-center border-r border-gray-400">${i + 1}</td>`;
+            html += `<tr><td class="font-bold text-gray-500 bg-gray-50 border-r border-gray-300">${i + 1}</td>`;
             sortedKeys.forEach(k => {
                 const item = groups[k].items[i];
                 if (item) {
-                    html += `
-                        <td contenteditable="true" inputmode="numeric" data-id="${item.id}" data-field="pcs" onblur="handleEdit(this)" onkeypress="return restrictKey(event)" class="font-semibold text-gray-800 bg-amber-50/70 border-r border-gray-300 px-2 py-1.5">${item.pcs}</td>
-                        <td contenteditable="true" inputmode="decimal" data-id="${item.id}" data-field="totalKg" onblur="handleEdit(this)" onkeypress="return restrictKey(event)" class="font-bold text-orange-900 bg-amber-50 px-2 py-1.5">${item.totalKg}</td>
-                    `;
+                    html += `<td contenteditable="true" inputmode="numeric" data-id="${item.id}" data-field="pcs" onblur="handleEdit(this)" onkeypress="return restrictKey(event)" class="font-semibold text-gray-800 bg-amber-50/60 border-r border-gray-200 px-3 py-2">${item.pcs}</td>
+                             <td contenteditable="true" inputmode="decimal" data-id="${item.id}" data-field="totalKg" onblur="handleEdit(this)" onkeypress="return restrictKey(event)" class="font-bold text-orange-900 bg-amber-50/30 px-3 py-2">${item.totalKg}</td>`;
                 } else {
-                    html += `
-                        <td class="border-r border-gray-300"></td>
-                        <td></td>
-                    `;
+                    html += `<td class="border-r border-gray-200 px-3 py-2"></td><td class="px-3 py-2"></td>`;
                 }
             });
             html += `</tr>`;
         }
-
-        // Baris Total di paling bawah (Sesuai Catatan Tangan: (Total))
-        html += `</tbody><tfoot><tr class="bg-orange-100 font-extrabold border-t-2 border-gray-600">`;
-        html += `<td class="bg-orange-200 text-orange-900 p-2 text-center border-r border-gray-400 text-xs font-bold">(Total)</td>`;
+        html += `</tbody><tfoot><tr class="bg-orange-100/90 font-extrabold border-t-2 border-gray-400"><td class="bg-orange-200 text-orange-950 p-2.5 text-center border-r border-gray-300">(Total)</td>`;
         
-        let grandTotalAll = 0;
-        let grandPcsAll = 0;
-
+        let grandTotalAll = 0, grandPcsAll = 0;
         sortedKeys.forEach(k => {
             const sumTotal = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
             const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
-            grandTotalAll += sumTotal;
-            grandPcsAll += sumPcs;
-            
-            html += `
-                <td class="text-orange-900 border-r border-gray-400 p-2 text-center">
-                    <div class="text-[9px] text-gray-500 font-normal uppercase">(Pcs)</div>
-                    ${sumPcs}
-                </td>
-                <td class="text-orange-900 p-2 text-center">
-                    <div class="text-[9px] text-gray-500 font-normal uppercase">(Kg)</div>
-                    ${Math.round(sumTotal * 100) / 100}
-                </td>
-            `;
+            grandTotalAll += sumTotal; grandPcsAll += sumPcs;
+            html += `<td class="text-orange-950 border-r border-gray-300 p-2.5 text-center">${sumPcs}</td><td class="text-orange-950 p-2.5 text-center">${Math.round(sumTotal * 100) / 100}</td>`;
         });
-        
-        html += `</tr></tfoot></table>`;
-        
-        html += `
-            <div class="p-3 bg-orange-50 flex justify-between items-center border-t border-orange-200">
-                <span class="text-xs font-bold text-orange-800 uppercase tracking-wide">(Total Keseluruhan)</span>
-                <div class="text-right">
-                    <div class="text-xs text-orange-700 font-bold">${grandPcsAll} Ekor</div>
-                    <div class="text-sm text-orange-900 font-extrabold">${Math.round(grandTotalAll * 100) / 100} Kg</div>
-                </div>
-            </div>
-        `;
-
+        html += `</tr></tfoot></table><div class="p-3 bg-orange-50 border-t border-orange-200 flex justify-between items-center"><span class="text-xs font-bold text-orange-900">(Total Keseluruhan Hari Ini)</span><div class="text-right"><div class="text-xs text-orange-800 font-bold">${grandPcsAll} Ekor</div><div class="text-sm text-orange-950 font-extrabold">${Math.round(grandTotalAll * 100) / 100} Kg</div></div></div>`;
         container.innerHTML = html;
     }
 
-    // INLINE EDITING UNTUK PCS MAUPUN BERAT TIMBANGAN
     function handleEdit(cell) {
         const id = cell.getAttribute('data-id');
-        const field = cell.getAttribute('data-field') || 'totalKg';
+        const field = cell.getAttribute('data-field');
         const index = dataList.findIndex(d => d.id === id);
         if (index === -1) return;
-
-        let valString = cell.innerText.replace(/[^0-9.]/g, '');
-        const newValue = parseFloat(valString) || 0;
-        
+        const newValue = parseFloat(cell.innerText.replace(/[^0-9.]/g, '')) || 0;
         if (newValue <= 0 && field === 'pcs') {
-             dataList.splice(index, 1);
-             showToast('Data dihapus', true);
+            dataList.splice(index, 1);
+            showToast('Baris data dihapus', true);
         } else {
-             dataList[index][field] = field === 'pcs' ? Math.round(newValue) : newValue;
-             showToast('Data diperbarui');
+            dataList[index][field] = field === 'pcs' ? Math.round(newValue) : newValue;
+            showToast('Data diperbarui');
         }
-
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
         renderTable();
     }
@@ -989,24 +826,11 @@
     function exportExcel() {
         const targetDate = document.getElementById('filterTanggalPotong').value;
         const { groups, sortedKeys, maxRows, filteredData } = getGroupedData(targetDate);
+        if (filteredData.length === 0) { showToast('Tidak ada data!', true); return; }
 
-        if (filteredData.length === 0) {
-             showToast('Tidak ada data untuk diexport!', true);
-             return;
-        }
-
-        const aoa = [];
-        
-        // Baris 1: Tanggal Input
-        aoa.push([`(Tanggal Input: ${targetDate})`]);
-        aoa.push([]); // Baris kosong
-
-        // Baris 3: Header Utama Group Grade & Berat kg
+        const aoa = [[`(Tanggal Input: ${targetDate})`], []];
         const h1 = ['(Total) / No'];
-        const merges = [
-            { s: { r: 2, c: 0 }, e: { r: 3, c: 0 } } // Merge vertikal kolom No
-        ];
-
+        const merges = [{ s: { r: 2, c: 0 }, e: { r: 3, c: 0 } }];
         let colIndex = 1;
         sortedKeys.forEach(k => {
             h1.push(`(${groups[k].label})`, '');
@@ -1014,47 +838,27 @@
             colIndex += 2;
         });
         aoa.push(h1);
-
-        // Baris 4: Sub-Header (Jumlah Pcs) & Berat Per timbang
         const h2 = [''];
-        sortedKeys.forEach(() => {
-            h2.push('(Jumlah Pcs)', 'Berat Per timbang');
-        });
+        sortedKeys.forEach(() => h2.push('(Jumlah Pcs)', 'Berat (Kg)'));
         aoa.push(h2);
 
-        // Baris-baris Data
         for (let i = 0; i < maxRows; i++) {
             const row = [i + 1];
             sortedKeys.forEach(k => {
                 const item = groups[k].items[i];
-                if (item) {
-                    row.push(item.pcs, item.totalKg);
-                } else {
-                    row.push('', '');
-                }
+                row.push(item ? item.pcs : '', item ? item.totalKg : '');
             });
             aoa.push(row);
         }
 
-        // Baris Total di Paling Bawah (Sesuai gambar)
         const totalRow = ['(Total)'];
         sortedKeys.forEach(k => {
-            const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
-            const sumTotal = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
-            totalRow.push(sumPcs, Math.round(sumTotal * 100) / 100);
+            totalRow.push(groups[k].items.reduce((a, c) => a + c.pcs, 0), Math.round(groups[k].items.reduce((a, c) => a + c.totalKg, 0) * 100) / 100);
         });
         aoa.push(totalRow);
 
         const ws = XLSX.utils.aoa_to_sheet(aoa);
         ws['!merges'] = merges;
-
-        // Atur Lebar Kolom Excel
-        const colWidths = [{ wch: 12 }];
-        sortedKeys.forEach(() => {
-            colWidths.push({ wch: 15 }, { wch: 18 });
-        });
-        ws['!cols'] = colWidths;
-
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Tally_Karkas");
         XLSX.writeFile(wb, `Laporan_RPA_Karkas_${targetDate}.xlsx`);
@@ -1063,570 +867,286 @@
     function kirimWA() {
         const targetDate = document.getElementById('filterTanggalPotong').value;
         const { groups, sortedKeys } = getGroupedData(targetDate);
+        if (sortedKeys.length === 0) { showToast('Tidak ada data!', true); return; }
 
-        if (sortedKeys.length === 0) {
-            showToast('Tidak ada data untuk dikirim!', true);
-            return;
-        }
-
-        const dateObj = new Date(targetDate);
-        const dateFormatted = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-
-        let message = `*Laporan Data Karkas Ayam*\n*(Tanggal Input: ${dateFormatted})*\n\n`;
-        let totalBeratSemua = 0;
-        let totalPcsSemua = 0;
-
+        let message = `*Laporan Data Karkas Ayam*\n*(Tanggal: ${targetDate})*\n\n`;
+        let totalBerat = 0, totalPcs = 0;
         sortedKeys.forEach(k => {
-            const label = groups[k].label;
-            const sumBerat = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
-            const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
-            
-            totalBeratSemua += sumBerat;
-            totalPcsSemua += sumPcs;
-
-            message += `*(${label})*\n`;
-            message += `• (Jumlah Pcs): ${sumPcs} ekor\n`;
-            message += `• Berat Per timbang: ${Math.round(sumBerat * 100)/100} Kg\n\n`;
+            const sumBerat = groups[k].items.reduce((a, c) => a + c.totalKg, 0);
+            const sumPcs = groups[k].items.reduce((a, c) => a + c.pcs, 0);
+            totalBerat += sumBerat; totalPcs += sumPcs;
+            message += `*(${groups[k].label})*\n• Pcs: ${sumPcs}\n• Berat: ${Math.round(sumBerat * 100)/100} Kg\n\n`;
         });
-
-        message += `*(Total Keseluruhan)*\n`;
-        message += `• Total Pcs: ${totalPcsSemua} ekor\n`;
-        message += `• Total Berat: ${Math.round(totalBeratSemua * 100)/100} Kg`;
-
-        const phoneNumber = '6282317165861';
-        const encoded = encodeURIComponent(message);
-        window.open(`https://wa.me/${phoneNumber}?text=${encoded}`, '_blank');
+        message += `*(Total Keseluruhan)*\n• Total Pcs: ${totalPcs}\n• Total Berat: ${Math.round(totalBerat * 100)/100} Kg`;
+        window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(message)}`, '_blank');
     }
 
-    // RENDER TABEL KEDATANGAN
     function renderTableKedatangan() {
         const container = document.getElementById('tableKedatanganContainer');
         if (!container) return;
+        const targetDate = document.getElementById('inputTanggalKedatangan').value;
+        const targetJam = document.getElementById('inputJamKedatangan').value;
+        const namaKandang = document.getElementById('inputNamaKandangKedatangan').value || '-';
+        const alamatKandang = document.getElementById('inputAlamatKandangKedatangan').value || '-';
 
-        const filterInput = document.getElementById('inputTanggalKedatangan');
-        if (!filterInput) return;
-        const targetDate = filterInput.value;
+        document.getElementById('labelHeaderInfo').innerText = `Tanggal: ${targetDate} | Jam: ${targetJam}`;
+        document.getElementById('labelHeaderKandang').innerText = `Kandang: ${namaKandang} (${alamatKandang})`;
 
-        const filtered = kedatanganList.filter(d => d.tanggal === targetDate);
+        let html = `<table class="tally-table text-xs text-gray-800 w-full text-center"><thead><tr class="bg-gray-100"><th class="w-12 font-semibold border-r border-gray-300">No</th><th class="font-semibold border-r border-gray-300 bg-amber-50">Ekor</th><th class="font-semibold bg-orange-50">Berat (kg)</th></tr></thead><tbody>`;
 
-        if (filtered.length === 0) {
-            container.innerHTML = `
-                <div class="py-10 text-center flex flex-col items-center">
-                    <i class="fa-solid fa-truck-ramp-box text-4xl text-gray-300 mb-2"></i>
-                    <p class="text-sm text-gray-500 font-medium">Belum ada data kedatangan</p>
-                </div>`;
-            return;
+        let totalEkor = 0, totalBerat = 0;
+        for (let i = 0; i < 10; i++) {
+            const item = currentKedatanganRows[i];
+            const ekorVal = (item && item.ekor !== '' && item.ekor !== undefined) ? item.ekor : '';
+            const beratVal = (item && item.berat !== '' && item.berat !== undefined) ? item.berat : '';
+            if (item) { totalEkor += (parseFloat(item.ekor) || 0); totalBerat += (parseFloat(item.berat) || 0); }
+
+            html += `<tr><td class="font-bold text-gray-500 bg-gray-50 border-r border-gray-300">${i + 1}</td>
+                     <td contenteditable="true" inputmode="numeric" data-index="${i}" data-field="ekor" onblur="handleEditBarisKedatangan(this)" onkeypress="return restrictKey(event)" class="font-semibold bg-amber-50/50 border-r border-gray-200 px-3 py-2">${ekorVal}</td>
+                     <td contenteditable="true" inputmode="decimal" data-index="${i}" data-field="berat" onblur="handleEditBarisKedatangan(this)" onkeypress="return restrictKey(event)" class="font-bold text-orange-950 bg-orange-50/30 px-3 py-2">${beratVal}</td></tr>`;
         }
-
-        let html = `<table class="tally-table text-xs text-gray-800 w-full text-left">
-            <thead>
-                <tr class="bg-orange-50">
-                    <th class="font-semibold text-orange-800 min-w-[80px]">Kandang</th>
-                    <th class="font-semibold text-orange-800">Alamat</th>
-                    <th class="text-center font-semibold text-orange-800">Ekor</th>
-                    <th class="text-center font-semibold text-orange-800">Berat(kg)</th>
-                </tr>
-            </thead>
-            <tbody>`;
-
-        let totalEkor = 0;
-        let totalBerat = 0;
-
-        filtered.forEach(item => {
-            totalEkor += item.jumlahEkor;
-            totalBerat += item.beratAyam;
-
-            html += `<tr>
-                <td contenteditable="true" data-id="${item.id}" data-field="namaKandang" onblur="handleEditKedatangan(this)" onkeypress="return restrictKey(event)" class="font-bold text-gray-800 bg-amber-50/50">${item.namaKandang}</td>
-                <td contenteditable="true" data-id="${item.id}" data-field="alamatKandang" onblur="handleEditKedatangan(this)" onkeypress="return restrictKey(event)" class="text-gray-600 bg-amber-50/50">${item.alamatKandang}</td>
-                <td contenteditable="true" inputmode="numeric" data-id="${item.id}" data-field="jumlahEkor" onblur="handleEditKedatangan(this)" onkeypress="return restrictKey(event)" class="text-center font-bold text-gray-800 bg-amber-50/50">${item.jumlahEkor}</td>
-                <td contenteditable="true" inputmode="decimal" data-id="${item.id}" data-field="beratAyam" onblur="handleEditKedatangan(this)" onkeypress="return restrictKey(event)" class="text-center font-bold text-gray-800 bg-amber-50/50">${item.beratAyam}</td>
-            </tr>`;
-        });
-
-        html += `</tbody>
-            <tfoot>
-                <tr class="bg-orange-100">
-                    <td colspan="2" class="text-right font-bold text-orange-800 px-2 py-2">(Total):</td>
-                    <td class="text-center font-extrabold text-orange-900">${totalEkor}</td>
-                    <td class="text-center font-extrabold text-orange-900">${Math.round(totalBerat * 100)/100}</td>
-                </tr>
-            </tfoot>
-        </table>`;
-
+        html += `</tbody><tfoot><tr class="bg-orange-100 font-extrabold border-t-2 border-gray-400"><td class="bg-orange-200 text-orange-950 p-2.5 text-center border-r border-gray-300">Total</td><td class="text-orange-950 p-2.5 text-center border-r border-gray-300">${totalEkor}</td><td class="text-orange-950 p-2.5 text-center">${Math.round(totalBerat * 100) / 100}</td></tr></tfoot></table>`;
         container.innerHTML = html;
     }
 
-    function handleEditKedatangan(cell) {
-        const id = cell.getAttribute('data-id');
-        const field = cell.getAttribute('data-field');
-        const index = kedatanganList.findIndex(d => d.id === id);
-        if (index === -1) return;
+    function tambahBarisKedatangan() {
+        if (currentKedatanganRows.length >= 10) { showToast('Maksimal 10 baris!', true); return; }
+        const ekor = document.getElementById('inputBarisEkor').value;
+        const berat = document.getElementById('inputBarisBerat').value;
+        if (!berat || parseFloat(berat) <= 0) { showToast('Berat harus diisi!', true); return; }
+        currentKedatanganRows.push({ ekor: ekor !== '' ? parseInt(ekor) : '', berat: parseFloat(berat) });
+        document.getElementById('inputBarisEkor').value = '';
+        document.getElementById('inputBarisBerat').value = '';
+        renderTableKedatangan();
+        showToast('Baris ditambahkan');
+    }
 
-        let textVal = cell.innerText.trim();
-        if (field === 'jumlahEkor' || field === 'beratAyam') {
-            let valString = textVal.replace(/[^0-9.]/g, '');
-            const newValue = parseFloat(valString) || 0;
-            if (newValue <= 0 && field === 'jumlahEkor') {
-                kedatanganList.splice(index, 1);
-                showToast('Data kedatangan dihapus', true);
-            } else {
-                kedatanganList[index][field] = newValue;
-                showToast('Kedatangan diperbarui');
-            }
+    function handleEditBarisKedatangan(cell) {
+        const index = parseInt(cell.getAttribute('data-index'));
+        const field = cell.getAttribute('data-field');
+        const val = cell.innerText.trim();
+        if (!currentKedatanganRows[index]) currentKedatanganRows[index] = { ekor: '', berat: '' };
+        if (val === '' || val === '0') {
+            if (field === 'berat') currentKedatanganRows.splice(index, 1);
+            else currentKedatanganRows[index][field] = '';
         } else {
-            if (textVal === '') {
-                kedatanganList.splice(index, 1);
-                showToast('Data kedatangan dihapus', true);
-            } else {
-                kedatanganList[index][field] = textVal;
-                showToast('Kedatangan diperbarui');
-            }
+            const num = parseFloat(val);
+            if (!isNaN(num)) currentKedatanganRows[index][field] = field === 'ekor' ? Math.round(num) : num;
         }
-        localStorage.setItem(STORAGE_KEY_KEDATANGAN, JSON.stringify(kedatanganList));
         renderTableKedatangan();
     }
 
     function exportKedatanganExcel() {
-        const targetDate = document.getElementById('inputTanggalKedatangan').value;
-        const filtered = kedatanganList.filter(d => d.tanggal === targetDate);
-
-        if (filtered.length === 0) {
-            showToast('Tidak ada data kedatangan untuk diexport!', true);
-            return;
-        }
-
-        const exportData = filtered.map((d, index) => ({
-            'No': index + 1,
-            'Tanggal': d.tanggal,
-            'Nama Kandang': d.namaKandang,
-            'Alamat Kandang': d.alamatKandang,
-            'Jumlah Ekor': d.jumlahEkor,
-            'Berat Ayam (Kg)': d.beratAyam
-        }));
-
-        const ws = XLSX.utils.json_to_sheet(exportData);
+        if (currentKedatanganRows.length === 0) { showToast('Tidak ada data kedatangan!', true); return; }
+        const aoa = [[`Tanggal: ${document.getElementById('inputTanggalKedatangan').value}`], [""], ['No', 'Ekor', 'Berat (Kg)']];
+        currentKedatanganRows.forEach((r, i) => aoa.push([i + 1, r.ekor, r.berat]));
+        const ws = XLSX.utils.aoa_to_sheet(aoa);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Kedatangan");
-        XLSX.writeFile(wb, `Laporan_Kedatangan_${targetDate}.xlsx`);
+        XLSX.writeFile(wb, `Laporan_Kedatangan.xlsx`);
     }
 
-    // RENDER TABEL BAGIAN AYAM
+    function kirimWAKedatangan() {
+        if (currentKedatanganRows.length === 0) { showToast('Tidak ada data!', true); return; }
+        let msg = `*Laporan Kedatangan Ayam*\n`;
+        currentKedatanganRows.forEach((r, i) => { msg += `${i+1}. Ekor: ${r.ekor || '-'} | Berat: ${r.berat} Kg\n`; });
+        window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
     function renderTableBagian() {
         const container = document.getElementById('tableBagianContainer');
         if (!container) return;
-
-        const filterInput = document.getElementById('inputTanggalBagian');
-        if (!filterInput) return;
-        const targetDate = filterInput.value;
-
+        const targetDate = document.getElementById('inputTanggalBagian').value;
         const filtered = bagianList.filter(d => d.tanggal === targetDate);
 
         if (filtered.length === 0) {
-            container.innerHTML = `
-                <div class="py-10 text-center flex flex-col items-center">
-                    <i class="fa-solid fa-drumstick-bite text-4xl text-gray-300 mb-2"></i>
-                    <p class="text-sm text-gray-500 font-medium">Belum ada data bagian di tanggal ini</p>
-                </div>`;
+            container.innerHTML = `<div class="py-12 text-center flex flex-col items-center justify-center p-4"><i class="fa-solid fa-drumstick-bite text-4xl text-gray-300 mb-2"></i><p class="text-xs text-gray-500 font-semibold">Belum ada data bagian di tanggal ini</p></div>`;
             return;
         }
 
-        let html = `<table class="tally-table text-xs text-gray-800 w-full text-left">
-            <thead>
-                <tr class="bg-orange-50">
-                    <th class="font-semibold text-orange-800 min-w-[30px] text-center">No</th>
-                    <th class="font-semibold text-orange-800">Jenis Bagian</th>
-                    <th class="text-center font-semibold text-orange-800">Berat (kg)</th>
-                    <th class="text-center font-semibold text-orange-800 w-12">Aksi</th>
-                </tr>
-            </thead>
-            <tbody>`;
-
-        let grandTotalBerat = 0;
-
+        let html = `<table class="tally-table text-xs text-gray-800 w-full text-left"><thead><tr class="bg-orange-50/80"><th class="text-center font-semibold text-orange-900 border-r border-gray-300 w-10">No</th><th class="font-semibold text-orange-900 border-r border-gray-300 px-3">Jenis Bagian</th><th class="text-center font-semibold text-orange-900 border-r border-gray-300">Berat (kg)</th><th class="text-center font-semibold text-orange-900 w-16">Aksi</th></tr></thead><tbody>`;
+        let total = 0;
         filtered.forEach((item, idx) => {
-            grandTotalBerat += item.berat;
-
-            html += `<tr>
-                <td class="text-center font-semibold text-gray-500">${idx + 1}</td>
-                <td class="font-bold text-gray-800">${item.jenis}</td>
-                <td contenteditable="true" inputmode="decimal" data-id="${item.id}" onblur="handleEditBagian(this)" onkeypress="return restrictKey(event)" class="text-center font-bold text-gray-800 bg-amber-50/50">${item.berat}</td>
-                <td class="text-center">
-                    <button onclick="deleteBagian('${item.id}')" class="text-red-500 hover:text-red-700 p-1">
-                        <i class="fa-solid fa-trash-can text-sm"></i>
-                    </button>
-                </td>
-            </tr>`;
+            total += item.berat;
+            html += `<tr><td class="text-center font-bold text-gray-500 bg-gray-50 border-r border-gray-300">${idx + 1}</td><td class="font-bold text-gray-800 px-3 border-r border-gray-200">${item.jenis}</td>
+                     <td contenteditable="true" inputmode="decimal" data-id="${item.id}" onblur="handleEditBagian(this)" onkeypress="return restrictKey(event)" class="text-center font-bold text-orange-950 bg-amber-50/40 px-3 py-2 border-r border-gray-200">${item.berat}</td>
+                     <td class="text-center"><button onclick="deleteBagian('${item.id}')" class="text-red-500 hover:text-red-700 p-1.5 transition-colors"><i class="fa-solid fa-trash-can text-sm"></i></button></td></tr>`;
         });
-
-        html += `</tbody>
-            <tfoot>
-                <tr class="bg-orange-100">
-                    <td colspan="2" class="text-right font-bold text-orange-800 px-2 py-2">(Total):</td>
-                    <td class="text-center font-extrabold text-orange-900">${Math.round(grandTotalBerat * 100) / 100} kg</td>
-                    <td></td>
-                </tr>
-            </tfoot>
-        </table>`;
-
+        html += `</tbody><tfoot><tr class="bg-orange-100/80 font-extrabold border-t-2 border-gray-400"><td colspan="2" class="text-right font-bold text-orange-950 px-3 py-2.5 border-r border-gray-300">(Total):</td><td class="text-center font-extrabold text-orange-950 px-3 py-2.5 border-r border-gray-300">${Math.round(total * 100) / 100} kg</td><td></td></tr></tfoot></table>`;
         container.innerHTML = html;
     }
 
     function handleEditBagian(cell) {
         const id = cell.getAttribute('data-id');
-        const index = bagianList.findIndex(d => d.id === id);
-        if (index === -1) return;
-
-        let valString = cell.innerText.replace(/[^0-9.]/g, '');
-        const newValue = parseFloat(valString) || 0;
-
-        if (newValue <= 0) {
-            bagianList.splice(index, 1);
-            showToast('Data bagian dihapus', true);
-        } else {
-            bagianList[index].berat = newValue;
-            showToast('Berat diperbarui');
-        }
-
+        const idx = bagianList.findIndex(d => d.id === id);
+        if (idx === -1) return;
+        const val = parseFloat(cell.innerText.replace(/[^0-9.]/g, '')) || 0;
+        if (val <= 0) bagianList.splice(idx, 1);
+        else bagianList[idx].berat = val;
         localStorage.setItem(STORAGE_KEY_BAGIAN, JSON.stringify(bagianList));
         renderTableBagian();
     }
 
     function deleteBagian(id) {
-        const index = bagianList.findIndex(d => d.id === id);
-        if (index !== -1) {
-            bagianList.splice(index, 1);
-            localStorage.setItem(STORAGE_KEY_BAGIAN, JSON.stringify(bagianList));
-            showToast('Data bagian dihapus', true);
-            renderTableBagian();
-        }
+        bagianList = bagianList.filter(d => d.id !== id);
+        localStorage.setItem(STORAGE_KEY_BAGIAN, JSON.stringify(bagianList));
+        renderTableBagian();
+        showToast('Bagian dihapus', true);
     }
 
     function exportBagianExcel() {
         const targetDate = document.getElementById('inputTanggalBagian').value;
         const filtered = bagianList.filter(d => d.tanggal === targetDate);
-
-        if (filtered.length === 0) {
-            showToast('Tidak ada data bagian untuk diexport!', true);
-            return;
-        }
-
-        const exportData = filtered.map((d, index) => ({
-            'No': index + 1,
-            'Tanggal': d.tanggal,
-            'Jenis Bagian': d.jenis,
-            'Berat (Kg)': d.berat
-        }));
-
-        const ws = XLSX.utils.json_to_sheet(exportData);
+        if (filtered.length === 0) { showToast('Tidak ada data!', true); return; }
+        const ws = XLSX.utils.json_to_sheet(filtered.map((d, i) => ({ No: i + 1, Tanggal: d.tanggal, Bagian: d.jenis, 'Berat (Kg)': d.berat })));
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Laporan_Bagian");
-        XLSX.writeFile(wb, `Laporan_Bagian_Ayam_${targetDate}.xlsx`);
+        XLSX.utils.book_append_sheet(wb, ws, "Bagian");
+        XLSX.writeFile(wb, `Laporan_Bagian_${targetDate}.xlsx`);
     }
 
     function kirimWABagian() {
         const targetDate = document.getElementById('inputTanggalBagian').value;
         const filtered = bagianList.filter(d => d.tanggal === targetDate);
-
-        if (filtered.length === 0) {
-            showToast('Tidak ada data bagian untuk dikirim!', true);
-            return;
-        }
-
-        const dateObj = new Date(targetDate);
-        const dateFormatted = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-
-        let message = `*Laporan Data Bagian Ayam*\n*(Tanggal Input: ${dateFormatted})*\n\n`;
-        let totalBerat = 0;
-
-        const groupSummary = {};
-        filtered.forEach(item => {
-            if (!groupSummary[item.jenis]) groupSummary[item.jenis] = 0;
-            groupSummary[item.jenis] += item.berat;
-            totalBerat += item.berat;
-        });
-
-        Object.keys(groupSummary).forEach(jenis => {
-            message += `• *${jenis}*: ${Math.round(groupSummary[jenis] * 100) / 100} Kg\n`;
-        });
-
-        message += `\n*(Total Keseluruhan)*: ${Math.round(totalBerat * 100) / 100} Kg`;
-
-        const phoneNumber = '6282317165861';
-        const encoded = encodeURIComponent(message);
-        window.open(`https://wa.me/${phoneNumber}?text=${encoded}`, '_blank');
+        if (filtered.length === 0) { showToast('Tidak ada data!', true); return; }
+        let msg = `*Laporan Bagian Ayam (${targetDate})*\n`;
+        let total = 0;
+        filtered.forEach(d => { msg += `• ${d.jenis}: ${d.berat} Kg\n`; total += d.berat; });
+        msg += `\n*Total:* ${Math.round(total * 100)/100} Kg`;
+        window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     function renderTableTally() {
         const container = document.getElementById('tableTallyContainer');
         if (!container) return;
-
-        const filterInput = document.getElementById('filterTanggalTally');
-        if (!filterInput) return;
-        const targetDate = filterInput.value;
-
+        const targetDate = document.getElementById('filterTanggalTally').value;
         const filtered = dataList.filter(d => d.tanggal === targetDate);
 
         if (filtered.length === 0) {
-            container.innerHTML = `
-                <div class="py-10 text-center flex flex-col items-center">
-                    <i class="fa-solid fa-box-open text-4xl text-gray-300 mb-2"></i>
-                    <p class="text-sm text-gray-500 font-medium">Belum ada data karkas di tanggal ini</p>
-                </div>`;
+            container.innerHTML = `<div class="py-10 text-center"><p class="text-xs text-gray-500 font-semibold">Belum ada data karkas di tanggal ini</p></div>`;
             document.getElementById('tallyTotalMuat').innerText = '0 Kg';
             document.getElementById('tallySisaBelum').innerText = '0 Kg';
             return;
         }
 
-        let totalMuat = 0;
-        let sisaBelum = 0;
-
-        let html = `<table class="w-full text-left text-xs border-collapse">
-            <thead>
-                <tr class="bg-gray-100 border-b border-gray-300 text-gray-600">
-                    <th class="p-2 font-semibold min-w-[70px]">Grade(Kg)</th>
-                    <th class="p-2 font-semibold text-center">Pcs</th>
-                    <th class="p-2 font-semibold text-center">Netto(Kg)</th>
-                    <th class="p-2 font-semibold text-center w-[80px]">Status</th>
-                </tr>
-            </thead>
-            <tbody>`;
-
-        // Sort data so un-loaded items are usually at the top or kept in input order
-        // Here we keep input order but style them
+        let totalMuat = 0, sisaBelum = 0;
+        let html = `<table class="w-full text-left text-xs border-collapse"><tr class="bg-gray-100 text-gray-700 border-b border-gray-200"><th class="p-3">Grade</th><th class="p-3 text-center">Pcs</th><th class="p-3 text-center">Netto</th><th class="p-3 text-center">Status Mobil</th></tr>`;
         filtered.forEach(item => {
-            const isNaik = item.naikMobil === true;
-            if (isNaik) {
-                totalMuat += item.totalKg;
-            } else {
-                sisaBelum += item.totalKg;
-            }
-
-            const statusBtn = isNaik 
-                ? `<button onclick="toggleNaikMobil('${item.id}')" class="bg-green-500 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold shadow-sm w-full active:scale-95 transition flex items-center justify-center gap-1"><i class="fa-solid fa-check"></i> Naik</button>`
-                : `<button onclick="toggleNaikMobil('${item.id}')" class="bg-gray-200 text-gray-600 hover:bg-gray-300 px-2.5 py-1.5 rounded-lg text-[10px] font-bold shadow-sm w-full active:scale-95 transition">Belum</button>`;
-            
-            const rowClass = isNaik ? "bg-green-50/50" : "bg-white";
-            const textOpacity = isNaik ? "opacity-60" : "";
-
-            html += `<tr class="border-b border-gray-100 ${rowClass}">
-                <td class="p-2 ${textOpacity}">
-                    <div class="font-bold text-gray-800">Gr ${item.grade}</div>
-                    <div class="text-[10px] text-gray-500">${item.berat} kg</div>
-                </td>
-                <td class="p-2 text-center font-bold text-gray-700 ${textOpacity}">${item.pcs}</td>
-                <td class="p-2 text-center font-bold text-orange-700 ${textOpacity}">${item.totalKg}</td>
-                <td class="p-2 text-center align-middle">${statusBtn}</td>
-            </tr>`;
+            if (item.naikMobil) totalMuat += item.totalKg; else sisaBelum += item.totalKg;
+            html += `<tr class="border-b border-gray-200 ${item.naikMobil ? 'bg-emerald-50/60' : 'bg-white'}">
+                <td class="p-3"><b>Grade ${item.grade}</b><br><span class="text-[10px] text-gray-500 font-medium">${item.berat} kg</span></td>
+                <td class="p-3 text-center font-semibold text-gray-800">${item.pcs} Ekor</td>
+                <td class="p-3 text-center font-extrabold text-orange-900">${item.totalKg} Kg</td>
+                <td class="p-3 text-center"><button onclick="toggleNaikMobil('${item.id}')" class="${item.naikMobil ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} px-3 py-1.5 rounded-lg text-[10px] font-bold shadow-xs active:scale-95 transition-all">${item.naikMobil ? '✓ Sudah Muat' : '+ Belum'}</button></td></tr>`;
         });
-
-        html += `</tbody></table>`;
+        html += `</table>`;
         container.innerHTML = html;
-
         document.getElementById('tallyTotalMuat').innerText = `${Math.round(totalMuat * 100) / 100} Kg`;
         document.getElementById('tallySisaBelum').innerText = `${Math.round(sisaBelum * 100) / 100} Kg`;
     }
 
     function toggleNaikMobil(id) {
-        const index = dataList.findIndex(d => d.id === id);
-        if (index !== -1) {
-            const currentStatus = dataList[index].naikMobil || false;
-            dataList[index].naikMobil = !currentStatus;
-            
+        const item = dataList.find(d => d.id === id);
+        if (item) {
+            item.naikMobil = !item.naikMobil;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
             renderTableTally();
-            
-            if (dataList[index].naikMobil) {
-                showToast('Ditandai sudah naik mobil!');
-            } else {
-                showToast('Dibatalkan, belum naik mobil', true);
-            }
         }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const savedData = localStorage.getItem(STORAGE_KEY);
-        if (savedData) {
-            try { dataList = JSON.parse(savedData); } catch (e) { console.error(e); }
-        }
-
-        const savedKedatangan = localStorage.getItem(STORAGE_KEY_KEDATANGAN);
-        if (savedKedatangan) {
-            try { kedatanganList = JSON.parse(savedKedatangan); } catch (e) { console.error(e); }
-        }
-
-        const savedBagian = localStorage.getItem(STORAGE_KEY_BAGIAN);
-        if (savedBagian) {
-            try {
-                const parsed = JSON.parse(savedBagian);
-                bagianList = [];
-                parsed.forEach(item => {
-                    if (item.jenis && item.berat !== undefined) {
-                        bagianList.push(item);
-                    }
-                });
-            } catch (e) { console.error(e); }
-        }
+        if (localStorage.getItem(STORAGE_KEY)) dataList = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (localStorage.getItem(STORAGE_KEY_KEDATANGAN)) kedatanganList = JSON.parse(localStorage.getItem(STORAGE_KEY_KEDATANGAN));
+        if (localStorage.getItem(STORAGE_KEY_BAGIAN)) bagianList = JSON.parse(localStorage.getItem(STORAGE_KEY_BAGIAN));
+        loadCustomBagian();
 
         const today = new Date().toLocaleDateString('en-CA');
-        if (document.getElementById('inputTanggal')) document.getElementById('inputTanggal').value = today;
-        if (document.getElementById('filterTanggalPotong')) document.getElementById('filterTanggalPotong').value = today;
-        if (document.getElementById('inputTanggalKedatangan')) document.getElementById('inputTanggalKedatangan').value = today;
-        if (document.getElementById('inputTanggalBagian')) document.getElementById('inputTanggalBagian').value = today;
-        if (document.getElementById('filterTanggalTally')) document.getElementById('filterTanggalTally').value = today;
+        const nowTime = new Date().toTimeString().slice(0, 5);
+        ['inputTanggal', 'filterTanggalPotong', 'inputTanggalKedatangan', 'inputTanggalBagian', 'filterTanggalTally'].forEach(id => {
+            if (document.getElementById(id)) document.getElementById(id).value = today;
+        });
+        if (document.getElementById('inputJamKedatangan')) document.getElementById('inputJamKedatangan').value = nowTime;
 
-        loadCustomBagian();
         renderBagianCategories();
-
         renderTable();
         renderTableKedatangan();
         renderTableBagian();
         renderTableTally();
 
-        // FORM SUBMIT BERANDA / POTONG
-        const inputForm = document.getElementById('inputForm');
-        if (inputForm) {
-            inputForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const tanggal = document.getElementById('inputTanggal').value;
-                const namaKandang = document.getElementById('inputNamaKandang').value;
-                const alamatKandang = document.getElementById('inputAlamatKandang').value;
-                const grade = document.getElementById('inputGrade').value;
-                const berat = document.getElementById('inputBerat').value;
-                const pcs = document.getElementById('inputPcs').value;
-                
-                const beratKotor = document.getElementById('inputBeratKotor').value;
-                const beratKeranjang = document.getElementById('inputBeratKeranjang').value;
-                const keranjang = parseInt(document.getElementById('inputKeranjang').value) || 1;
-                
-                const totalKg = document.getElementById('inputTotalKg').value;
+        document.getElementById('inputForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const tanggal = document.getElementById('inputTanggal').value;
+            const grade = document.getElementById('inputGrade').value;
+            const berat = parseFloat(document.getElementById('inputBerat').value);
+            const pcs = parseInt(document.getElementById('inputPcs').value);
+            const totalKg = parseFloat(document.getElementById('inputTotalKg').value);
+            const keranjang = parseInt(document.getElementById('inputKeranjang').value) || 1;
 
-                if (parseFloat(totalKg) <= 0 || isNaN(parseFloat(totalKg))) {
-                    showToast('Berat Bersih tidak boleh 0 atau minus!', true);
-                    return;
-                }
+            if (isNaN(totalKg) || totalKg <= 0) {
+                showToast('Berat bersih tidak valid!', true);
+                return;
+            }
 
-                const newData = {
-                    id: Date.now().toString(),
-                    tanggal: tanggal,
-                    namaKandang: namaKandang,
-                    alamatKandang: alamatKandang,
-                    grade: grade,
-                    berat: parseFloat(berat),
-                    pcs: parseInt(pcs),
-                    beratKotor: parseFloat(beratKotor),
-                    keranjang: keranjang,
-                    beratKeranjang: parseFloat(beratKeranjang),
-                    totalKg: parseFloat(totalKg)
-                };
-
-                dataList.push(newData);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
-
-                document.getElementById('previewTanggal').innerText = tanggal;
-                document.getElementById('previewGrade').innerText = `${grade} (${berat} kg)`;
-                document.getElementById('previewPcs').innerText = `${pcs} Ekor`;
-                document.getElementById('previewNetto').innerText = `${parseFloat(totalKg).toFixed(2)} Kg`;
-
-                let printContainerHtml = '';
-                for (let i = 1; i <= keranjang; i++) {
-                    printContainerHtml += `
-                        <div class="w-[72mm] border-2 border-black p-4 mb-4 font-mono text-black mx-auto bg-white page-break leading-tight" style="box-sizing: border-box;">
-                            <div class="text-center font-bold text-base border-b-2 border-black border-dashed pb-2 mb-3 tracking-wider">
-                                *** RPA AUTO ***<br>
-                                <span class="text-xs font-normal">STRUK LABEL KARKAS</span>
-                            </div>
-                            <div class="text-xs border-b border-black border-dashed pb-2 mb-2 space-y-1">
-                                <div class="flex justify-between"><span>TANGGAL INPUT</span><span>: ${tanggal}</span></div>
-                                <div class="flex justify-between"><span>GRADE KARKAS</span><span>: ${grade}</span></div>
-                                <div class="flex justify-between"><span>BERAT REF</span><span>: ${berat} kg/ekor</span></div>
-                                <div class="flex justify-between"><span>KERANJANG</span><span>: ${i} dari ${keranjang}</span></div>
-                            </div>
-                            <div class="text-xs border-b-2 border-black border-dashed pb-2 mb-3 space-y-1.5">
-                                <div class="flex justify-between text-sm font-bold"><span>JUMLAH PCS</span><span>: ${Math.round(pcs / keranjang)} Ekor</span></div>
-                                <div class="flex justify-between text-xl font-black"><span>NETTO</span><span>: ${(parseFloat(totalKg) / keranjang).toFixed(2)} KG</span></div>
-                            </div>
-                            <div class="text-[10px] text-center font-bold uppercase tracking-widest pt-1">
-                                ========================<br>
-                                * SIMPAN SEBAGAI BUKTI *
-                            </div>
-                        </div>
-                    `;
-                }
-                document.getElementById('printLabelsContainer').innerHTML = printContainerHtml;
-
-                document.getElementById('inputPcs').value = '';
-                document.getElementById('inputBeratKotor').value = '';
-                document.getElementById('inputKeranjang').value = '';
-                document.getElementById('inputTotalKg').value = '';
-                
-                showToast('Data berhasil disimpan');
-                renderTable();
-                
-                document.getElementById('labelModal').classList.remove('hidden');
+            dataList.push({
+                id: Date.now().toString(),
+                tanggal,
+                namaKandang: document.getElementById('inputNamaKandang').value,
+                alamatKandang: document.getElementById('inputAlamatKandang').value,
+                grade, berat, pcs, totalKg, keranjang,
+                beratKotor: parseFloat(document.getElementById('inputBeratKotor').value),
+                beratKeranjang: parseFloat(document.getElementById('inputBeratKeranjang').value),
+                naikMobil: false
             });
-        }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
 
-        // FORM SUBMIT KEDATANGAN
-        const formKedatangan = document.getElementById('formKedatangan');
-        if (formKedatangan) {
-            formKedatangan.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const newData = {
-                    id: 'kedatangan_' + Date.now().toString(),
-                    tanggal: document.getElementById('inputTanggalKedatangan').value,
-                    namaKandang: document.getElementById('inputNamaKandangKedatangan').value,
-                    alamatKandang: document.getElementById('inputAlamatKandangKedatangan').value,
-                    beratAyam: parseFloat(document.getElementById('inputBeratKedatangan').value),
-                    jumlahEkor: parseInt(document.getElementById('inputEkorKedatangan').value)
-                };
+            document.getElementById('previewTanggal').innerText = tanggal;
+            document.getElementById('previewGrade').innerText = `${grade} (${berat} kg)`;
+            document.getElementById('previewPcs').innerText = `${pcs} Ekor`;
+            document.getElementById('previewNetto').innerText = `${totalKg.toFixed(2)} Kg`;
 
-                kedatanganList.push(newData);
-                localStorage.setItem(STORAGE_KEY_KEDATANGAN, JSON.stringify(kedatanganList));
+            let printHtml = '';
+            for (let i = 1; i <= keranjang; i++) {
+                printHtml += `<div class="w-[72mm] border-2 border-black p-4 mb-4 font-mono text-black mx-auto bg-white"><div class="text-center font-bold text-base border-b-2 border-black pb-2 mb-3">*** RPA AUTO ***</div><div class="text-xs pb-2 mb-2 space-y-1"><div>TANGGAL: ${tanggal}</div><div>GRADE: ${grade} (${berat} kg)</div><div>KERANJANG: ${i}/${keranjang}</div></div><div class="text-sm font-bold pb-2 mb-3"><div>PCS: ${Math.round(pcs/keranjang)} EKOR</div><div class="text-lg">NETTO: ${(totalKg/keranjang).toFixed(2)} KG</div></div></div>`;
+            }
+            document.getElementById('printLabelsContainer').innerHTML = printHtml;
+            document.getElementById('inputPcs').value = '';
+            document.getElementById('inputBeratKotor').value = '';
+            document.getElementById('inputKeranjang').value = '';
+            document.getElementById('inputTotalKg').value = '';
+            showToast('Data berhasil disimpan');
+            renderTable();
+            document.getElementById('labelModal').classList.remove('hidden');
+        });
 
-                document.getElementById('inputNamaKandangKedatangan').value = '';
-                document.getElementById('inputAlamatKandangKedatangan').value = '';
-                document.getElementById('inputBeratKedatangan').value = '';
-                document.getElementById('inputEkorKedatangan').value = '';
-                
-                showToast('Kedatangan disimpan');
-                renderTableKedatangan();
+        document.getElementById('formKedatangan').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (currentKedatanganRows.length === 0) { showToast('Tambahkan baris timbang!', true); return; }
+            kedatanganList.push({
+                id: 'kedatangan_' + Date.now(),
+                tanggal: document.getElementById('inputTanggalKedatangan').value,
+                jam: document.getElementById('inputJamKedatangan').value,
+                rows: [...currentKedatanganRows]
             });
-        }
+            localStorage.setItem(STORAGE_KEY_KEDATANGAN, JSON.stringify(kedatanganList));
+            showToast('Kedatangan disimpan!');
+            currentKedatanganRows = [];
+            renderTableKedatangan();
+        });
 
-        // FORM SUBMIT BAGIAN AYAM
-        const formBagian = document.getElementById('formBagian');
-        if (formBagian) {
-            formBagian.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                const tanggal = document.getElementById('inputTanggalBagian').value;
-                const jenis = document.getElementById('inputJenisBagian').value;
-                const berat = parseFloat(document.getElementById('inputBeratBagian').value) || 0;
-
-                if (berat <= 0) {
-                    showToast('Berat bagian harus lebih dari 0!', true);
-                    return;
-                }
-
-                const newData = {
-                    id: 'bagian_' + Date.now().toString() + '_' + Math.random().toString(36).substr(2, 4),
-                    tanggal: tanggal,
-                    jenis: jenis,
-                    berat: berat
-                };
-
-                bagianList.push(newData);
-                localStorage.setItem(STORAGE_KEY_BAGIAN, JSON.stringify(bagianList));
-
-                document.getElementById('inputBeratBagian').value = '';
-
-                showToast(`Data ${jenis} (${berat} kg) disimpan`);
-                renderTableBagian();
+        document.getElementById('formBagian').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const berat = parseFloat(document.getElementById('inputBeratBagian').value) || 0;
+            if (berat <= 0) { showToast('Berat tidak valid!', true); return; }
+            const jenis = document.getElementById('inputJenisBagian').value;
+            bagianList.push({
+                id: 'bagian_' + Date.now(),
+                tanggal: document.getElementById('inputTanggalBagian').value,
+                jenis, berat
             });
-        }
+            localStorage.setItem(STORAGE_KEY_BAGIAN, JSON.stringify(bagianList));
+            document.getElementById('inputBeratBagian').value = '';
+            showToast(`Bagian ${jenis} disimpan`);
+            renderTableBagian();
+        });
     });
 </script>
 </body>
