@@ -101,7 +101,7 @@
             </div>
         </div>
         <span class="text-[10px] bg-white/20 backdrop-blur-md text-white px-2.5 py-1 rounded-full border border-white/30 font-bold tracking-wide uppercase">
-            v3.5 Mobile
+            v3.6 Mobile
         </span>
     </header>
 
@@ -313,14 +313,13 @@
                     <i class="fa-solid fa-plus-circle text-base"></i> Tambah ke Tabel Kedatangan
                 </button>
             </div>
-            <!-- NOTE: Tombol Simpan Sesi Kedatangan telah dihapus sesuai instruksi -->
         </div>
 
         <!-- Dynamic Horizontal Tables Area (Per 10 Baris Samping-Sampingan) -->
         <div class="space-y-4">
             <div class="flex items-center justify-between">
                 <h3 class="text-gray-800 font-bold flex items-center gap-2 text-sm">
-                    <i class="fa-solid fa-table-cells text-orange-500"></i> Tabel Pencatatan Kedatangan (Side-by-Side)
+                    <i class="fa-solid fa-table-cells text-orange-500"></i> Tabel Pencatatan Kedatangan
                 </h3>
                 <span id="totalBarisBadge" class="text-[11px] font-bold text-gray-500 bg-gray-200 px-2.5 py-1 rounded-lg">
                     0 Baris
@@ -347,7 +346,6 @@
             <!-- Action Area: Calculate Totals & Export -->
             <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-2xl border border-amber-200 shadow-sm space-y-3">
                 
-                <!-- TOMBOL JUMLAH BERAT & EKOR (SESUAI REQUEST) -->
                 <button onclick="hitungTotalKedatangan()" class="w-full h-14 bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-black rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm tracking-wide">
                     <i class="fa-solid fa-calculator text-amber-400 text-lg"></i> HITUNG JUMLAH BERAT & EKOR
                 </button>
@@ -635,14 +633,13 @@
     
     let dataList = [];
     let kedatanganList = [];
-    let currentKedatanganRows = []; // Array of { ekor, berat }
+    let currentKedatanganRows = [];
     let bagianList = [];
     let customBagianList = [];
     
     let calcPcsInput = '';
     let currentCalcTarget = 'inputPcs';
 
-    // Single-Hand Grade Selector
     function selectGrade(grade) {
         document.getElementById('inputGrade').value = grade;
         ['A', 'B', 'C'].forEach(g => {
@@ -655,7 +652,6 @@
         });
     }
 
-    // Single-Hand Presets for Pcs & Keranjang
     function addPcsPreset(val) {
         const inputEl = document.getElementById('inputPcs');
         const curr = parseInt(inputEl.value) || 0;
@@ -669,7 +665,6 @@
         showToast(`Keranjang: ${val}`);
     }
 
-    // Calculator Functions
     function openCalcModal(targetId) {
         currentCalcTarget = targetId;
         const currentVal = document.getElementById(targetId).value;
@@ -753,7 +748,6 @@
         }
     }
 
-    // Default & Custom Bagian Categories
     const DEFAULT_BAGIAN = ['Kepala Utuh', 'Ceker', 'Usus', 'Ati', 'Ampela', 'Sisa Jantung', 'Dada', 'Paha', 'Sayap', 'Kulit', 'Kerongkongan', 'Brutu'];
 
     function loadCustomBagian() {
@@ -865,7 +859,6 @@
         return { groups, sortedKeys, maxRows, filteredData: filtered };
     }
 
-    // Render Beranda Table
     function renderTable() {
         const container = document.getElementById('tableContainer');
         if (!container) return;
@@ -920,84 +913,129 @@
             showToast('Baris data dihapus', true);
         } else {
             dataList[index][field] = field === 'pcs' ? Math.round(newValue) : newValue;
-        showToast('Data diperbarui');
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
-    renderTable();
-}
-
-function exportExcel() {
-    const targetDate = document.getElementById('filterTanggalPotong').value;
-    const { filteredData } = getGroupedData(targetDate);
-    
-    if (filteredData.length === 0) {
-        showToast('Tidak ada data potong karkas!', true);
-        return;
+            showToast('Data diperbarui');
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
+        renderTable();
     }
 
-    const aoa = [
-        [`Laporan Potong Karkas - RPA Auto`],
-        [`Tanggal: ${targetDate}`],
-        [""],
-        ['No', 'Nama Kandang', 'Grade', 'Ukuran (Kg)', 'Pcs (Ekor)', 'Netto (Kg)', 'Status Muat']
-    ];
+    // ==========================================
+    // EXPORT EXCEL & WA (KARKAS)
+    // ==========================================
+    function exportExcel() {
+        const targetDate = document.getElementById('filterTanggalPotong').value;
+        const { groups, sortedKeys, maxRows, filteredData } = getGroupedData(targetDate);
+        
+        if (filteredData.length === 0) {
+            showToast('Tidak ada data potong karkas!', true);
+            return;
+        }
 
-    let totalPcs = 0, totalBerat = 0;
-    filteredData.forEach((item, index) => {
-        aoa.push([
-            index + 1,
-            item.namaKandang || '-',
-            item.grade,
-            item.berat,
-            item.pcs,
-            item.totalKg,
-            item.naikMobil ? 'Sudah Muat' : 'Belum'
-        ]);
-        totalPcs += item.pcs;
-        totalBerat += item.totalKg;
-    });
+        const aoa = [
+            [`Laporan Potong Karkas - RPA Auto`],
+            [`Tanggal: ${targetDate}`],
+            [""]
+        ];
 
-    aoa.push(["", "", "", "TOTAL KESELURUHAN", totalPcs, Math.round(totalBerat * 100) / 100, ""]);
+        let header1 = ['No'];
+        sortedKeys.forEach(k => {
+            header1.push(`Grade ${groups[k].grade} (${groups[k].berat} kg)`);
+            header1.push(""); // Spasi untuk colspan
+        });
+        aoa.push(header1);
 
-    const ws = XLSX.utils.aoa_to_sheet(aoa);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Karkas");
-    XLSX.writeFile(wb, `Laporan_Karkas_${targetDate}.xlsx`);
-}
+        let header2 = [''];
+        sortedKeys.forEach(k => {
+            header2.push("Pcs (Ekor)");
+            header2.push("Berat (Kg)");
+        });
+        aoa.push(header2);
 
-function kirimWA() {
-    const targetDate = document.getElementById('filterTanggalPotong').value;
-    const { groups, sortedKeys, filteredData } = getGroupedData(targetDate);
-    
-    if (filteredData.length === 0) {
-        showToast('Tidak ada data karkas!', true);
-        return;
+        for (let i = 0; i < maxRows; i++) {
+            let row = [i + 1];
+            sortedKeys.forEach(k => {
+                const item = groups[k].items[i];
+                if (item) {
+                    row.push(item.pcs);
+                    row.push(item.totalKg);
+                } else {
+                    row.push("");
+                    row.push("");
+                }
+            });
+            aoa.push(row);
+        }
+
+        let footer = ['TOTAL'];
+        let grandTotalAll = 0, grandPcsAll = 0;
+        sortedKeys.forEach(k => {
+            const sumTotal = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
+            const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
+            grandTotalAll += sumTotal;
+            grandPcsAll += sumPcs;
+            footer.push(sumPcs);
+            footer.push(Math.round(sumTotal * 100) / 100);
+        });
+        aoa.push(footer);
+
+        aoa.push([""]);
+        aoa.push(["RINGKASAN HARI INI"]);
+        aoa.push(["Total Ekor", grandPcsAll]);
+        aoa.push(["Total Berat", Math.round(grandTotalAll * 100) / 100]);
+
+        const ws = XLSX.utils.aoa_to_sheet(aoa);
+        
+        // Merge cell di baris Header Grade agar rapi
+        if(!ws['!merges']) ws['!merges'] = [];
+        let colIndex = 1;
+        sortedKeys.forEach(k => {
+            ws['!merges'].push({ s: {r: 3, c: colIndex}, e: {r: 3, c: colIndex + 1} }); 
+            colIndex += 2;
+        });
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Karkas");
+        XLSX.writeFile(wb, `Laporan_Karkas_${targetDate}.xlsx`);
     }
 
-    let msg = `*Laporan Potong Karkas*\nTanggal: ${targetDate}\n\n`;
-    
-    let grandPcs = 0;
-    let grandBerat = 0;
+    function kirimWA() {
+        const targetDate = document.getElementById('filterTanggalPotong').value;
+        const { groups, sortedKeys, filteredData } = getGroupedData(targetDate);
+        
+        if (filteredData.length === 0) {
+            showToast('Tidak ada data karkas!', true);
+            return;
+        }
 
-    sortedKeys.forEach(k => {
-        const sumTotal = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
-        const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
-        grandPcs += sumPcs;
-        grandBerat += sumTotal;
-        msg += `• Grade ${groups[k].grade} (${groups[k].berat} kg): ${sumPcs} Ekor = ${Math.round(sumTotal * 100) / 100} Kg\n`;
-    });
+        let msg = `*📊 LAPORAN POTONG KARKAS 📊*\n`;
+        msg += `🗓️ *Tanggal:* ${targetDate}\n`;
+        msg += `--------------------------------\n\n`;
+        msg += `*RINCIAN PER GRADE:*\n`;
+        
+        let grandPcs = 0;
+        let grandBerat = 0;
 
-    msg += `\n*TOTAL HARI INI:*\n- Total Ekor: ${grandPcs} Ekor\n- Total Berat: ${Math.round(grandBerat * 100) / 100} Kg`;
-    
-    // Sesuaikan nomor WA default di bawah ini
-    window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
-}
+        sortedKeys.forEach(k => {
+            const sumTotal = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
+            const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
+            grandPcs += sumPcs;
+            grandBerat += sumTotal;
+            msg += `🔹 *Grade ${groups[k].grade} (${groups[k].berat} kg)*\n`;
+            msg += `   └ ${sumPcs} Ekor  |  ${Math.round(sumTotal * 100) / 100} Kg\n\n`;
+        });
 
-// ==========================================
-// MODUL DATA KEDATANGAN (SIDE-BY-SIDE TABLES)
-// ==========================================
+        msg += `--------------------------------\n`;
+        msg += `*📈 TOTAL KESELURUHAN*\n`;
+        msg += `🐔 *Total Ekor  :* ${grandPcs} Ekor\n`;
+        msg += `⚖️️ *Total Berat :* ${Math.round(grandBerat * 100) / 100} Kg`;
+        
+        window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
+    }
 
-function renderTableKedatangan() {
+    // ==========================================
+    // MODUL DATA KEDATANGAN
+    // ==========================================
+    function renderTableKedatangan() {
         const container = document.getElementById('tableKedatanganContainer');
         if (!container) return;
 
@@ -1017,7 +1055,6 @@ function renderTableKedatangan() {
             return;
         }
 
-        // Calculate total tables needed (1 table per 10 rows)
         const tableCount = Math.ceil(totalRows / 10);
         let flexHtml = '';
 
@@ -1061,7 +1098,6 @@ function renderTableKedatangan() {
                         <td contenteditable="true" inputmode="decimal" data-index="${i}" data-field="berat" onblur="handleEditBarisKedatangan(this)" onkeypress="return restrictKey(event)" class="font-black text-orange-950 bg-orange-50/30 px-2 py-1.5">${beratVal}</td>
                     </tr>`;
                 } else {
-                    // Empty placeholder row to maintain 10-row visual height per block
                     subTableHtml += `<tr>
                         <td class="font-medium text-gray-300 bg-gray-50/50 border-r border-gray-200">${displayNo}</td>
                         <td class="border-r border-gray-200 px-2 py-1.5 bg-gray-50/20 text-gray-300">-</td>
@@ -1107,7 +1143,6 @@ function renderTableKedatangan() {
         renderTableKedatangan();
         showToast(`Baris #${currentKedatanganRows.length} ditambahkan`);
 
-        // Auto-scroll side container to the far right to show new table if appended
         setTimeout(() => {
             const container = document.getElementById('tableKedatanganContainer');
             if (container) container.scrollLeft = container.scrollWidth;
@@ -1138,7 +1173,6 @@ function renderTableKedatangan() {
         renderTableKedatangan();
     }
 
-    // HITUNG TOMBOL JUMLAH BERAT & EKOR
     function hitungTotalKedatangan() {
         if (currentKedatanganRows.length === 0) {
             showToast('Belum ada data kedatangan!', true);
@@ -1175,27 +1209,42 @@ function renderTableKedatangan() {
         localStorage.setItem(STORAGE_KEY_KEDATANGAN, JSON.stringify(sessionData));
     }
 
+    // ==========================================
+    // EXPORT EXCEL & WA (KEDATANGAN)
+    // ==========================================
     function exportKedatanganExcel() {
         if (currentKedatanganRows.length === 0) { showToast('Tidak ada data kedatangan!', true); return; }
         
         const tgl = document.getElementById('inputTanggalKedatangan').value;
+        const jam = document.getElementById('inputJamKedatangan').value;
         const kandang = document.getElementById('inputNamaKandangKedatangan').value || '-';
+        const alamat = document.getElementById('inputAlamatKandangKedatangan').value || '-';
         
-        const aoa = [
-            [`Laporan Kedatangan Ayam - RPA Auto`],
-            [`Tanggal: ${tgl} | Kandang: ${kandang}`],
-            [""],
-            ['No Baris', 'Ekor', 'Berat (Kg)']
-        ];
-
         let totalEkor = 0, totalBerat = 0;
-        currentKedatanganRows.forEach((r, i) => {
-            aoa.push([i + 1, r.ekor || 0, r.berat]);
+        currentKedatanganRows.forEach(r => {
             totalEkor += (parseFloat(r.ekor) || 0);
             totalBerat += (parseFloat(r.berat) || 0);
         });
+        const rataRata = totalEkor > 0 ? (totalBerat / totalEkor).toFixed(2) : 0;
 
-        aoa.push(["Total", totalEkor, Math.round(totalBerat * 100) / 100]);
+        const aoa = [
+            [`Laporan Kedatangan Ayam - RPA Auto`],
+            [`Tanggal`, tgl],
+            [`Jam`, jam],
+            [`Kandang`, kandang],
+            [`Alamat`, alamat],
+            [""],
+            [`RINGKASAN`],
+            [`Total Ekor`, totalEkor],
+            [`Total Berat (Kg)`, Math.round(totalBerat * 100) / 100],
+            [`Rata-rata (Kg/Ekor)`, rataRata],
+            [""],
+            ['No', 'Ekor', 'Berat (Kg)']
+        ];
+
+        currentKedatanganRows.forEach((r, i) => {
+            aoa.push([i + 1, r.ekor || "-", r.berat]);
+        });
 
         const ws = XLSX.utils.aoa_to_sheet(aoa);
         const wb = XLSX.utils.book_new();
@@ -1206,23 +1255,42 @@ function renderTableKedatangan() {
     function kirimWAKedatangan() {
         if (currentKedatanganRows.length === 0) { showToast('Tidak ada data!', true); return; }
         
+        const tgl = document.getElementById('inputTanggalKedatangan').value;
+        const jam = document.getElementById('inputJamKedatangan').value;
+        const kandang = document.getElementById('inputNamaKandangKedatangan').value || '-';
+        
         let totalEkor = 0, totalBerat = 0;
-        let msg = `*Laporan Kedatangan Ayam*\nTanggal: ${document.getElementById('inputTanggalKedatangan').value}\nKandang: ${document.getElementById('inputNamaKandangKedatangan').value || '-'}\n\n`;
+        let rincian = '';
         
         currentKedatanganRows.forEach((r, i) => {
-            msg += `${i+1}. Ekor: ${r.ekor || '-'} | Berat: ${r.berat} Kg\n`;
+            const num = (i + 1).toString().padStart(2, '0');
+            const ekorStr = r.ekor ? `${r.ekor} Ekor` : `- Ekor`;
+            rincian += `${num}. ${ekorStr}  |  ${r.berat} Kg\n`;
             totalEkor += (parseFloat(r.ekor) || 0);
             totalBerat += (parseFloat(r.berat) || 0);
         });
 
-        msg += `\n*TOTAL KESELURUHAN:*\n• Total Ekor: ${totalEkor} Ekor\n• Total Berat: ${Math.round(totalBerat * 100)/100} Kg`;
+        const rataRata = totalEkor > 0 ? (totalBerat / totalEkor).toFixed(2) : 0;
+
+        let msg = `*🚛 LAPORAN KEDATANGAN AYAM 🚛*\n`;
+        msg += `🗓️ *Tanggal :* ${tgl}\n`;
+        msg += `⏰ *Jam     :* ${jam}\n`;
+        msg += `🏢 *Kandang :* ${kandang}\n`;
+        msg += `--------------------------------\n\n`;
+        msg += `*RINCIAN TIMBANGAN:*\n`;
+        msg += rincian;
+        msg += `\n--------------------------------\n`;
+        msg += `*📈 RINGKASAN*\n`;
+        msg += `🐔 *Total Ekor  :* ${totalEkor} Ekor\n`;
+        msg += `⚖️ *Total Berat :* ${Math.round(totalBerat * 100)/100} Kg\n`;
+        msg += `📊 *Rata-rata   :* ${rataRata} Kg/Ekor`;
+        
         window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     // ==========================================
     // MODUL BAGIAN & TALLY MUAT
     // ==========================================
-
     function renderTableBagian() {
         const container = document.getElementById('tableBagianContainer');
         if (!container) return;
@@ -1264,11 +1332,30 @@ function renderTableKedatangan() {
         showToast('Bagian dihapus', true);
     }
 
+    // ==========================================
+    // EXPORT EXCEL & WA (BAGIAN)
+    // ==========================================
     function exportBagianExcel() {
         const targetDate = document.getElementById('inputTanggalBagian').value;
         const filtered = bagianList.filter(d => d.tanggal === targetDate);
         if (filtered.length === 0) { showToast('Tidak ada data!', true); return; }
-        const ws = XLSX.utils.json_to_sheet(filtered.map((d, i) => ({ No: i + 1, Tanggal: d.tanggal, Bagian: d.jenis, 'Berat (Kg)': d.berat })));
+        
+        let total = 0;
+        const aoa = [
+            [`Laporan Bagian Ayam - RPA Auto`],
+            [`Tanggal: ${targetDate}`],
+            [""],
+            ['No', 'Jenis Bagian', 'Berat (Kg)']
+        ];
+
+        filtered.forEach((d, i) => {
+            aoa.push([i + 1, d.jenis, d.berat]);
+            total += d.berat;
+        });
+
+        aoa.push(["", "TOTAL KESELURUHAN", Math.round(total * 100) / 100]);
+
+        const ws = XLSX.utils.aoa_to_sheet(aoa);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Bagian");
         XLSX.writeFile(wb, `Laporan_Bagian_${targetDate}.xlsx`);
@@ -1278,10 +1365,20 @@ function renderTableKedatangan() {
         const targetDate = document.getElementById('inputTanggalBagian').value;
         const filtered = bagianList.filter(d => d.tanggal === targetDate);
         if (filtered.length === 0) { showToast('Tidak ada data!', true); return; }
-        let msg = `*Laporan Bagian Ayam (${targetDate})*\n`;
+        
+        let msg = `*🍗 LAPORAN BAGIAN AYAM 🍗*\n`;
+        msg += `🗓️ *Tanggal:* ${targetDate}\n`;
+        msg += `--------------------------------\n\n`;
+        
         let total = 0;
-        filtered.forEach(d => { msg += `• ${d.jenis}: ${d.berat} Kg\n`; total += d.berat; });
-        msg += `\n*Total:* ${Math.round(total * 100)/100} Kg`;
+        filtered.forEach(d => { 
+            msg += `🔸 *${d.jenis}* : ${d.berat} Kg\n`; 
+            total += d.berat; 
+        });
+        
+        msg += `\n--------------------------------\n`;
+        msg += `*📈 TOTAL BERAT :* ${Math.round(total * 100)/100} Kg`;
+        
         window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
@@ -1419,3 +1516,9 @@ function renderTableKedatangan() {
 </script>
 </body>
 </html>
+```
+
+### Perubahan yang Dilakukan:
+1. **Excel Beranda (Karkas)**: Mengubah format `['No', 'Nama Kandang', 'Grade'...]` menjadi format Pivot Table yang sama persis seperti tabel di aplikasi, di mana di bagian atas ada header "Grade", di bawahnya ada sub-header "Pcs" dan "Berat (Kg)", disusul dengan daftar angka ke bawah dengan penjumlahan grand-total di bagian bawahnya.
+2. **Excel Kedatangan & Bagian**: Dibuat list standar namun diberikan header yang lebih jelas dan kotak **RINGKASAN** yang tersusun rapi di posisi yang lebih sesuai agar format datanya bersih saat dibuka di Office/Excel.
+3. **Format Pesan WhatsApp (Karkas, Kedatangan, Bagian)**: Kini menyertakan Emoji (`📊`, `📈`, `🐔`, `⚖️`, dsb), disusun dalam format list bersarang yang jauh lebih enak dibaca dan profesional (ada pemisah baris `----------`). Rincian per baris atau grade dijabarkan lengkap beserta total akhirnya.
