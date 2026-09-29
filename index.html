@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aplikasi RPA Mobile</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SheetJS (Excel Export) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        /* Sembunyikan scrollbar untuk tampilan mobile yang lebih bersih */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+        
+        /* Tabel gaya catatan tangan (tally) */
+        .tally-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .tally-table th, .tally-table td {
+            border: 1px solid #4B5563; /* Tailwind gray-600 */
+            padding: 0.5rem;
+        }
+        .tally-table th {
+            background-color: #F3F4F6; /* Tailwind gray-100 */
+        }
+        .tally-table td[contenteditable="true"] {
+            background-color: #FEF3C7; /* Tailwind amber-50 - highlight editable */
+            transition: background-color 0.2s;
+        }
+        .tally-table td[contenteditable="true"]:focus {
+            background-color: #FDE68A; /* Tailwind amber-200 */
+            outline: 2px solid #059669; /* Tailwind emerald-600 */
+            outline-offset: -2px;
+        }
+
+        /* Notifikasi Toast */
+        #toast {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            transform: translate(-50%, 100%);
+            opacity: 0;
+        }
+        #toast.show {
+            transform: translate(-50%, 0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-200 text-gray-800 font-sans antialiased">
+
+<div class="max-w-md mx-auto bg-gray-50 shadow-xl min-h-screen relative pb-20">
+    
+    <!-- Header Utama -->
+    <header class="bg-emerald-600 text-white p-4 shadow-md sticky top-0 z-20 flex items-center gap-3">
+        <i class="fa-solid fa-kiwi-bird text-2xl"></i>
+        <div>
+            <h1 class="text-lg font-bold leading-tight">Sistem RPA</h1>
+            <p class="text-xs text-emerald-100 opacity-90">Rumah Potong Ayam</p>
+        </div>
+    </header>
+
+    <!-- VIEW: BERANDA (FORM INPUT) -->
+    <div id="view-home" class="p-4 block animate-fade-in">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+            <h2 class="text-gray-700 font-bold mb-4 border-b pb-2 flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-emerald-500"></i> Input Data Baru
+            </h2>
+            
+            <form id="inputForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Tanggal</label>
+                    <input type="date" id="inputTanggal" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Grade Ayam</label>
+                        <select id="inputGrade" required class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                            <option value="A">Grade A</option>
+                            <option value="B">Grade B</option>
+                            <option value="C">Grade C</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Berat (0-3 kg)</label>
+                        <input type="number" id="inputBerat" min="0.1" max="3" step="0.1" required placeholder="Cth: 1.5" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Jumlah Ekor (Pcs)</label>
+                        <input type="number" id="inputPcs" min="1" step="1" required placeholder="Cth: 20" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1">Berat Total (kg)</label>
+                        <input type="number" id="inputTotalKg" min="0.1" step="0.1" required placeholder="Cth: 30.5" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Jumlah Keranjang</label>
+                    <input type="number" id="inputKeranjang" min="1" step="1" required placeholder="Cth: 2" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none transition">
+                </div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold py-3.5 rounded-xl shadow-md transition-all mt-4 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> Simpan Data
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- VIEW: LAPORAN (REPORT) -->
+    <div id="view-report" class="p-4 hidden animate-fade-in">
+        
+        <!-- Filter Tanggal -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4 flex items-center gap-3">
+            <div class="bg-blue-100 text-blue-600 p-2 rounded-lg"><i class="fa-solid fa-calendar-day"></i></div>
+            <div class="flex-1">
+                <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider">Filter Laporan</label>
+                <input type="date" id="filterTanggal" class="w-full bg-transparent text-sm font-bold text-gray-700 outline-none" onchange="renderTable()">
+            </div>
+        </div>
+
+        <div class="flex gap-2 items-start mb-3 bg-amber-50 p-3 rounded-lg border border-amber-200">
+            <i class="fa-solid fa-circle-info text-amber-500 mt-0.5 text-sm"></i>
+            <p class="text-[11px] text-amber-800 leading-tight">
+                Ketuk angka pada tabel kuning untuk <b>edit langsung</b>. Ubah jadi <b class="text-red-600">0</b> untuk menghapus baris data.
+            </p>
+        </div>
+
+        <!-- Wadah Tabel (Bisa Digeser Horizontal) -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-300 overflow-hidden mb-4">
+            <div class="overflow-x-auto p-0" id="tableContainer">
+                <!-- Tabel Tally dirender disini via JS -->
+            </div>
+        </div>
+
+        <!-- Tombol Aksi Bawah Tabel -->
+        <div class="grid grid-cols-2 gap-3">
+            <button onclick="exportExcel()" class="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold py-3 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
+                <i class="fa-solid fa-file-excel"></i> Export Excel
+            </button>
+            <button onclick="kirimWA()" class="bg-[#25D366] hover:bg-[#20bd5a] active:scale-95 text-white font-bold py-3 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
+                <i class="fa-brands fa-whatsapp text-lg"></i> Kirim WA
+            </button>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="fixed bottom-0 w-full max-w-md bg-white border-t border-gray-200 pb-safe z-30 flex">
+        <button onclick="switchTab('home')" id="nav-home" class="flex-1 py-3.5 flex flex-col items-center justify-center text-emerald-600 font-bold transition-colors">
+            <i class="fa-solid fa-house mb-1 text-lg"></i>
+            <span class="text-[10px] uppercase tracking-wide">Beranda</span>
+        </button>
+        <button onclick="switchTab('report')" id="nav-report" class="flex-1 py-3.5 flex flex-col items-center justify-center text-gray-400 font-medium transition-colors hover:text-emerald-500">
+            <i class="fa-solid fa-table-list mb-1 text-lg"></i>
+            <span class="text-[10px] uppercase tracking-wide">Laporan</span>
+        </button>
+    </nav>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed top-20 left-1/2 bg-gray-800 text-white px-5 py-2.5 rounded-full shadow-lg z-50 text-sm font-semibold flex items-center gap-2 pointer-events-none">
+        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toast-msg">Tersimpan</span>
+    </div>
+
+</div>
+
+<script>
+    const STORAGE_KEY = 'rpa_data_v3';
+    let dataList = [];
+
+    // INISIALISASI
+    document.addEventListener('DOMContentLoaded', () => {
+        // Load data
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        if (savedData) dataList = JSON.parse(savedData);
+
+        // Set tanggal hari ini ke input
+        const today = new Date().toLocaleDateString('en-CA');
+        document.getElementById('inputTanggal').value = today;
+        document.getElementById('filterTanggal').value = today;
+    });
+
+    // NAVIGATION LOGIC
+    function switchTab(tab) {
+        const viewHome = document.getElementById('view-home');
+        const viewReport = document.getElementById('view-report');
+        const navHome = document.getElementById('nav-home');
+        const navReport = document.getElementById('nav-report');
+
+        if (tab === 'home') {
+            viewHome.classList.remove('hidden');
+            viewReport.classList.add('hidden');
+            
+            navHome.classList.replace('text-gray-400', 'text-emerald-600');
+            navHome.classList.replace('font-medium', 'font-bold');
+            navReport.classList.replace('text-emerald-600', 'text-gray-400');
+            navReport.classList.replace('font-bold', 'font-medium');
+        } else {
+            viewHome.classList.add('hidden');
+            viewReport.classList.remove('hidden');
+            
+            navReport.classList.replace('text-gray-400', 'text-emerald-600');
+            navReport.classList.replace('font-medium', 'font-bold');
+            navHome.classList.replace('text-emerald-600', 'text-gray-400');
+            navHome.classList.replace('font-bold', 'font-medium');
+
+            // Selalu render ulang saat tab laporan dibuka
+            renderTable();
+        }
+    }
+
+    // TOAST LOGIC
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toast');
+        const icon = toast.querySelector('i');
+        document.getElementById('toast-msg').innerText = message;
+        
+        if (isError) {
+            toast.classList.replace('bg-gray-800', 'bg-red-600');
+            icon.className = 'fa-solid fa-circle-exclamation text-white';
+        } else {
+            toast.classList.replace('bg-red-600', 'bg-gray-800');
+            icon.className = 'fa-solid fa-circle-check text-emerald-400';
+        }
+
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // FORM SUBMIT LOGIC
+    document.getElementById('inputForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const tanggal = document.getElementById('inputTanggal').value;
+        const grade = document.getElementById('inputGrade').value;
+        const berat = document.getElementById('inputBerat').value;
+        const pcs = document.getElementById('inputPcs').value;
+        const totalKg = document.getElementById('inputTotalKg').value;
+        const keranjang = document.getElementById('inputKeranjang').value;
+
+        const newData = {
+            id: Date.now().toString(),
+            tanggal: tanggal,
+            grade: grade,
+            berat: parseFloat(berat),
+            pcs: parseInt(pcs),
+            totalKg: parseFloat(totalKg),
+            keranjang: parseInt(keranjang)
+        };
+
+        dataList.push(newData);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
+
+        // Reset fields
+        document.getElementById('inputPcs').value = '';
+        document.getElementById('inputTotalKg').value = '';
+        document.getElementById('inputKeranjang').value = '';
+        
+        showToast('Data berhasil disimpan');
+    });
+
+    // DATA GROUPING FOR PIVOT
+    function getGroupedData(targetDate) {
+        const filtered = dataList.filter(d => d.tanggal === targetDate);
+        const groups = {};
+        
+        filtered.forEach(item => {
+            const key = `${item.grade}_${item.berat}`;
+            if (!groups[key]) {
+                groups[key] = {
+                    label: `Grade ${item.grade} (${item.berat} kg)`,
+                    grade: item.grade,
+                    berat: item.berat,
+                    items: []
+                };
+            }
+            groups[key].items.push(item);
+        });
+
+        // Urutkan Keys: A->C, lalu berat (kecil->besar)
+        const sortedKeys = Object.keys(groups).sort((a, b) => {
+            if (groups[a].grade !== groups[b].grade) {
+                return groups[a].grade.localeCompare(groups[b].grade);
+            }
+            return groups[a].berat - groups[b].berat;
+        });
+
+        // Cari baris terbanyak
+        let maxRows = 0;
+        sortedKeys.forEach(k => {
+            if (groups[k].items.length > maxRows) maxRows = groups[k].items.length;
+        });
+
+        return { groups, sortedKeys, maxRows, filteredData: filtered };
+    }
+
+    // RENDER PIVOT TABLE
+    window.renderTable = function() {
+        const container = document.getElementById('tableContainer');
+        const targetDate = document.getElementById('filterTanggal').value;
+        const { groups, sortedKeys, maxRows } = getGroupedData(targetDate);
+
+        if (sortedKeys.length === 0) {
+            container.innerHTML = `
+                <div class="py-10 text-center flex flex-col items-center">
+                    <i class="fa-regular fa-folder-open text-4xl text-gray-300 mb-2"></i>
+                    <p class="text-sm text-gray-500 font-medium">Belum ada data untuk tanggal ini</p>
+                </div>`;
+            return;
+        }
+
+        // Setup Table
+        let html = `<table class="tally-table text-xs text-gray-800 min-w-max" id="reportTable"><thead>`;
+
+        // Baris Header 1: Grade (Y kg)
+        html += `<tr>`;
+        sortedKeys.forEach(k => {
+            html += `<th colspan="2" class="text-center font-bold text-gray-700 whitespace-nowrap bg-emerald-50">${groups[k].label}</th>`;
+        });
+        html += `</tr>`;
+
+        // Baris Header 2: Subkolom Pcs & Kg
+        html += `<tr>`;
+        sortedKeys.forEach(() => {
+            html += `<th class="text-center font-semibold min-w-[70px]">Jumlah Pcs</th>`;
+            html += `<th class="text-center font-semibold min-w-[90px]">Berat Total kg</th>`;
+        });
+        html += `</tr></thead><tbody>`;
+
+        // Baris Data
+        for (let i = 0; i < maxRows; i++) {
+            html += `<tr>`;
+            sortedKeys.forEach(k => {
+                const item = groups[k].items[i];
+                if (item) {
+                    // Gunakan contenteditable="true" dan inputmode="numeric" untuk UX mobile
+                    html += `
+                        <td contenteditable="true" inputmode="numeric" 
+                            data-id="${item.id}" data-field="pcs" 
+                            onblur="handleInlineEdit(this)"
+                            onkeypress="return restrictKey(event)"
+                            class="text-center font-bold text-gray-800 whitespace-nowrap">${item.pcs}</td>
+                        <td contenteditable="true" inputmode="decimal" 
+                            data-id="${item.id}" data-field="totalKg" 
+                            onblur="handleInlineEdit(this)"
+                            onkeypress="return restrictKey(event)"
+                            class="text-center font-bold text-gray-800 whitespace-nowrap">${item.totalKg}</td>
+                    `;
+                } else {
+                    html += `<td></td><td></td>`; // Kosong jika baris berlebih
+                }
+            });
+            html += `</tr>`;
+        }
+        html += `</tbody>`;
+
+        // Footer Total
+        html += `<tfoot><tr class="bg-emerald-50">`;
+        sortedKeys.forEach(k => {
+            const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
+            const sumKilo = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
+            const fSumKilo = Math.round(sumKilo * 100) / 100;
+
+            html += `<td class="text-center font-extrabold text-emerald-800">${sumPcs}</td>`;
+            html += `<td class="text-center font-extrabold text-emerald-800">${fSumKilo}</td>`;
+        });
+        html += `</tr></tfoot></table>`;
+
+        container.innerHTML = html;
+    }
+
+    // INLINE EDITING LOGIC
+    window.restrictKey = function(e) {
+        // Cegah enter membuat baris baru di dalam contenteditable
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            e.target.blur(); // Trigger blur
+            return false;
+        }
+    }
+
+    window.handleInlineEdit = function(cell) {
+        const id = cell.getAttribute('data-id');
+        const field = cell.getAttribute('data-field');
+        // Bersihkan string, parse ke float/int
+        const valString = cell.innerText.replace(/[^0-9.]/g, ''); 
+        const newValue = parseFloat(valString) || 0;
+
+        const index = dataList.findIndex(d => d.id === id);
+        if (index === -1) return;
+
+        if (newValue <= 0) {
+            // Hapus jika 0
+            dataList.splice(index, 1);
+            showToast('Data baris dihapus', true);
+        } else {
+            // Update
+            if (field === 'pcs') dataList[index].pcs = parseInt(newValue);
+            if (field === 'totalKg') dataList[index].totalKg = parseFloat(newValue);
+            showToast('Tabel diperbarui');
+        }
+
+        // Save & Rerender
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
+        renderTable();
+    }
+
+    // EXPORT EXCEL (SheetJS)
+    window.exportExcel = function() {
+        const table = document.getElementById('reportTable');
+        if (!table) {
+            showToast('Tidak ada data untuk diexport!', true);
+            return;
+        }
+        
+        // Convert HTML Table ke Worksheet
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.table_to_sheet(table);
+        
+        XLSX.utils.book_append_sheet(wb, ws, "Laporan RPA");
+        
+        const dateStr = document.getElementById('filterTanggal').value;
+        XLSX.writeFile(wb, `Laporan_Timbang_${dateStr}.xlsx`);
+    }
+
+    // KIRIM WHATSAPP
+    window.kirimWA = function() {
+        const targetDate = document.getElementById('filterTanggal').value;
+        const { groups, sortedKeys, filteredData } = getGroupedData(targetDate);
+
+        if (sortedKeys.length === 0) {
+            showToast('Tidak ada data untuk dikirim!', true);
+            return;
+        }
+
+        // Format Tanggal
+        const dateObj = new Date(targetDate);
+        const dateFormatted = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+        // Header
+        let message = `*Laporan Potong Ayam*\nTanggal: ${dateFormatted}\n\n`;
+
+        // Rekap per Grup & Grand Total
+        let grandTotalPcs = 0;
+        let grandTotalKg = 0;
+
+        sortedKeys.forEach(k => {
+            const g = groups[k];
+            const sumPcs = g.items.reduce((acc, curr) => acc + curr.pcs, 0);
+            const sumKilo = g.items.reduce((acc, curr) => acc + curr.totalKg, 0);
+            
+            grandTotalPcs += sumPcs;
+            grandTotalKg += sumKilo;
+
+            const fSumKilo = Math.round(sumKilo * 100) / 100;
+            message += `${g.label} : ${sumPcs} ekor, ${fSumKilo} kg\n`;
+        });
+
+        // Grand Total Footer
+        const fGrandTotalKg = Math.round(grandTotalKg * 100) / 100;
+        message += `\n*Total*: ${grandTotalPcs} ekor, ${fGrandTotalKg} kg`;
+
+        // Arahkan ke WhatsApp
+        const phoneNumber = '6282317165861';
+        const encoded = encodeURIComponent(message);
+        window.open(`https://wa.me/${phoneNumber}?text=${encoded}`, '_blank');
+    }
+</script>
+
+</body>
+</html>
