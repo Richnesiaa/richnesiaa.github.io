@@ -114,7 +114,12 @@
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-600 mb-1">Jumlah Ekor (Pcs)</label>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-xs font-semibold text-gray-600">Jumlah Ekor (Pcs)</label>
+                            <button type="button" onclick="openCalcPcsModal()" class="text-[11px] text-orange-600 hover:text-orange-700 font-semibold flex items-center gap-1 bg-orange-50 px-1.5 py-0.5 rounded border border-orange-200 active:scale-95 transition">
+                                <i class="fa-solid fa-calculator text-[10px]"></i> Hitung
+                            </button>
+                        </div>
                         <input type="number" id="inputPcs" min="1" step="1" inputmode="numeric" required placeholder="Cth: 20" class="w-full p-2.5 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-orange-500 outline-none transition">
                     </div>
                     <div>
@@ -397,6 +402,62 @@
         </div>
     </div>
 
+    <!-- MODAL KALKULATOR JUMLAH EKOR -->
+    <div id="calcPcsModal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 animate-fade-in print:hidden">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-xs overflow-hidden transform scale-100 transition-transform">
+            <div class="p-3.5 border-b bg-orange-50 flex justify-between items-center">
+                <h3 class="font-bold text-orange-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-calculator text-orange-600"></i> Hitung Jumlah Ekor
+                </h3>
+                <button type="button" onclick="closeCalcPcsModal()" class="text-gray-400 hover:text-red-500 text-lg transition-colors p-1">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="p-4 space-y-3">
+                <!-- Tampilan Layar Kalkulator -->
+                <div class="bg-gray-900 rounded-xl p-3 text-right font-mono text-white">
+                    <div id="calcExprDisplay" class="text-xs text-gray-400 h-4 overflow-hidden text-ellipsis whitespace-nowrap">0</div>
+                    <div id="calcResultDisplay" class="text-2xl font-bold tracking-wider text-orange-400 h-8 overflow-hidden text-ellipsis">0</div>
+                </div>
+
+                <!-- Tombol Keypad Kalkulator -->
+                <div class="grid grid-cols-4 gap-1.5 text-sm font-bold">
+                    <button type="button" onclick="calcPcsClear()" class="bg-red-100 text-red-600 hover:bg-red-200 p-2.5 rounded-lg active:scale-95 transition">C</button>
+                    <button type="button" onclick="calcPcsBackspace()" class="bg-gray-100 text-gray-700 hover:bg-gray-200 p-2.5 rounded-lg active:scale-95 transition"><i class="fa-solid fa-backspace"></i></button>
+                    <button type="button" onclick="calcPcsAppend('/')" class="bg-orange-100 text-orange-700 hover:bg-orange-200 p-2.5 rounded-lg active:scale-95 transition">÷</button>
+                    <button type="button" onclick="calcPcsAppend('*')" class="bg-orange-100 text-orange-700 hover:bg-orange-200 p-2.5 rounded-lg active:scale-95 transition">×</button>
+
+                    <button type="button" onclick="calcPcsAppend('7')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">7</button>
+                    <button type="button" onclick="calcPcsAppend('8')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">8</button>
+                    <button type="button" onclick="calcPcsAppend('9')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">9</button>
+                    <button type="button" onclick="calcPcsAppend('-')" class="bg-orange-100 text-orange-700 hover:bg-orange-200 p-2.5 rounded-lg active:scale-95 transition">-</button>
+
+                    <button type="button" onclick="calcPcsAppend('4')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">4</button>
+                    <button type="button" onclick="calcPcsAppend('5')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">5</button>
+                    <button type="button" onclick="calcPcsAppend('6')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">6</button>
+                    <button type="button" onclick="calcPcsAppend('+')" class="bg-orange-100 text-orange-700 hover:bg-orange-200 p-2.5 rounded-lg active:scale-95 transition">+</button>
+
+                    <button type="button" onclick="calcPcsAppend('1')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">1</button>
+                    <button type="button" onclick="calcPcsAppend('2')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">2</button>
+                    <button type="button" onclick="calcPcsAppend('3')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">3</button>
+                    <button type="button" onclick="calcPcsEqual()" class="bg-orange-500 text-white hover:bg-orange-600 row-span-2 p-2.5 rounded-lg flex items-center justify-center text-lg active:scale-95 transition">=</button>
+
+                    <button type="button" onclick="calcPcsAppend('0')" class="col-span-2 bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">0</button>
+                    <button type="button" onclick="calcPcsAppend('00')" class="bg-gray-50 text-gray-800 border hover:bg-gray-100 p-2.5 rounded-lg active:scale-95 transition">00</button>
+                </div>
+
+                <div class="pt-2 flex gap-2">
+                    <button type="button" onclick="closeCalcPcsModal()" class="flex-1 py-2.5 rounded-xl border border-gray-300 text-gray-600 font-semibold text-xs hover:bg-gray-50 active:scale-95 transition">
+                        Batal
+                    </button>
+                    <button type="button" onclick="applyCalcPcsResult()" class="flex-1 py-2.5 rounded-xl bg-orange-600 text-white font-bold text-xs shadow-md hover:bg-orange-700 active:scale-95 transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-check"></i> Gunakan Hasil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <!-- AREA CETAK KHUSUS -->
@@ -416,6 +477,117 @@
     let kedatanganList = [];
     let bagianList = [];
     let customBagianList = [];
+    
+    let calcPcsInput = '';
+
+    function openCalcPcsModal() {
+        const currentPcs = document.getElementById('inputPcs').value;
+        if (currentPcs && !isNaN(currentPcs) && parseFloat(currentPcs) > 0) {
+            calcPcsInput = currentPcs.toString();
+        } else {
+            calcPcsInput = '';
+        }
+        updateCalcPcsDisplay();
+        const modal = document.getElementById('calcPcsModal');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeCalcPcsModal() {
+        const modal = document.getElementById('calcPcsModal');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    function updateCalcPcsDisplay() {
+        const exprEl = document.getElementById('calcExprDisplay');
+        const resEl = document.getElementById('calcResultDisplay');
+        if (!exprEl || !resEl) return;
+
+        exprEl.innerText = calcPcsInput || '0';
+
+        let currentEval = 0;
+        try {
+            if (calcPcsInput) {
+                const sanitized = calcPcsInput.replace(/[^0-9+\-*/.]/g, '');
+                if (sanitized) {
+                    currentEval = Function('"use strict"; return (' + sanitized + ')')();
+                }
+            }
+        } catch (e) {
+            currentEval = 'Error';
+        }
+
+        if (typeof currentEval === 'number' && !isNaN(currentEval)) {
+            resEl.innerText = Math.round(currentEval);
+        } else if (currentEval === 'Error') {
+            resEl.innerText = '...';
+        } else {
+            resEl.innerText = '0';
+        }
+    }
+
+    function calcPcsAppend(char) {
+        const operators = ['+', '-', '*', '/'];
+        const lastChar = calcPcsInput.slice(-1);
+        
+        if (operators.includes(char) && operators.includes(lastChar)) {
+            calcPcsInput = calcPcsInput.slice(0, -1) + char;
+        } else {
+            calcPcsInput += char;
+        }
+        updateCalcPcsDisplay();
+    }
+
+    function calcPcsClear() {
+        calcPcsInput = '';
+        updateCalcPcsDisplay();
+    }
+
+    function calcPcsBackspace() {
+        calcPcsInput = calcPcsInput.slice(0, -1);
+        updateCalcPcsDisplay();
+    }
+
+    function calcPcsEqual() {
+        try {
+            if (calcPcsInput) {
+                const sanitized = calcPcsInput.replace(/[^0-9+\-*/.]/g, '');
+                if (sanitized) {
+                    const result = Function('"use strict"; return (' + sanitized + ')')();
+                    if (!isNaN(result)) {
+                        calcPcsInput = Math.round(result).toString();
+                    }
+                }
+            }
+        } catch (e) {
+            calcPcsInput = '';
+        }
+        updateCalcPcsDisplay();
+    }
+
+    function applyCalcPcsResult() {
+        let finalVal = 0;
+        try {
+            if (calcPcsInput) {
+                const sanitized = calcPcsInput.replace(/[^0-9+\-*/.]/g, '');
+                if (sanitized) {
+                    const evalResult = Function('"use strict"; return (' + sanitized + ')')();
+                    if (!isNaN(evalResult)) {
+                        finalVal = Math.round(evalResult);
+                    }
+                }
+            }
+        } catch (e) {
+            finalVal = 0;
+        }
+
+        if (finalVal > 0) {
+            document.getElementById('inputPcs').value = finalVal;
+            showToast(`Jumlah ekor set: ${finalVal}`);
+            closeCalcPcsModal();
+        } else {
+            showToast('Hasil perhitungan tidak valid!', true);
+        }
+    }
 
     const DEFAULT_BAGIAN = ['Kepala Utuh', 'Ceker', 'Usus', 'Ati', 'Ampela', 'Sisa Jantung', 'Dada', 'Paha', 'Sayap', 'Kulit', 'Kerongkongan', 'Brutu'];
 
