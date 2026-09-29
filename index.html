@@ -920,17 +920,84 @@
             showToast('Baris data dihapus', true);
         } else {
             dataList[index][field] = field === 'pcs' ? Math.round(newValue) : newValue;
-            showToast('Data diperbarui');
-        }
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
-        renderTable();
+        showToast('Data diperbarui');
+    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
+    renderTable();
+}
+
+function exportExcel() {
+    const targetDate = document.getElementById('filterTanggalPotong').value;
+    const { filteredData } = getGroupedData(targetDate);
+    
+    if (filteredData.length === 0) {
+        showToast('Tidak ada data potong karkas!', true);
+        return;
     }
 
-    // ==========================================
-    // MODUL DATA KEDATANGAN (SIDE-BY-SIDE TABLES)
-    // ==========================================
+    const aoa = [
+        [`Laporan Potong Karkas - RPA Auto`],
+        [`Tanggal: ${targetDate}`],
+        [""],
+        ['No', 'Nama Kandang', 'Grade', 'Ukuran (Kg)', 'Pcs (Ekor)', 'Netto (Kg)', 'Status Muat']
+    ];
 
-    function renderTableKedatangan() {
+    let totalPcs = 0, totalBerat = 0;
+    filteredData.forEach((item, index) => {
+        aoa.push([
+            index + 1,
+            item.namaKandang || '-',
+            item.grade,
+            item.berat,
+            item.pcs,
+            item.totalKg,
+            item.naikMobil ? 'Sudah Muat' : 'Belum'
+        ]);
+        totalPcs += item.pcs;
+        totalBerat += item.totalKg;
+    });
+
+    aoa.push(["", "", "", "TOTAL KESELURUHAN", totalPcs, Math.round(totalBerat * 100) / 100, ""]);
+
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Karkas");
+    XLSX.writeFile(wb, `Laporan_Karkas_${targetDate}.xlsx`);
+}
+
+function kirimWA() {
+    const targetDate = document.getElementById('filterTanggalPotong').value;
+    const { groups, sortedKeys, filteredData } = getGroupedData(targetDate);
+    
+    if (filteredData.length === 0) {
+        showToast('Tidak ada data karkas!', true);
+        return;
+    }
+
+    let msg = `*Laporan Potong Karkas*\nTanggal: ${targetDate}\n\n`;
+    
+    let grandPcs = 0;
+    let grandBerat = 0;
+
+    sortedKeys.forEach(k => {
+        const sumTotal = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
+        const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
+        grandPcs += sumPcs;
+        grandBerat += sumTotal;
+        msg += `• Grade ${groups[k].grade} (${groups[k].berat} kg): ${sumPcs} Ekor = ${Math.round(sumTotal * 100) / 100} Kg\n`;
+    });
+
+    msg += `\n*TOTAL HARI INI:*\n- Total Ekor: ${grandPcs} Ekor\n- Total Berat: ${Math.round(grandBerat * 100) / 100} Kg`;
+    
+    // Sesuaikan nomor WA default di bawah ini
+    window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+// ==========================================
+// MODUL DATA KEDATANGAN (SIDE-BY-SIDE TABLES)
+// ==========================================
+
+function renderTableKedatangan() {
         const container = document.getElementById('tableKedatanganContainer');
         if (!container) return;
 
