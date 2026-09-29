@@ -320,19 +320,67 @@
         </div>
     </div>
 
+    <!-- VIEW: TALLY MUAT (NAIK MOBIL) -->
+    <div id="view-tally" class="p-4 hidden animate-fade-in">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-4 border-t-4 border-t-blue-500">
+            <h2 class="text-gray-700 font-bold mb-4 border-b pb-2 flex items-center gap-2">
+                <i class="fa-solid fa-truck-loading text-blue-500"></i> Tally Muat (Naik Mobil)
+            </h2>
+            
+            <div class="flex gap-2 items-start mb-4 bg-blue-50 p-3 rounded-lg border border-blue-200">
+                <i class="fa-solid fa-circle-info text-blue-500 mt-0.5 text-sm"></i>
+                <p class="text-[11px] text-blue-800 leading-tight">
+                    Tandai karkas yang sudah dinaikkan ke mobil. Data diambil langsung dari <b>Input Karkas (Beranda)</b>.
+                </p>
+            </div>
+
+            <!-- Filter Tanggal Tally -->
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4 flex items-center gap-3">
+                <div class="bg-blue-100 text-blue-600 p-2 rounded-lg"><i class="fa-solid fa-calendar-day"></i></div>
+                <div class="flex-1">
+                    <label class="block text-[10px] uppercase font-bold text-gray-400 tracking-wider">Pilih Tanggal</label>
+                    <input type="date" id="filterTanggalTally" class="w-full bg-transparent text-sm font-bold text-gray-700 outline-none" onchange="renderTableTally()">
+                </div>
+            </div>
+
+            <!-- Summary Info -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-green-50 border border-green-100 p-3 rounded-lg text-center">
+                    <div class="text-[10px] text-green-600 font-bold uppercase">Total Sudah Muat</div>
+                    <div id="tallyTotalMuat" class="text-lg font-black text-green-700">0 Kg</div>
+                </div>
+                <div class="bg-orange-50 border border-orange-100 p-3 rounded-lg text-center">
+                    <div class="text-[10px] text-orange-600 font-bold uppercase">Sisa Belum Muat</div>
+                    <div id="tallySisaBelum" class="text-lg font-black text-orange-700">0 Kg</div>
+                </div>
+            </div>
+
+            <!-- Tabel Data Tally -->
+            <div class="overflow-x-auto bg-white rounded-xl shadow-sm border border-gray-200">
+                <div id="tableTallyContainer">
+                    <!-- Data Tally via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- BOTTOM NAVIGATION -->
     <nav class="fixed bottom-0 w-full max-w-md bg-white border-t border-gray-200 pb-safe z-30 flex">
         <button onclick="switchTab('home')" id="nav-home" class="flex-1 py-3 flex flex-col items-center justify-center text-orange-600 font-bold transition-colors">
             <i class="fa-solid fa-house mb-1 text-lg"></i>
-            <span class="text-[10px] uppercase tracking-wide">Beranda / Karkas</span>
+            <span class="text-[10px] uppercase tracking-wide">Beranda</span>
         </button>
         <button onclick="switchTab('kedatangan')" id="nav-kedatangan" class="flex-1 py-3 flex flex-col items-center justify-center text-gray-400 font-medium transition-colors hover:text-orange-500">
             <i class="fa-solid fa-truck mb-1 text-lg"></i>
-            <span class="text-[10px] uppercase tracking-wide">Kedatangan</span>
+            <span class="text-[10px] uppercase tracking-wide">Datang</span>
         </button>
         <button onclick="switchTab('bagian')" id="nav-bagian" class="flex-1 py-3 flex flex-col items-center justify-center text-gray-400 font-medium transition-colors hover:text-orange-500">
             <i class="fa-solid fa-drumstick-bite mb-1 text-lg"></i>
             <span class="text-[10px] uppercase tracking-wide">Bagian</span>
+        </button>
+        <button onclick="switchTab('tally')" id="nav-tally" class="flex-1 py-3 flex flex-col items-center justify-center text-gray-400 font-medium transition-colors hover:text-blue-500">
+            <i class="fa-solid fa-clipboard-check mb-1 text-lg"></i>
+            <span class="text-[10px] uppercase tracking-wide">Tally</span>
         </button>
     </nav>
 
@@ -704,18 +752,20 @@
         const views = {
             home: document.getElementById('view-home'),
             kedatangan: document.getElementById('view-kedatangan'),
-            bagian: document.getElementById('view-bagian')
+            bagian: document.getElementById('view-bagian'),
+            tally: document.getElementById('view-tally')
         };
         const navs = {
             home: document.getElementById('nav-home'),
             kedatangan: document.getElementById('nav-kedatangan'),
-            bagian: document.getElementById('nav-bagian')
+            bagian: document.getElementById('nav-bagian'),
+            tally: document.getElementById('nav-tally')
         };
 
         Object.keys(views).forEach(key => {
             if (views[key]) views[key].classList.add('hidden');
             if (navs[key]) {
-                navs[key].classList.remove('font-bold', 'text-orange-600', 'text-orange-500');
+                navs[key].classList.remove('font-bold', 'text-orange-600', 'text-orange-500', 'text-blue-500');
                 navs[key].classList.add('text-gray-400', 'font-medium');
             }
         });
@@ -735,6 +785,9 @@
         } else if (tab === 'bagian') {
             if (navs.bagian) navs.bagian.classList.add('text-orange-500');
             renderTableBagian();
+        } else if (tab === 'tally') {
+            if (navs.tally) navs.tally.classList.add('text-blue-500');
+            renderTableTally();
         }
     }
 
@@ -1304,6 +1357,93 @@
         window.open(`https://wa.me/${phoneNumber}?text=${encoded}`, '_blank');
     }
 
+    function renderTableTally() {
+        const container = document.getElementById('tableTallyContainer');
+        if (!container) return;
+
+        const filterInput = document.getElementById('filterTanggalTally');
+        if (!filterInput) return;
+        const targetDate = filterInput.value;
+
+        const filtered = dataList.filter(d => d.tanggal === targetDate);
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="py-10 text-center flex flex-col items-center">
+                    <i class="fa-solid fa-box-open text-4xl text-gray-300 mb-2"></i>
+                    <p class="text-sm text-gray-500 font-medium">Belum ada data karkas di tanggal ini</p>
+                </div>`;
+            document.getElementById('tallyTotalMuat').innerText = '0 Kg';
+            document.getElementById('tallySisaBelum').innerText = '0 Kg';
+            return;
+        }
+
+        let totalMuat = 0;
+        let sisaBelum = 0;
+
+        let html = `<table class="w-full text-left text-xs border-collapse">
+            <thead>
+                <tr class="bg-gray-100 border-b border-gray-300 text-gray-600">
+                    <th class="p-2 font-semibold min-w-[70px]">Grade(Kg)</th>
+                    <th class="p-2 font-semibold text-center">Pcs</th>
+                    <th class="p-2 font-semibold text-center">Netto(Kg)</th>
+                    <th class="p-2 font-semibold text-center w-[80px]">Status</th>
+                </tr>
+            </thead>
+            <tbody>`;
+
+        // Sort data so un-loaded items are usually at the top or kept in input order
+        // Here we keep input order but style them
+        filtered.forEach(item => {
+            const isNaik = item.naikMobil === true;
+            if (isNaik) {
+                totalMuat += item.totalKg;
+            } else {
+                sisaBelum += item.totalKg;
+            }
+
+            const statusBtn = isNaik 
+                ? `<button onclick="toggleNaikMobil('${item.id}')" class="bg-green-500 text-white px-2.5 py-1.5 rounded-lg text-[10px] font-bold shadow-sm w-full active:scale-95 transition flex items-center justify-center gap-1"><i class="fa-solid fa-check"></i> Naik</button>`
+                : `<button onclick="toggleNaikMobil('${item.id}')" class="bg-gray-200 text-gray-600 hover:bg-gray-300 px-2.5 py-1.5 rounded-lg text-[10px] font-bold shadow-sm w-full active:scale-95 transition">Belum</button>`;
+            
+            const rowClass = isNaik ? "bg-green-50/50" : "bg-white";
+            const textOpacity = isNaik ? "opacity-60" : "";
+
+            html += `<tr class="border-b border-gray-100 ${rowClass}">
+                <td class="p-2 ${textOpacity}">
+                    <div class="font-bold text-gray-800">Gr ${item.grade}</div>
+                    <div class="text-[10px] text-gray-500">${item.berat} kg</div>
+                </td>
+                <td class="p-2 text-center font-bold text-gray-700 ${textOpacity}">${item.pcs}</td>
+                <td class="p-2 text-center font-bold text-orange-700 ${textOpacity}">${item.totalKg}</td>
+                <td class="p-2 text-center align-middle">${statusBtn}</td>
+            </tr>`;
+        });
+
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+
+        document.getElementById('tallyTotalMuat').innerText = `${Math.round(totalMuat * 100) / 100} Kg`;
+        document.getElementById('tallySisaBelum').innerText = `${Math.round(sisaBelum * 100) / 100} Kg`;
+    }
+
+    function toggleNaikMobil(id) {
+        const index = dataList.findIndex(d => d.id === id);
+        if (index !== -1) {
+            const currentStatus = dataList[index].naikMobil || false;
+            dataList[index].naikMobil = !currentStatus;
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
+            renderTableTally();
+            
+            if (dataList[index].naikMobil) {
+                showToast('Ditandai sudah naik mobil!');
+            } else {
+                showToast('Dibatalkan, belum naik mobil', true);
+            }
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const savedData = localStorage.getItem(STORAGE_KEY);
         if (savedData) {
@@ -1333,6 +1473,7 @@
         if (document.getElementById('filterTanggalPotong')) document.getElementById('filterTanggalPotong').value = today;
         if (document.getElementById('inputTanggalKedatangan')) document.getElementById('inputTanggalKedatangan').value = today;
         if (document.getElementById('inputTanggalBagian')) document.getElementById('inputTanggalBagian').value = today;
+        if (document.getElementById('filterTanggalTally')) document.getElementById('filterTanggalTally').value = today;
 
         loadCustomBagian();
         renderBagianCategories();
@@ -1340,6 +1481,7 @@
         renderTable();
         renderTableKedatangan();
         renderTableBagian();
+        renderTableTally();
 
         // FORM SUBMIT BERANDA / POTONG
         const inputForm = document.getElementById('inputForm');
