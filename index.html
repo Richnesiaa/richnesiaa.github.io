@@ -278,7 +278,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1">Jam Kedatangan</label>
-                    <input type="time" id="inputJamKedatangan" required class="w-full h-11 px-3 bg-gray-50 border border-gray-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-orange-500 outline-none transition">
+                    <input type="time" id="inputJamKedatangan" required class="w-full h-11 px-3 bg-gray-50 border border-gray-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-orange-500 outline-none transition" onchange="renderTableKedatangan()">
                 </div>
             </div>
 
@@ -1027,7 +1027,7 @@
         msg += `--------------------------------\n`;
         msg += `*📈 TOTAL KESELURUHAN*\n`;
         msg += `🐔 *Total Ekor  :* ${grandPcs} Ekor\n`;
-        msg += `⚖️️ *Total Berat :* ${Math.round(grandBerat * 100) / 100} Kg`;
+        msg += `⚖ *Total Berat :* ${Math.round(grandBerat * 100) / 100} Kg`;
         
         window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
     }
@@ -1049,6 +1049,10 @@
         
         const totalRows = currentKedatanganRows.length;
         document.getElementById('totalBarisBadge').innerText = `${totalRows} Baris Ditimbang`;
+
+        // FIX BUG: Simpan session ke localStorage SEBELUM melakukan check (totalRows === 0).
+        // Dengan begini, ketika array kosong, localStorage ikut ter-update menjadi kosong.
+        autoSaveKedatanganLocal();
 
         if (totalRows === 0) {
             container.innerHTML = `<div class="w-full py-8 text-center text-gray-400 font-semibold text-xs border border-dashed border-gray-300 rounded-xl bg-gray-50"><i class="fa-solid fa-truck text-2xl mb-1 text-gray-300 block"></i>Belum ada data timbangan kedatangan. Tambahkan baris di atas!</div>`;
@@ -1120,7 +1124,6 @@
         }
 
         container.innerHTML = flexHtml;
-        autoSaveKedatanganLocal();
     }
 
     function tambahBarisKedatangan() {
@@ -1451,74 +1454,55 @@
         renderTableTally();
 
         // Submit Form Beranda (Karkas)
-        document.getElementById('inputForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const tanggal = document.getElementById('inputTanggal').value;
-            const grade = document.getElementById('inputGrade').value;
-            const berat = parseFloat(document.getElementById('inputBerat').value);
-            const pcs = parseInt(document.getElementById('inputPcs').value);
-            const totalKg = parseFloat(document.getElementById('inputTotalKg').value);
-            const keranjang = parseInt(document.getElementById('inputKeranjang').value) || 1;
+        const inputForm = document.getElementById('inputForm');
+        if (inputForm) {
+            inputForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = Date.now().toString();
+                const tanggal = document.getElementById('inputTanggal').value;
+                const grade = document.getElementById('inputGrade').value;
+                const berat = parseFloat(document.getElementById('inputBerat').value);
+                const pcs = parseInt(document.getElementById('inputPcs').value);
+                const totalKg = parseFloat(document.getElementById('inputTotalKg').value);
 
-            if (isNaN(totalKg) || totalKg <= 0) {
-                showToast('Berat bersih tidak valid!', true);
-                return;
-            }
+                if (totalKg <= 0) { showToast('Berat bersih harus lebih dari 0', true); return; }
 
-            dataList.push({
-                id: Date.now().toString(),
-                tanggal,
-                namaKandang: document.getElementById('inputNamaKandang').value,
-                alamatKandang: document.getElementById('inputAlamatKandang').value,
-                grade, berat, pcs, totalKg, keranjang,
-                beratKotor: parseFloat(document.getElementById('inputBeratKotor').value),
-                beratKeranjang: parseFloat(document.getElementById('inputBeratKeranjang').value),
-                naikMobil: false
+                dataList.push({ id, tanggal, grade, berat, pcs, totalKg, naikMobil: false });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
+                
+                showToast('Data berhasil disimpan');
+                
+                document.getElementById('inputPcs').value = '';
+                document.getElementById('inputBeratKotor').value = '';
+                document.getElementById('inputKeranjang').value = '';
+                document.getElementById('inputBeratKeranjang').value = '';
+                document.getElementById('inputTotalKg').value = '';
+                
+                renderTable();
             });
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
-
-            document.getElementById('previewTanggal').innerText = tanggal;
-            document.getElementById('previewGrade').innerText = `${grade} (${berat} kg)`;
-            document.getElementById('previewPcs').innerText = `${pcs} Ekor`;
-            document.getElementById('previewNetto').innerText = `${totalKg.toFixed(2)} Kg`;
-
-            let printHtml = '';
-            for (let i = 1; i <= keranjang; i++) {
-                printHtml += `<div class="w-[72mm] border-2 border-black p-4 mb-4 font-mono text-black mx-auto bg-white"><div class="text-center font-bold text-base border-b-2 border-black pb-2 mb-3">*** RPA AUTO ***</div><div class="text-xs pb-2 mb-2 space-y-1"><div>TANGGAL: ${tanggal}</div><div>GRADE: ${grade} (${berat} kg)</div><div>KERANJANG: ${i}/${keranjang}</div></div><div class="text-sm font-bold pb-2 mb-3"><div>PCS: ${Math.round(pcs/keranjang)} EKOR</div><div class="text-lg">NETTO: ${(totalKg/keranjang).toFixed(2)} KG</div></div></div>`;
-            }
-            document.getElementById('printLabelsContainer').innerHTML = printHtml;
-            document.getElementById('inputPcs').value = '';
-            document.getElementById('inputBeratKotor').value = '';
-            document.getElementById('inputKeranjang').value = '';
-            document.getElementById('inputTotalKg').value = '';
-            showToast('Data karkas tersimpan!');
-            renderTable();
-            document.getElementById('labelModal').classList.remove('hidden');
-        });
+        }
 
         // Submit Form Bagian
-        document.getElementById('formBagian').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const berat = parseFloat(document.getElementById('inputBeratBagian').value) || 0;
-            if (berat <= 0) { showToast('Berat tidak valid!', true); return; }
-            const jenis = document.getElementById('inputJenisBagian').value;
-            bagianList.push({
-                id: 'bagian_' + Date.now(),
-                tanggal: document.getElementById('inputTanggalBagian').value,
-                jenis, berat
+        const formBagian = document.getElementById('formBagian');
+        if (formBagian) {
+            formBagian.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = Date.now().toString();
+                const tanggal = document.getElementById('inputTanggalBagian').value;
+                const jenis = document.getElementById('inputJenisBagian').value;
+                const berat = parseFloat(document.getElementById('inputBeratBagian').value);
+
+                bagianList.push({ id, tanggal, jenis, berat });
+                localStorage.setItem(STORAGE_KEY_BAGIAN, JSON.stringify(bagianList));
+                
+                showToast('Data Bagian ditambahkan');
+                document.getElementById('inputBeratBagian').value = '';
+                
+                renderTableBagian();
             });
-            localStorage.setItem(STORAGE_KEY_BAGIAN, JSON.stringify(bagianList));
-            document.getElementById('inputBeratBagian').value = '';
-            showToast(`Bagian ${jenis} disimpan`);
-            renderTableBagian();
-        });
+        }
     });
+
 </script>
 </body>
 </html>
-```
-
-### Perubahan yang Dilakukan:
-1. **Excel Beranda (Karkas)**: Mengubah format `['No', 'Nama Kandang', 'Grade'...]` menjadi format Pivot Table yang sama persis seperti tabel di aplikasi, di mana di bagian atas ada header "Grade", di bawahnya ada sub-header "Pcs" dan "Berat (Kg)", disusul dengan daftar angka ke bawah dengan penjumlahan grand-total di bagian bawahnya.
-2. **Excel Kedatangan & Bagian**: Dibuat list standar namun diberikan header yang lebih jelas dan kotak **RINGKASAN** yang tersusun rapi di posisi yang lebih sesuai agar format datanya bersih saat dibuka di Office/Excel.
-3. **Format Pesan WhatsApp (Karkas, Kedatangan, Bagian)**: Kini menyertakan Emoji (`📊`, `📈`, `🐔`, `⚖️`, dsb), disusun dalam format list bersarang yang jauh lebih enak dibaca dan profesional (ada pemisah baris `----------`). Rincian per baris atau grade dijabarkan lengkap beserta total akhirnya.
