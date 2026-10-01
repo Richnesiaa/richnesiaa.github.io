@@ -101,12 +101,32 @@
             </div>
         </div>
         <span class="text-[10px] bg-white/20 backdrop-blur-md text-white px-2.5 py-1 rounded-full border border-white/30 font-bold tracking-wide uppercase">
-            v5.3 Step Voice
+            v5.4 AI Scan
         </span>
     </header>
 
     <div id="view-home" class="p-4 md:p-6 block space-y-5">
         
+        <!-- AI Scan Tally Sheet Card -->
+        <div class="bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl p-4 text-white shadow-md space-y-3">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-camera text-lg"></i> Scan Foto Tally Karkas</h3>
+                    <p class="text-[11px] text-orange-100 mt-0.5">Ambil foto atau upload lembar kertas laporan packing</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 pt-1">
+                <label class="bg-white text-orange-600 font-bold py-2.5 px-3 rounded-xl text-xs shadow hover:bg-orange-50 active:scale-95 transition cursor-pointer flex items-center justify-center gap-1.5 text-center">
+                    <i class="fa-solid fa-camera"></i> Buka Kamera
+                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleImageUpload(event)">
+                </label>
+                <label class="bg-white/10 hover:bg-white/20 text-white border border-white/30 font-bold py-2.5 px-3 rounded-xl text-xs shadow backdrop-blur-sm active:scale-95 transition cursor-pointer flex items-center justify-center gap-1.5 text-center">
+                    <i class="fa-solid fa-upload"></i> Upload Galeri
+                    <input type="file" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                </label>
+            </div>
+        </div>
+
         <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-5 space-y-4">
             <div class="flex justify-between items-center border-b border-gray-100 pb-3">
                 <h2 class="text-gray-800 font-bold flex items-center gap-2 text-base">
@@ -118,7 +138,6 @@
             </div>
             
             <form id="inputForm" class="space-y-4">
-                
                 <div>
                     <label class="block text-xs font-bold text-gray-700 mb-1">Tanggal Potong</label>
                     <input type="date" id="inputTanggal" required class="w-full h-12 px-3 bg-gray-50 border border-gray-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition" onchange="renderTable()">
@@ -621,10 +640,9 @@
     let calcPcsInput = '';
     let currentCalcTarget = 'inputPcs';
 
-    // --- STREAMING_CHUNK:Voice Wizard Step-by-Step State ---
     let recognition;
     let isWizardActive = false;
-    let wizardCurrentStep = 1; // 1: Grade & Size, 2: Pcs, 3: Kotor
+    let wizardCurrentStep = 1;
 
     function initSpeechRecognition() {
         if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -721,27 +739,14 @@
 
     function processWizardStep(text) {
         let t = text.toLowerCase().replace(/koma/g, '.').replace(/,/g, '.').trim();
-        console.log(`Wizard Step ${wizardCurrentStep} received:`, t);
-
         if (wizardCurrentStep === 1) {
             let gradeMatch = t.match(/([abc])/);
             let numMatch = t.match(/\d+(?:\.\d+)?/g);
-
-            if (gradeMatch) {
-                let g = gradeMatch[1].toUpperCase();
-                selectGrade(g);
-            }
-
+            if (gradeMatch) selectGrade(gradeMatch[1].toUpperCase());
             if (numMatch && numMatch.length > 0) {
                 let rawNum = parseFloat(numMatch[numMatch.length - 1]);
-                let sizeVal = 1.1;
-                if (rawNum >= 5 && rawNum <= 30 && !numMatch[numMatch.length - 1].includes('.')) {
-                    sizeVal = (rawNum / 10).toFixed(1);
-                } else {
-                    sizeVal = rawNum;
-                }
+                let sizeVal = (rawNum >= 5 && rawNum <= 30 && !numMatch[numMatch.length - 1].includes('.')) ? (rawNum / 10).toFixed(1) : rawNum;
                 document.getElementById('inputBerat').value = sizeVal;
-                
                 showToast(`Grade & Ukuran terekam (${sizeVal})`);
                 wizardCurrentStep = 2;
                 updateWizardUI();
@@ -749,13 +754,11 @@
             } else {
                 showToast("Grade/Ukuran tidak jelas, ulangi!", true);
             }
-
         } else if (wizardCurrentStep === 2) {
             let numMatch = t.match(/\d+/);
             if (numMatch) {
                 let pcsVal = parseInt(numMatch[0]);
                 document.getElementById('inputPcs').value = pcsVal;
-                
                 showToast(`Jumlah ${pcsVal} Ekor terekam`);
                 wizardCurrentStep = 3;
                 updateWizardUI();
@@ -763,19 +766,14 @@
             } else {
                 showToast("Jumlah ekor tidak jelas, ulangi!", true);
             }
-
         } else if (wizardCurrentStep === 3) {
             let numMatch = t.match(/\d+(?:\.\d+)?/);
             if (numMatch) {
                 let kotorVal = parseFloat(numMatch[0]);
                 document.getElementById('inputBeratKotor').value = kotorVal;
-                
                 showToast(`Berat Kotor ${kotorVal} Kg terekam`);
                 stopVoiceWizard();
-
-                setTimeout(() => {
-                    openKeranjangModal();
-                }, 400);
+                setTimeout(() => openKeranjangModal(), 400);
                 return;
             } else {
                 showToast("Berat kotor tidak jelas, ulangi!", true);
@@ -802,7 +800,6 @@
         showToast(`Pcs +${val}`);
     }
 
-    // --- STREAMING_CHUNK:Basket Modal & Storage Logic ---
     function openKeranjangModal() {
         const kotor = parseFloat(document.getElementById('inputBeratKotor').value) || 0;
         const pcs = parseInt(document.getElementById('inputPcs').value) || 0;
@@ -876,6 +873,126 @@
         document.getElementById('inputBeratKotor').value = '';
     }
 
+    // --- STREAMING_CHUNK:AI Image Upload & OCR Parser for Karkas Tally Sheet ---
+    async function handleImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        showToast("Memproses foto dengan AI...");
+        
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            const base64String = e.target.result.split(',')[1];
+            const mimeType = file.type || 'image/jpeg';
+
+            const systemPrompt = "Anda adalah AI asisten Rumah Potong Ayam yang sangat akurat dalam membaca lembar pencatatan fisik (Laporan Packing Karkas). Ekstrak data timbangan karkas dari foto yang diberikan.";
+            const userPrompt = `Analisa foto lembar Laporan Packing Karkas ini. Ekstrak data pencatatan timbangan per grade (Grade A, Grade B, dll.), ukuran/target berat per ekor (misal 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, dst.), jumlah ekor (pcs), dan berat total (kg) dari setiap kolom timbangan. 
+Kembalikan hasilnya DALAM FORMAT JSON ARRAY murni dengan struktur persis berikut:
+[
+  {
+    "tanggal": "YYYY-MM-DD",
+    "grade": "A",
+    "berat": 1.1,
+    "pcs": 60,
+    "totalKg": 66.5
+  }
+]
+Jika tanggal pada form di foto terbaca (misal 1-10-2026 atau 2026-10-01), konversikan ke format YYYY-MM-DD. Jika tidak ada, gunakan tanggal hari ini (${new Date().toLocaleDateString('en-CA')}). Pastikan hanya mengembalikan JSON array murni tanpa markdown tambahan.`;
+
+            const payload = {
+                contents: [
+                    {
+                        role: "user",
+                        parts: [
+                            { text: userPrompt },
+                            {
+                                inlineData: {
+                                    mimeType: mimeType,
+                                    data: base64String
+                                }
+                            }
+                        ]
+                    }
+                ],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            };
+
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            try {
+                let response = null;
+                let attempts = 0;
+                const maxRetries = 3;
+                let delay = 1000;
+
+                while (attempts < maxRetries) {
+                    try {
+                        response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+                        if (response.ok) break;
+                    } catch (err) {
+                        // retry
+                    }
+                    attempts++;
+                    await new Promise(res => setTimeout(res, delay));
+                    delay *= 2;
+                }
+
+                if (!response || !response.ok) {
+                    throw new Error("Gagal terhubung ke AI service");
+                }
+
+                const result = await response.json();
+                const candidate = result.candidates?.[0];
+                if (candidate && candidate.content?.parts?.[0]?.text) {
+                    let textResult = candidate.content.parts[0].text;
+                    textResult = textResult.replace(/```json/g, '').replace(/```/g, '').trim();
+                    const parsedData = JSON.parse(textResult);
+
+                    if (Array.isArray(parsedData) && parsedData.length > 0) {
+                        let addedCount = 0;
+                        parsedData.forEach(item => {
+                            const id = Date.now().toString() + Math.random().toString(36).substr(2, 5);
+                            const tanggal = item.tanggal || document.getElementById('inputTanggal').value;
+                            const grade = (item.grade || 'A').toUpperCase();
+                            const berat = parseFloat(item.berat) || 1.0;
+                            const pcs = parseInt(item.pcs) || 0;
+                            const totalKg = parseFloat(item.totalKg) || 0;
+
+                            if (pcs > 0 && totalKg > 0) {
+                                dataList.push({ id, tanggal, grade, berat, pcs, totalKg, naikMobil: false });
+                                addedCount++;
+                            }
+                        });
+
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
+                        renderTable();
+                        showToast(`Berhasil import ${addedCount} data dari foto!`);
+                    } else {
+                        showToast('Tidak ada data valid yang ditemukan pada foto.', true);
+                    }
+                } else {
+                    throw new Error("Format respons AI tidak valid");
+                }
+            } catch (error) {
+                console.error(error);
+                showToast('Gagal memproses foto dengan AI: ' + error.message, true);
+            } finally {
+                event.target.value = '';
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
     function showToast(message, isError = false) {
         const toast = document.getElementById('toast');
         if (!toast) return;
@@ -923,7 +1040,6 @@
         return { groups, sortedKeys, maxRows, filteredData: filtered };
     }
 
-    // --- STREAMING_CHUNK:Table Karkas Rendering with Item-Level Averages directly in cells ---
     function renderTable() {
         const container = document.getElementById('tableContainer');
         if (!container) return;
@@ -992,11 +1108,7 @@
     function exportExcel() {
         const targetDate = document.getElementById('filterTanggalPotong').value;
         const { groups, sortedKeys, maxRows, filteredData } = getGroupedData(targetDate);
-        
-        if (filteredData.length === 0) {
-            showToast('Tidak ada data potong karkas!', true);
-            return;
-        }
+        if (filteredData.length === 0) { showToast('Tidak ada data potong karkas!', true); return; }
 
         const aoa = [
             [`Laporan Potong Karkas - RPA Auto`],
@@ -1022,13 +1134,8 @@
             let row = [i + 1];
             sortedKeys.forEach(k => {
                 const item = groups[k].items[i];
-                if (item) {
-                    row.push(item.pcs);
-                    row.push(item.totalKg);
-                } else {
-                    row.push("");
-                    row.push("");
-                }
+                if (item) { row.push(item.pcs); row.push(item.totalKg); }
+                else { row.push(""); row.push(""); }
             });
             aoa.push(row);
         }
@@ -1058,38 +1165,23 @@
     function kirimWA() {
         const targetDate = document.getElementById('filterTanggalPotong').value;
         const { groups, sortedKeys, filteredData } = getGroupedData(targetDate);
-        
-        if (filteredData.length === 0) {
-            showToast('Tidak ada data karkas!', true);
-            return;
-        }
+        if (filteredData.length === 0) { showToast('Tidak ada data karkas!', true); return; }
 
-        let msg = `*LAPORAN POTONG KARKAS*\n`;
-        msg += `*Tanggal:* ${targetDate}\n`;
-        msg += `--------------------------------\n\n`;
-        msg += `*RINCIAN PER GRADE:*\n`;
-        
-        let grandPcs = 0;
-        let grandBerat = 0;
+        let msg = `*LAPORAN POTONG KARKAS*\n*Tanggal:* ${targetDate}\n--------------------------------\n\n*RINCIAN PER GRADE:*\n`;
+        let grandPcs = 0, grandBerat = 0;
 
         sortedKeys.forEach(k => {
             const sumTotal = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
             const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
-            grandPcs += sumPcs;
-            grandBerat += sumTotal;
-            msg += `- *Grade ${groups[k].grade} (${groups[k].berat} kg)*\n`;
-            msg += `   └ ${sumPcs} Ekor  |  ${Math.round(sumTotal * 100) / 100} Kg\n\n`;
+            grandPcs += sumPcs; grandBerat += sumTotal;
+            msg += `- *Grade ${groups[k].grade} (${groups[k].berat} kg)*\n   └ ${sumPcs} Ekor  |  ${Math.round(sumTotal * 100) / 100} Kg\n\n`;
         });
 
-        msg += `--------------------------------\n`;
-        msg += `*TOTAL KESELURUHAN*\n`;
-        msg += `*Total Ekor  :* ${grandPcs} Ekor\n`;
-        msg += `*Total Berat :* ${Math.round(grandBerat * 100) / 100} Kg`;
-        
+        msg += `--------------------------------\n*TOTAL KESELURUHAN*\n*Total Ekor  :* ${grandPcs} Ekor\n*Total Berat :* ${Math.round(grandBerat * 100) / 100} Kg`;
         window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    // --- STREAMING_CHUNK:Kedatangan incoming chicken storage & render logic ---
+    // --- STREAMING_CHUNK:Kedatangan data storage & date switcher ---
     function loadKedatanganStorage() {
         const saved = localStorage.getItem(STORAGE_KEY_KEDATANGAN);
         if (saved) {
@@ -1097,8 +1189,22 @@
         }
     }
 
+    function autoSaveKedatanganLocal() {
+        const tgl = document.getElementById('inputTanggalKedatangan').value;
+        if (!tgl) return;
+        kedatanganData[tgl] = {
+            jam: document.getElementById('inputJamKedatangan').value,
+            namaKandang: document.getElementById('inputNamaKandangKedatangan').value,
+            alamatKandang: document.getElementById('inputAlamatKandangKedatangan').value,
+            rows: currentKedatanganRows
+        };
+        localStorage.setItem(STORAGE_KEY_KEDATANGAN, JSON.stringify(kedatanganData));
+    }
+
     function loadKedatanganForCurrentDate() {
         const tgl = document.getElementById('inputTanggalKedatangan').value;
+        if (!tgl) return;
+
         if (!kedatanganData[tgl]) {
             kedatanganData[tgl] = {
                 jam: new Date().toTimeString().slice(0, 5),
@@ -1107,6 +1213,7 @@
                 rows: []
             };
         }
+
         const session = kedatanganData[tgl];
         document.getElementById('inputJamKedatangan').value = session.jam || '';
         document.getElementById('inputNamaKandangKedatangan').value = session.namaKandang || '';
@@ -1116,22 +1223,9 @@
     }
 
     function onKedatanganDateChange() {
-        autoSaveKedatanganLocal();
         loadKedatanganForCurrentDate();
         renderTableKedatangan();
-    }
-
-    function autoSaveKedatanganLocal() {
-        const tgl = document.getElementById('inputTanggalKedatangan').value;
-        if (!tgl) return;
-        
-        kedatanganData[tgl] = {
-            jam: document.getElementById('inputJamKedatangan').value,
-            namaKandang: document.getElementById('inputNamaKandangKedatangan').value,
-            alamatKandang: document.getElementById('inputAlamatKandangKedatangan').value,
-            rows: currentKedatanganRows
-        };
-        localStorage.setItem(STORAGE_KEY_KEDATANGAN, JSON.stringify(kedatanganData));
+        showToast(`Memuat data kedatangan tanggal: ${document.getElementById('inputTanggalKedatangan').value}`);
     }
 
     function renderTableKedatangan() {
@@ -1328,9 +1422,7 @@
             ['No', 'Ekor', 'Berat (Kg)']
         ];
 
-        currentKedatanganRows.forEach((r, i) => {
-            aoa.push([i + 1, r.ekor || "-", r.berat]);
-        });
+        currentKedatanganRows.forEach((r, i) => { aoa.push([i + 1, r.ekor || "-", r.berat]); });
 
         const ws = XLSX.utils.aoa_to_sheet(aoa);
         const wb = XLSX.utils.book_new();
@@ -1345,9 +1437,7 @@
         const jam = document.getElementById('inputJamKedatangan').value;
         const kandang = document.getElementById('inputNamaKandangKedatangan').value || '-';
         
-        let totalEkor = 0, totalBerat = 0;
-        let rincian = '';
-        
+        let totalEkor = 0, totalBerat = 0, rincian = '';
         currentKedatanganRows.forEach((r, i) => {
             const num = (i + 1).toString().padStart(2, '0');
             const ekorStr = r.ekor ? `${r.ekor} Ekor` : `- Ekor`;
@@ -1358,23 +1448,10 @@
 
         const rataRata = totalEkor > 0 ? (totalBerat / totalEkor).toFixed(2) : 0;
 
-        let msg = `*LAPORAN KEDATANGAN AYAM*\n`;
-        msg += `*Tanggal :* ${tgl}\n`;
-        msg += `*Jam     :* ${jam}\n`;
-        msg += `*Kandang :* ${kandang}\n`;
-        msg += `--------------------------------\n\n`;
-        msg += `*RINCIAN TIMBANGAN:*\n`;
-        msg += rincian;
-        msg += `\n--------------------------------\n`;
-        msg += `*RINGKASAN*\n`;
-        msg += `*Total Ekor  :* ${totalEkor} Ekor\n`;
-        msg += `*Total Berat :* ${Math.round(totalBerat * 100)/100} Kg\n`;
-        msg += `*Rata-rata   :* ${rataRata} Kg/Ekor`;
-        
+        let msg = `*LAPORAN KEDATANGAN AYAM*\n*Tanggal :* ${tgl}\n*Jam     :* ${jam}\n*Kandang :* ${kandang}\n--------------------------------\n\n*RINCIAN TIMBANGAN:*\n${rincian}\n--------------------------------\n*RINGKASAN*\n*Total Ekor  :* ${totalEkor} Ekor\n*Total Berat :* ${Math.round(totalBerat * 100)/100} Kg\n*Rata-rata   :* ${rataRata} Kg/Ekor`;
         window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    // --- STREAMING_CHUNK:Chicken parts and tally modules ---
     function renderTableBagian() {
         const container = document.getElementById('tableBagianContainer');
         if (!container) return;
@@ -1422,18 +1499,8 @@
         if (filtered.length === 0) { showToast('Tidak ada data!', true); return; }
         
         let total = 0;
-        const aoa = [
-            [`Laporan Bagian Ayam - RPA Auto`],
-            [`Tanggal: ${targetDate}`],
-            [""],
-            ['No', 'Jenis Bagian', 'Berat (Kg)']
-        ];
-
-        filtered.forEach((d, i) => {
-            aoa.push([i + 1, d.jenis, d.berat]);
-            total += d.berat;
-        });
-
+        const aoa = [[`Laporan Bagian Ayam - RPA Auto`], [`Tanggal: ${targetDate}`], [""], ['No', 'Jenis Bagian', 'Berat (Kg)']];
+        filtered.forEach((d, i) => { aoa.push([i + 1, d.jenis, d.berat]); total += d.berat; });
         aoa.push(["", "TOTAL KESELURUHAN", Math.round(total * 100) / 100]);
 
         const ws = XLSX.utils.aoa_to_sheet(aoa);
@@ -1447,19 +1514,10 @@
         const filtered = bagianList.filter(d => d.tanggal === targetDate);
         if (filtered.length === 0) { showToast('Tidak ada data!', true); return; }
         
-        let msg = `*LAPORAN BAGIAN AYAM*\n`;
-        msg += `*Tanggal:* ${targetDate}\n`;
-        msg += `--------------------------------\n\n`;
-        
+        let msg = `*LAPORAN BAGIAN AYAM*\n*Tanggal:* ${targetDate}\n--------------------------------\n\n`;
         let total = 0;
-        filtered.forEach(d => { 
-            msg += `- *${d.jenis}* : ${d.berat} Kg\n`; 
-            total += d.berat; 
-        });
-        
-        msg += `\n--------------------------------\n`;
-        msg += `*TOTAL BERAT :* ${Math.round(total * 100)/100} Kg`;
-        
+        filtered.forEach(d => { msg += `- *${d.jenis}* : ${d.berat} Kg\n`; total += d.berat; });
+        msg += `\n--------------------------------\n*TOTAL BERAT :* ${Math.round(total * 100)/100} Kg`;
         window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
@@ -1641,7 +1699,6 @@
         }
     }
 
-    // --- STREAMING_CHUNK:Initialization on DOM load ---
     document.addEventListener('DOMContentLoaded', () => {
         if (localStorage.getItem(STORAGE_KEY)) dataList = JSON.parse(localStorage.getItem(STORAGE_KEY));
         if (localStorage.getItem(STORAGE_KEY_BAGIAN)) bagianList = JSON.parse(localStorage.getItem(STORAGE_KEY_BAGIAN));
