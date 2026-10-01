@@ -101,7 +101,7 @@
             </div>
         </div>
         <span class="text-[10px] bg-white/20 backdrop-blur-md text-white px-2.5 py-1 rounded-full border border-white/30 font-bold tracking-wide uppercase">
-            v5.4 AI Scan
+            v5.6 AI Handwrite OCR
         </span>
     </header>
 
@@ -112,7 +112,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h3 class="font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-camera text-lg"></i> Scan Foto Tally Karkas</h3>
-                    <p class="text-[11px] text-orange-100 mt-0.5">Ambil foto atau upload lembar kertas laporan packing</p>
+                    <p class="text-[11px] text-orange-100 mt-0.5">Pilih kamera langsung atau upload dari galeri untuk membaca tulisan tangan</p>
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-2 pt-1">
@@ -439,9 +439,19 @@
         </button>
     </nav>
 
+    <!-- TOAST NOTIFICATION -->
     <div id="toast" class="fixed top-5 left-1/2 bg-slate-900 border-slate-700 text-white px-5 py-3 rounded-full shadow-2xl z-[60] text-xs font-bold flex items-center gap-2.5 pointer-events-none border">
         <i class="fa-solid fa-circle-check text-orange-400 text-base"></i>
         <span id="toast-msg">Data diperbarui</span>
+    </div>
+
+    <!-- AI SCAN LOADING MODAL -->
+    <div id="aiLoadingModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[80] flex flex-col items-center justify-center p-4 print:hidden hidden">
+        <div class="bg-white p-6 rounded-3xl shadow-2xl flex flex-col items-center max-w-xs w-full space-y-4 text-center">
+            <div class="w-14 h-14 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+            <h3 class="font-bold text-gray-800 text-base">AI Sedang Membaca Foto...</h3>
+            <p id="aiLoadingText" class="text-xs text-gray-500">Menganalisis tulisan tangan lembar karkas. Mohon tunggu sebentar...</p>
+        </div>
     </div>
 
     <!-- VOICE WIZARD STEP MODAL -->
@@ -619,10 +629,6 @@
         </div>
     </div>
 
-</div>
-
-<div id="actualPrintArea" class="hidden print:block bg-white text-black p-4 w-full h-full font-sans">
-    <div id="printLabelsContainer"></div>
 </div>
 
 <script>
@@ -873,31 +879,46 @@
         document.getElementById('inputBeratKotor').value = '';
     }
 
-    // --- STREAMING_CHUNK:AI Image Upload & OCR Parser for Karkas Tally Sheet ---
+    // --- STREAMING_CHUNK:AI Handwritten Tally Sheet OCR Parser with Loading Indicator ---
     async function handleImageUpload(event) {
         const file = event.target.files[0];
         if (!file) return;
 
-        showToast("Memproses foto dengan AI...");
-        
+        const loadingModal = document.getElementById('aiLoadingModal');
+        const loadingText = document.getElementById('aiLoadingText');
+        if (loadingModal) loadingModal.classList.remove('hidden');
+        if (loadingText) loadingText.innerText = "Mengunggah foto dan mempersiapkan AI...";
+
         const reader = new FileReader();
         reader.onload = async function(e) {
             const base64String = e.target.result.split(',')[1];
             const mimeType = file.type || 'image/jpeg';
 
-            const systemPrompt = "Anda adalah AI asisten Rumah Potong Ayam yang sangat akurat dalam membaca lembar pencatatan fisik (Laporan Packing Karkas). Ekstrak data timbangan karkas dari foto yang diberikan.";
-            const userPrompt = `Analisa foto lembar Laporan Packing Karkas ini. Ekstrak data pencatatan timbangan per grade (Grade A, Grade B, dll.), ukuran/target berat per ekor (misal 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, dst.), jumlah ekor (pcs), dan berat total (kg) dari setiap kolom timbangan. 
-Kembalikan hasilnya DALAM FORMAT JSON ARRAY murni dengan struktur persis berikut:
+            if (loadingText) loadingText.innerText = "AI sedang mengenali tulisan tangan & struktur tabel karkas...";
+
+            const systemPrompt = `Anda adalah AI asisten Rumah Potong Ayam profesional yang sangat mahir membaca lembar pencatatan fisik (Laporan Packing Karkas) tulisan tangan operator di kertas bergaris (formulir de heus). Anda mengenali berbagai variasi format tabel, kolom Grade A dan Grade B, ukuran/berat per ekor (misal angka header 6,7,8,9,10,11,12,13,14,15,16,17,18 yang menyatakan berat per ekor 0.6 kg s.d 1.8 kg, atau angka desimal langsung seperti 1.0, 1.1, 1.2, 1.3, 1.4, 1.5), serta pasangan baris Ekor (pcs) dan Kg (berat total).`;
+            const userPrompt = `Analisa foto lembar Laporan Packing Karkas tulisan tangan ini dengan sangat cermat dan teliti. 
+1. Cari tanggal pada bagian atas formulir (misal 1-10-2026 atau format lainnya). Ubah ke format YYYY-MM-DD. Jika tidak ditemukan, gunakan tanggal hari ini (${new Date().toLocaleDateString('en-CA')}).
+2. Kenali pembagian tabel untuk "GRADE A" dan "GRADE B".
+3. Identifikasi nomor kolom / ukuran target berat per ekor (misal kolom 6 berarti berat 0.6 kg, kolom 11 berarti berat 1.1 kg, atau berat tertulis langsung 1.2 kg).
+4. Baca setiap sel baris timbangan yang berisi angka Ekor (pcs) dan Kg (berat total tertulis). Abaikan sel kosong atau garis coretan.
+5. Ekstrak dan gabungkan seluruh data tersebut menjadi JSON Array murni dengan struktur persis berikut:
 [
   {
     "tanggal": "YYYY-MM-DD",
     "grade": "A",
     "berat": 1.1,
-    "pcs": 60,
-    "totalKg": 66.5
+    "pcs": 80,
+    "totalKg": 95.5
   }
 ]
-Jika tanggal pada form di foto terbaca (misal 1-10-2026 atau 2026-10-01), konversikan ke format YYYY-MM-DD. Jika tidak ada, gunakan tanggal hari ini (${new Date().toLocaleDateString('en-CA')}). Pastikan hanya mengembalikan JSON array murni tanpa markdown tambahan.`;
+Ketentuan:
+- "grade": "A" atau "B" atau "C".
+- "berat": Nilai ukuran target berat per ekor dalam angka desimal (contoh: 0.6, 0.7, 1.1, 1.2, 1.5, dll).
+- "pcs": Jumlah ekor (angka bulat).
+- "totalKg": Berat total tertulis (angka desimal).
+- Jangan lewatkan angka tulisan tangan sekecil apa pun di dalam kolom tabel.
+- Berikan HANYA JSON array murni, tanpa teks lain atau markdown backtick.`;
 
             const payload = {
                 contents: [
@@ -939,9 +960,7 @@ Jika tanggal pada form di foto terbaca (misal 1-10-2026 atau 2026-10-01), konver
                             body: JSON.stringify(payload)
                         });
                         if (response.ok) break;
-                    } catch (err) {
-                        // retry
-                    }
+                    } catch (err) {}
                     attempts++;
                     await new Promise(res => setTimeout(res, delay));
                     delay *= 2;
@@ -976,17 +995,18 @@ Jika tanggal pada form di foto terbaca (misal 1-10-2026 atau 2026-10-01), konver
 
                         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
                         renderTable();
-                        showToast(`Berhasil import ${addedCount} data dari foto!`);
+                        showToast(`Berhasil import ${addedCount} data dari foto tulisan tangan!`);
                     } else {
-                        showToast('Tidak ada data valid yang ditemukan pada foto.', true);
+                        showToast('Tidak ada data valid yang terbaca pada foto.', true);
                     }
                 } else {
                     throw new Error("Format respons AI tidak valid");
                 }
             } catch (error) {
                 console.error(error);
-                showToast('Gagal memproses foto dengan AI: ' + error.message, true);
+                showToast('Gagal memproses foto: ' + error.message, true);
             } finally {
+                if (loadingModal) loadingModal.classList.add('hidden');
                 event.target.value = '';
             }
         };
@@ -1181,7 +1201,6 @@ Jika tanggal pada form di foto terbaca (misal 1-10-2026 atau 2026-10-01), konver
         window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    // --- STREAMING_CHUNK:Kedatangan data storage & date switcher ---
     function loadKedatanganStorage() {
         const saved = localStorage.getItem(STORAGE_KEY_KEDATANGAN);
         if (saved) {
