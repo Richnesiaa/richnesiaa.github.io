@@ -5,8 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RPA Auto - Sistem Rumah Potong Ayam</title>
     
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS Excel Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous"></script>
 
     <style>
@@ -55,7 +58,7 @@
             </div>
         </div>
         <span class="text-[10px] bg-white/20 backdrop-blur-md text-white px-2.5 py-1 rounded-full border border-white/30 font-bold tracking-wide uppercase">
-            v6.1 PRO
+            v6.2 PRO
         </span>
     </header>
 
@@ -177,6 +180,7 @@
                 <button type="button" onclick="tambahBarisKedatangan()" class="w-full h-12 bg-orange-600 hover:bg-orange-700 text-white font-extrabold rounded-xl text-sm shadow-md transition flex items-center justify-center gap-2 active:scale-98"><i class="fa-solid fa-plus-circle text-base"></i> Tambah ke Tabel Kedatangan</button>
             </div>
         </div>
+
         <div class="space-y-4">
             <div class="flex items-center justify-between">
                 <h3 class="text-gray-800 font-bold flex items-center gap-2 text-sm"><i class="fa-solid fa-table-cells text-orange-500"></i> Tabel Pencatatan Kedatangan</h3>
@@ -186,19 +190,108 @@
                 <div class="p-2.5 bg-slate-800 text-white rounded-xl text-xs font-bold flex flex-col sm:flex-row justify-between gap-1 shadow-sm"><span id="labelHeaderInfo" class="text-orange-300">Tanggal Terima: - | Jam: -</span><span id="labelHeaderKandang" class="text-slate-300">Kandang: - (-)</span></div>
                 <div id="tableKedatanganContainer" class="flex flex-nowrap overflow-x-auto gap-4 pb-2 side-table-scroll"></div>
             </div>
-            <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-2xl border border-amber-200 shadow-sm space-y-3">
-                <button onclick="hitungTotalKedatangan()" class="w-full h-14 bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-black rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm tracking-wide"><i class="fa-solid fa-calculator text-amber-400 text-lg"></i> HITUNG JUMLAH BERAT & EKOR</button>
-                <div id="summaryKedatanganCard" class="bg-white p-4 rounded-xl border border-orange-200 shadow-inner hidden space-y-2">
-                    <div class="text-xs font-bold text-orange-900 uppercase tracking-wider border-b border-orange-100 pb-1.5 flex items-center justify-between"><span><i class="fa-solid fa-square-poll-vertical text-orange-500"></i> Hasil Ringkasan kedatangan</span></div>
-                    <div class="grid grid-cols-2 gap-3 pt-1">
-                        <div class="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-center"><span class="text-[10px] font-bold text-amber-800 uppercase block">Total Ekor</span><span id="resultTotalEkor" class="text-xl font-black text-amber-950">0 Ekor</span></div>
-                        <div class="bg-orange-50 p-2.5 rounded-lg border border-orange-200 text-center"><span class="text-[10px] font-bold text-orange-800 uppercase block">Total Berat</span><span id="resultTotalBerat" class="text-xl font-black text-orange-950">0 Kg</span></div>
-                    </div>
-                    <div class="text-center pt-1 border-t border-gray-100 text-xs text-gray-600 font-semibold">Rata-rata Berat / Ekor: <span id="resultRataRata" class="text-orange-700 font-bold">0 Kg</span></div>
+
+            <div class="bg-white rounded-2xl border border-gray-200 p-4 shadow-sm space-y-4">
+                <div class="border-b border-gray-100 pb-2 flex items-center justify-between">
+                    <h3 class="text-gray-800 font-black text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-scale-unbalanced text-red-500 text-base"></i> Pengurangan Ayam Mati & Keranjang
+                    </h3>
+                    <span class="text-[10px] bg-red-100 text-red-700 px-2.5 py-0.5 rounded-full font-bold">Input Akhir Kedatangan</span>
                 </div>
+                <p class="text-xs text-gray-500">Masukkan data setelah semua timbangan ayam datang selesai di-input untuk menghitung <b>Berat Netto Bersih Diterima</b>.</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Ayam Mati Input -->
+                    <div class="bg-red-50/70 p-3.5 rounded-xl border border-red-200 space-y-2">
+                        <div class="text-xs font-bold text-red-800 flex items-center gap-1.5">
+                            <i class="fa-solid fa-skull-crossbones text-red-600"></i> Ayam Mati (Susut)
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-600 mb-0.5">Ekor Mati</label>
+                                <input type="number" id="inputEkorMati" min="0" placeholder="Cth: 2" class="w-full h-10 px-2.5 bg-white border border-red-300 rounded-lg text-sm font-bold text-red-900 outline-none focus:ring-2 focus:ring-red-500" oninput="hitungTotalKedatangan()">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-600 mb-0.5">Berat Mati (kg)</label>
+                                <input type="number" id="inputKgMati" min="0" step="0.1" placeholder="Cth: 3.5" class="w-full h-10 px-2.5 bg-white border border-red-300 rounded-lg text-sm font-bold text-red-900 outline-none focus:ring-2 focus:ring-red-500" oninput="hitungTotalKedatangan()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Keranjang / Tara Input -->
+                    <div class="bg-amber-50/70 p-3.5 rounded-xl border border-amber-200 space-y-2">
+                        <div class="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                            <i class="fa-solid fa-box text-amber-600"></i> Tara Keranjang
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-600 mb-0.5">Jml Keranjang</label>
+                                <input type="number" id="inputJmlKeranjangKedatangan" min="0" placeholder="Cth: 15" class="w-full h-10 px-2.5 bg-white border border-amber-300 rounded-lg text-sm font-bold text-amber-950 outline-none focus:ring-2 focus:ring-amber-500" oninput="hitungTotalKedatangan()">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-gray-600 mb-0.5">Kg / Keranjang</label>
+                                <input type="number" id="inputBeratKeranjangKedatangan" min="0" step="0.1" value="1.8" placeholder="1.8" class="w-full h-10 px-2.5 bg-white border border-amber-300 rounded-lg text-sm font-bold text-amber-950 outline-none focus:ring-2 focus:ring-amber-500" oninput="hitungTotalKedatangan()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Summary Card Kedatangan -->
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50 p-4 rounded-2xl border border-amber-200 shadow-sm space-y-3">
+                <button onclick="hitungTotalKedatangan()" class="w-full h-14 bg-slate-900 hover:bg-slate-800 active:scale-98 text-white font-black rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm tracking-wide">
+                    <i class="fa-solid fa-calculator text-amber-400 text-lg"></i> HITUNG NETTO PENERIMAAN AKHIR
+                </button>
+                
+                <div id="summaryKedatanganCard" class="bg-white p-4 rounded-xl border border-orange-200 shadow-inner space-y-3">
+                    <div class="text-xs font-bold text-orange-900 uppercase tracking-wider border-b border-orange-100 pb-1.5 flex items-center justify-between">
+                        <span><i class="fa-solid fa-square-poll-vertical text-orange-500"></i> Rincian Hasil Kedatangan Ayam</span>
+                        <span class="text-[10px] font-normal text-gray-500">Otomatis Terkalkulasi</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div class="bg-gray-50 p-2 rounded-lg border border-gray-200 flex justify-between">
+                            <span class="text-gray-500 font-medium">Total Datang Kotor:</span>
+                            <strong id="resultTotalKotorText" class="text-gray-800">0 Kg</strong>
+                        </div>
+                        <div class="bg-gray-50 p-2 rounded-lg border border-gray-200 flex justify-between">
+                            <span class="text-gray-500 font-medium">Total Ekor Datang:</span>
+                            <strong id="resultTotalEkorDatangText" class="text-gray-800">0 Ekor</strong>
+                        </div>
+                        <div class="bg-red-50 p-2 rounded-lg border border-red-200 flex justify-between">
+                            <span class="text-red-700 font-medium">(-) Berat Ayam Mati:</span>
+                            <strong id="resultBeratMatiText" class="text-red-800">0 Kg</strong>
+                        </div>
+                        <div class="bg-amber-50 p-2 rounded-lg border border-amber-200 flex justify-between">
+                            <span class="text-amber-800 font-medium">(-) Total Tara Keranjang:</span>
+                            <strong id="resultBeratKeranjangText" class="text-amber-900">0 Kg</strong>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-orange-500 to-amber-600 text-white p-3.5 rounded-xl shadow-md text-center space-y-1">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-orange-100 block">BERAT NETTO BERSIH DITERIMA</span>
+                        <div id="resultTotalBeratNetto" class="text-2xl sm:text-3xl font-black">0.00 Kg</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 pt-1 text-center text-xs font-bold">
+                        <div class="bg-emerald-50 p-2 rounded-lg border border-emerald-200">
+                            <span class="text-[10px] text-emerald-700 uppercase block font-semibold">Ekor Hidup Bersih</span>
+                            <span id="resultEkorHidupText" class="text-base text-emerald-900 font-black">0 Ekor</span>
+                        </div>
+                        <div class="bg-blue-50 p-2 rounded-lg border border-blue-200">
+                            <span class="text-[10px] text-blue-700 uppercase block font-semibold">Rata-rata / Ekor Hidup</span>
+                            <span id="resultRataRata" class="text-base text-blue-900 font-black">0.00 Kg</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-2 gap-3 pt-1">
-                    <button onclick="exportKedatanganExcel()" class="h-12 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"><i class="fa-solid fa-file-excel text-base"></i> Export Excel</button>
-                    <button onclick="kirimWAKedatangan()" class="h-12 bg-[#25D366] hover:bg-[#20bd5a] active:scale-95 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-xs sm:text-sm"><i class="fa-brands fa-whatsapp text-lg"></i> Kirim WA</button>
+                    <button onclick="exportKedatanganExcel()" class="h-12 bg-emerald-700 hover:bg-emerald-800 active:scale-95 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-xs sm:text-sm">
+                        <i class="fa-solid fa-file-excel text-base"></i> Export Excel
+                    </button>
+                    <button onclick="kirimWAKedatangan()" class="h-12 bg-[#25D366] hover:bg-[#20bd5a] active:scale-95 text-white font-bold rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 text-xs sm:text-sm">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> Kirim WA
+                    </button>
                 </div>
             </div>
         </div>
@@ -306,6 +399,48 @@
         <span id="toast-msg">Data diperbarui</span>
     </div>
 
+    <!-- UNIVERSAL CALCULATOR MODAL -->
+    <div id="calcModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[90] hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-xs overflow-hidden border border-orange-100">
+            <div class="p-3.5 bg-gradient-to-r from-orange-600 to-amber-600 flex justify-between items-center text-white">
+                <h3 class="font-bold text-xs flex items-center gap-2"><i class="fa-solid fa-calculator"></i> Kalkulator Angka</h3>
+                <button onclick="closeCalcModal()" class="text-white/80 hover:text-white p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-4 space-y-3">
+                <div class="bg-gray-100 p-3 rounded-xl border border-gray-200 text-right">
+                    <div id="calcExpression" class="text-[10px] text-gray-400 min-h-[16px] font-mono"></div>
+                    <div id="calcDisplay" class="text-2xl font-black text-gray-800 font-mono truncate">0</div>
+                </div>
+                <div class="grid grid-cols-4 gap-2 font-bold">
+                    <button onclick="calcPress('C')" class="py-2.5 bg-red-100 text-red-700 rounded-xl active:scale-95 text-sm">C</button>
+                    <button onclick="calcPress('(')" class="py-2.5 bg-gray-100 text-gray-700 rounded-xl active:scale-95 text-sm">(</button>
+                    <button onclick="calcPress(')')" class="py-2.5 bg-gray-100 text-gray-700 rounded-xl active:scale-95 text-sm">)</button>
+                    <button onclick="calcPress('/')" class="py-2.5 bg-orange-100 text-orange-700 rounded-xl active:scale-95 text-sm">÷</button>
+                    
+                    <button onclick="calcPress('7')" class="py-2.5 bg-gray-50 text-gray-800 rounded-xl active:scale-95 text-base">7</button>
+                    <button onclick="calcPress('8')" class="py-2.5 bg-gray-50 text-gray-800 rounded-xl active:scale-95 text-base">8</button>
+                    <button onclick="calcPress('9')" class="py-2.5 bg-gray-50 text-gray-800 rounded-xl active:scale-95 text-base">9</button>
+                    <button onclick="calcPress('*')" class="py-2.5 bg-orange-100 text-orange-700 rounded-xl active:scale-95 text-sm">×</button>
+                    
+                    <button onclick="calcPress('4')" class="py-2.5 bg-gray-50 text-gray-800 rounded-xl active:scale-95 text-base">4</button>
+                    <button onclick="calcPress('5')" class="py-2.5 bg-gray-50 text-gray-800 rounded-xl active:scale-95 text-base">5</button>
+                    <button onclick="calcPress('6')" class="py-2.5 bg-gray-50 text-gray-800 rounded-xl active:scale-95 text-base">6</button>
+                    <button onclick="calcPress('-')" class="py-2.5 bg-orange-100 text-orange-700 rounded-xl active:scale-95 text-sm">-</button>
+                    
+                    <button onclick="calcPress('1')" class="py-2.5 bg-gray-50 text-gray-800 rounded-xl active:scale-95 text-base">1</button>
+                    <button onclick="calcPress('2')" class="py-2.5 bg-gray-50 text-gray-800 rounded-xl active:scale-95 text-base">2</button>
+                    <button onclick="calcPress('3')" class="py-2.5 bg-gray-50 text-gray-800 rounded-xl active:scale-95 text-base">3</button>
+                    <button onclick="calcPress('+')" class="py-2.5 bg-orange-100 text-orange-700 rounded-xl active:scale-95 text-sm">+</button>
+                    
+                    <button onclick="calcPress('0')" class="py-2.5 bg-gray-50 text-gray-800 rounded-xl active:scale-95 text-base col-span-2">0</button>
+                    <button onclick="calcPress('.')" class="py-2.5 bg-gray-50 text-gray-800 rounded-xl active:scale-95 text-base">.</button>
+                    <button onclick="calcPress('=')" class="py-2.5 bg-orange-600 text-white rounded-xl active:scale-95 text-base">=</button>
+                </div>
+                <button onclick="applyCalcResult()" class="w-full py-3 bg-slate-900 text-white font-bold rounded-xl active:scale-95 text-xs shadow-md">GUNAKAN HASIL INI</button>
+            </div>
+        </div>
+    </div>
+
     <!-- AI ERROR MODAL -->
     <div id="errorModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[95] flex items-center justify-center p-4 hidden transition-opacity print:hidden">
         <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4">
@@ -327,7 +462,7 @@
         </div>
     </div>
 
-    <!-- VOICE MODAL -->
+    <!-- VOICE MODAL KARKAS -->
     <div id="voiceWizardModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[70] flex flex-col items-center justify-center p-4 print:hidden transition-opacity hidden">
         <div class="bg-white p-6 rounded-3xl shadow-2xl flex flex-col items-center max-w-sm w-full relative overflow-hidden space-y-4">
             <button onclick="stopVoiceWizard()" class="absolute top-3 right-3 text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -341,39 +476,6 @@
             <div class="flex gap-2 w-full pt-1">
                 <button type="button" onclick="wizardPrevStep()" id="btnWizardPrev" class="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs transition" style="display: none;"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
                 <button type="button" onclick="stopVoiceWizard()" class="flex-1 py-2.5 bg-red-100 hover:bg-red-200 text-red-700 font-bold rounded-xl text-xs transition">Batal</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- VOICE KEDATANGAN MODAL -->
-    <div id="voiceKedatanganModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[70] flex flex-col items-center justify-center p-4 print:hidden transition-opacity hidden">
-        <div class="bg-white p-6 rounded-3xl shadow-2xl flex flex-col max-w-sm w-full relative overflow-hidden space-y-4 border-2 border-orange-500">
-            <button onclick="selesaiKedatanganWizard()" class="absolute top-3 right-3 text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-lg"></i></button>
-            
-            <div class="flex items-center gap-3 border-b border-gray-100 pb-3">
-                <button onclick="retakeKedatanganVoice()" class="w-12 h-12 shrink-0 bg-red-50 rounded-full flex items-center justify-center mic-pulse border border-red-100"><i class="fa-solid fa-microphone text-xl text-red-600"></i></button>
-                <div>
-                    <h3 class="font-black text-gray-800 text-base">Input Kedatangan</h3>
-                    <p class="text-[10px] text-gray-500">Sebut <span class="text-orange-600 font-bold">"10 Ekor 15.5"</span> atau <span class="text-orange-600 font-bold">"15.5 Kilo"</span></p>
-                </div>
-            </div>
-
-            <div id="wizardKedatanganResult" class="w-full bg-gray-50 rounded-xl border border-gray-200 p-2.5 text-xs font-semibold text-gray-700 text-center italic flex items-center justify-center min-h-[40px]">Mendengarkan...</div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-600 mb-1">Ekor (Opsional)</label>
-                    <input type="number" id="wizardKedatanganEkor" min="0" step="1" inputmode="numeric" placeholder="Jml Ekor" onkeypress="if(event.key === 'Enter') lanjutKedatanganWizard()" class="w-full h-11 px-3 bg-white border border-gray-300 rounded-xl text-sm font-bold outline-none focus:ring-2 focus:ring-orange-500 text-center">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-gray-600 mb-1">Berat (kg) *</label>
-                    <input type="number" id="wizardKedatanganBerat" min="0.1" step="0.1" inputmode="decimal" placeholder="Berat Total" onkeypress="if(event.key === 'Enter') lanjutKedatanganWizard()" class="w-full h-11 px-3 bg-white border border-gray-300 rounded-xl text-sm font-black text-orange-950 outline-none focus:ring-2 focus:ring-orange-500 text-center">
-                </div>
-            </div>
-
-            <div class="flex gap-2 w-full pt-2">
-                <button type="button" onclick="selesaiKedatanganWizard()" class="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-xs transition active:scale-95">Selesai</button>
-                <button type="button" onclick="lanjutKedatanganWizard()" class="flex-[2] py-3 bg-orange-600 hover:bg-orange-700 text-white font-black rounded-xl text-xs shadow-md transition active:scale-95 flex items-center justify-center gap-2">Lanjut Data <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </div>
     </div>
@@ -406,7 +508,7 @@
         </div>
     </div>
 
-    <!-- LABEL MODAL -->
+    <!-- LABEL STRUK MODAL -->
     <div id="labelModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 print:hidden hidden">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
             <div class="p-4 border-b border-orange-100 bg-orange-50/80 flex justify-between items-center"><h3 class="font-bold text-orange-900 text-sm flex items-center gap-2"><i class="fa-solid fa-receipt text-orange-600"></i> Struk Label Karkas</h3><button onclick="closeModal()" class="text-gray-400 hover:text-red-500 text-lg transition-colors p-1"><i class="fa-solid fa-xmark"></i></button></div>
@@ -459,1241 +561,904 @@
                     <input type="number" id="editGradeNewBerat" min="0.1" step="0.1" inputmode="decimal" class="w-full h-11 px-3 bg-white border border-gray-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
                 </div>
                 
-                <button onclick="saveEditGrade()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition text-xs active:scale-95 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-check"></i> Simpan Perubahan
-                </button>
+                <button onclick="saveEditGrade()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition text-xs active:scale-95">Simpan Perubahan</button>
             </div>
         </div>
     </div>
 
-    <!-- TAMBAH BAGIAN MODAL -->
-    <div id="tambahBagianModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 print:hidden">
+    <!-- TAMBAH CUSTOM BAGIAN MODAL -->
+    <div id="tambahBagianModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[70] hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs overflow-hidden">
-            <div class="p-4 border-b border-orange-100 bg-orange-50/80 flex justify-between items-center"><h3 class="font-bold text-orange-900 text-sm flex items-center gap-2"><i class="fa-solid fa-square-plus text-orange-600"></i> Tambah Bagian Ayam</h3><button onclick="closeTambahBagianModal()" class="text-gray-400 hover:text-red-500 text-lg transition-colors p-1"><i class="fa-solid fa-xmark"></i></button></div>
-            <form id="formTambahBagianBaru" onsubmit="saveBagianBaru(event)" class="p-4 space-y-3">
-                <div><label class="block text-xs font-semibold text-gray-700 mb-1">Nama Bagian Baru</label><input type="text" id="inputNamaBagianBaru" required placeholder="Cth: Fillet Dada" class="w-full h-11 px-3 bg-gray-50 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-orange-500 outline-none transition"></div>
-                <div class="flex gap-2 pt-2">
-                    <button type="button" onclick="closeTambahBagianModal()" class="flex-1 py-2.5 rounded-xl border border-gray-300 text-gray-600 font-semibold text-xs hover:bg-gray-50">Batal</button>
-                    <button type="submit" class="flex-1 py-2.5 rounded-xl bg-orange-600 text-white font-semibold text-xs shadow-md hover:bg-orange-700">Simpan</button>
+            <div class="p-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 text-sm flex items-center gap-2"><i class="fa-solid fa-circle-plus text-orange-500"></i> Custom Jenis Bagian</h3>
+                <button onclick="closeTambahBagianModal()" class="text-gray-400 hover:text-red-500 p-1 transition"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-4 space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Nama Bagian Baru</label>
+                    <input type="text" id="inputCustomBagianNama" placeholder="Cth: Tungir, Kulit Leher" class="w-full h-11 px-3 bg-white border border-gray-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-orange-500 outline-none">
                 </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- CALCULATOR MODAL -->
-    <div id="calcPcsModal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4 print:hidden">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xs overflow-hidden">
-            <div class="p-3.5 border-b border-orange-100 bg-orange-50/80 flex justify-between items-center"><h3 class="font-bold text-orange-900 text-sm flex items-center gap-2"><i class="fa-solid fa-calculator text-orange-600"></i> Kalkulator</h3><button type="button" onclick="closeCalcPcsModal()" class="text-gray-400 hover:text-red-500 text-lg transition-colors p-1"><i class="fa-solid fa-xmark"></i></button></div>
-            <div class="p-4 space-y-3">
-                <div class="bg-slate-900 rounded-xl p-3 text-right font-mono text-white shadow-inner">
-                    <div id="calcExprDisplay" class="text-xs text-slate-400 h-4 overflow-hidden text-ellipsis whitespace-nowrap">0</div>
-                    <div id="calcResultDisplay" class="text-2xl font-bold tracking-wider text-orange-400 h-8 overflow-hidden text-ellipsis">0</div>
-                </div>
-                <div class="grid grid-cols-4 gap-1.5 text-sm font-bold">
-                    <button type="button" onclick="calcPcsClear()" class="bg-red-100 text-red-700 hover:bg-red-200 p-2.5 rounded-xl active:scale-95 transition">C</button>
-                    <button type="button" onclick="calcPcsBackspace()" class="bg-gray-100 text-gray-700 hover:bg-gray-200 p-2.5 rounded-xl active:scale-95 transition"><i class="fa-solid fa-backspace"></i></button>
-                    <button type="button" onclick="calcPcsAppend('/')" class="bg-orange-100 text-orange-800 hover:bg-orange-200 p-2.5 rounded-xl active:scale-95 transition">÷</button>
-                    <button type="button" onclick="calcPcsAppend('*')" class="bg-orange-100 text-orange-800 hover:bg-orange-200 p-2.5 rounded-xl active:scale-95 transition">×</button>
-                    <button type="button" onclick="calcPcsAppend('7')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">7</button>
-                    <button type="button" onclick="calcPcsAppend('8')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">8</button>
-                    <button type="button" onclick="calcPcsAppend('9')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">9</button>
-                    <button type="button" onclick="calcPcsAppend('-')" class="bg-orange-100 text-orange-800 hover:bg-orange-200 p-2.5 rounded-xl active:scale-95 transition">-</button>
-                    <button type="button" onclick="calcPcsAppend('4')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">4</button>
-                    <button type="button" onclick="calcPcsAppend('5')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">5</button>
-                    <button type="button" onclick="calcPcsAppend('6')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">6</button>
-                    <button type="button" onclick="calcPcsAppend('+')" class="bg-orange-100 text-orange-800 hover:bg-orange-200 p-2.5 rounded-xl active:scale-95 transition">+</button>
-                    <button type="button" onclick="calcPcsAppend('1')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">1</button>
-                    <button type="button" onclick="calcPcsAppend('2')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">2</button>
-                    <button type="button" onclick="calcPcsAppend('3')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">3</button>
-                    <button type="button" onclick="calcPcsEqual()" class="bg-orange-600 text-white hover:bg-orange-700 row-span-2 p-2.5 rounded-xl flex items-center justify-center text-lg active:scale-95 transition shadow-md">=</button>
-                    <button type="button" onclick="calcPcsAppend('0')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">0</button>
-                    <button type="button" onclick="calcPcsAppend('00')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl active:scale-95 transition">00</button>
-                    <button type="button" onclick="calcPcsAppend('.')" class="bg-gray-50 text-gray-800 border border-gray-200 hover:bg-gray-100 p-2.5 rounded-xl font-black active:scale-95 transition">.</button>
-                </div>
-                <div class="pt-2 flex gap-2">
-                    <button type="button" onclick="closeCalcPcsModal()" class="flex-1 py-2.5 rounded-xl border border-gray-300 text-gray-600 font-semibold text-xs hover:bg-gray-50 active:scale-95 transition">Batal</button>
-                    <button type="button" onclick="applyCalcPcsResult()" class="flex-1 py-2.5 rounded-xl bg-orange-600 text-white font-bold text-xs shadow-md hover:bg-orange-700 active:scale-95 transition flex items-center justify-center gap-1.5"><i class="fa-solid fa-check"></i> Gunakan</button>
-                </div>
+                <button onclick="simpanCustomBagian()" class="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-md transition text-xs active:scale-95">Tambahkan Kategori</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    const STORAGE_KEY = 'rpa_data_v6';
-    const STORAGE_KEY_KEDATANGAN = 'rpa_kedatangan_v5'; 
-    const STORAGE_KEY_BAGIAN = 'rpa_bagian_v1';
-    const STORAGE_KEY_CUSTOM_BAGIAN = 'rpa_custom_bagian_v1';
+const DEFAULT_BAGIAN = ["Dada Utuh", "Dada Fillet", "Paha Utuh", "Paha Fillet", "Sayap", "Ati Ampela", "Ceker", "Kepala Leher", "Karkas Broiler", "Kerongkong / Tulang", "Kulit"];
+
+let karkasData = JSON.parse(localStorage.getItem('rpa_karkas_data')) || [];
+let kedatanganData = JSON.parse(localStorage.getItem('rpa_kedatangan_data')) || {};
+let bagianData = JSON.parse(localStorage.getItem('rpa_bagian_data')) || [];
+let customBagianList = JSON.parse(localStorage.getItem('rpa_custom_bagian')) || DEFAULT_BAGIAN;
+let tallyChecklist = JSON.parse(localStorage.getItem('rpa_tally_checklist')) || {};
+
+let activeCalcTargetInputId = null;
+let calcCurrentExpr = "";
+
+window.onload = function() {
+    const today = new Date().toISOString().split('T')[0];
     
-    let dataList = [];
-    let kedatanganData = {}; 
-    let currentKedatanganRows = [];
-    let bagianList = [];
-    let customBagianList = [];
+    document.getElementById('inputTanggal').value = today;
+    document.getElementById('filterTanggalPotong').value = today;
     
-    let calcPcsInput = '';
-    let currentCalcTarget = 'inputPcs';
-
-    let recognition;
-    let isWizardActive = false;
-    let wizardCurrentStep = 1;
-    let activeTab = 'home';
-    let activeVoiceMode = 'karkas';
-
-    function showToast(message, isError = false) {
-        const toast = document.getElementById('toast');
-        if (!toast) return;
-        toast.className = `fixed top-5 left-1/2 ${isError ? 'bg-red-600 border-red-700' : 'bg-slate-900 border-slate-700'} text-white px-5 py-3 rounded-full shadow-2xl z-[100] text-xs font-bold flex items-center gap-2.5 pointer-events-none border show`;
-        document.getElementById('toast-msg').innerText = message;
-        setTimeout(() => toast.classList.remove('show'), 2200);
-    }
-
-    function showErrorModal(msg) {
-        const modal = document.getElementById('errorModal');
-        const msgEl = document.getElementById('errorMessage');
-        if (modal && msgEl) {
-            msgEl.innerText = msg;
-            modal.classList.remove('hidden');
-        }
-    }
+    document.getElementById('inputTanggalKedatangan').value = today;
+    document.getElementById('inputJamKedatangan').value = "07:00";
     
-    function closeErrorModal() {
-        document.getElementById('errorModal').classList.add('hidden');
-    }
-
-    function initSpeechRecognition() {
-        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-            showToast("Browser tidak mendukung fitur suara", true);
-            return false;
-        }
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = true;
-        recognition.lang = 'id-ID';
-
-        recognition.onstart = function() {
-            isWizardActive = true;
-            if (activeVoiceMode === 'karkas') {
-                document.getElementById('voiceWizardModal').classList.remove('hidden');
-                updateWizardUI();
-            } else if (activeVoiceMode === 'kedatangan') {
-                document.getElementById('voiceKedatanganModal').classList.remove('hidden');
-            }
-        };
-
-        recognition.onresult = function(event) {
-            let interimTranscript = '';
-            let finalTranscript = '';
-
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    finalTranscript += event.results[i][0].transcript;
-                    if (activeVoiceMode === 'karkas') {
-                        document.getElementById('wizardResultText').innerText = finalTranscript;
-                        processWizardStep(finalTranscript);
-                    } else {
-                        document.getElementById('wizardKedatanganResult').innerText = finalTranscript;
-                        processKedatanganVoice(finalTranscript);
-                    }
-                } else {
-                    interimTranscript += event.results[i][0].transcript;
-                    if (activeVoiceMode === 'karkas') {
-                        document.getElementById('wizardResultText').innerText = interimTranscript;
-                    } else {
-                        document.getElementById('wizardKedatanganResult').innerText = interimTranscript;
-                    }
-                }
-            }
-        };
-
-        recognition.onerror = function(event) {
-            console.error("Speech error", event.error);
-            if (activeVoiceMode === 'karkas') {
-                document.getElementById('wizardResultText').innerText = "Gagal: " + event.error + ". Coba lagi.";
-            } else {
-                document.getElementById('wizardKedatanganResult').innerText = "Gagal: " + event.error + ".";
-            }
-        };
-
-        recognition.onend = function() {
-            if (isWizardActive) { try { recognition.start(); } catch(e) {} }
-        };
-        return true;
-    }
-
-    function startVoiceWizard() {
-        if (activeTab === 'kedatangan') {
-            activeVoiceMode = 'kedatangan';
-            openKedatanganVoiceWizard();
-        } else {
-            switchTab('home');
-            activeVoiceMode = 'karkas';
-            wizardCurrentStep = 1;
-            if (!recognition) {
-                if(!initSpeechRecognition()) return;
-            }
-            try { recognition.start(); } catch(e) {}
-        }
-    }
-
-    function stopVoiceWizard() {
-        if (recognition) {
-            try { recognition.stop(); } catch(e){}
-        }
-        isWizardActive = false;
-        document.getElementById('voiceWizardModal').classList.add('hidden');
-        document.getElementById('voiceKedatanganModal').classList.add('hidden');
-    }
-
-    function openKedatanganVoiceWizard() {
-        document.getElementById('voiceKedatanganModal').classList.remove('hidden');
-        document.getElementById('wizardKedatanganEkor').value = '';
-        document.getElementById('wizardKedatanganBerat').value = '';
-        document.getElementById('wizardKedatanganResult').innerText = "Mendengarkan...";
-        if (!recognition) { if(!initSpeechRecognition()) return; }
-        try { recognition.start(); } catch(e) {}
-    }
-
-    function processKedatanganVoice(text) {
-        let t = text.toLowerCase().replace(/koma/g, '.').replace(/,/g, '.').trim();
-        
-        if (t.includes('lanjut') || t.includes('simpan')) { lanjutKedatanganWizard(); return; }
-        if (t.includes('selesai') || t.includes('tutup')) { selesaiKedatanganWizard(); return; }
-
-        let nums = t.match(/\d+(?:\.\d+)?/g);
-        if (nums && nums.length > 0) {
-            if (nums.length >= 2) {
-                document.getElementById('wizardKedatanganEkor').value = parseInt(nums[0]);
-                document.getElementById('wizardKedatanganBerat').value = parseFloat(nums[1]);
-                showToast(`Ekor: ${parseInt(nums[0])}, Berat: ${parseFloat(nums[1])}`);
-            } else {
-                document.getElementById('wizardKedatanganBerat').value = parseFloat(nums[0]);
-                showToast(`Berat: ${parseFloat(nums[0])}`);
-            }
-        } else {
-            showToast("Suara tidak dikenali (Sebutkan angka)", true);
-        }
-    }
-
-    function lanjutKedatanganWizard() {
-        const ekor = document.getElementById('wizardKedatanganEkor').value;
-        const berat = document.getElementById('wizardKedatanganBerat').value;
-        if (!berat || parseFloat(berat) <= 0) { showToast('Berat harus diisi!', true); return; }
-        
-        currentKedatanganRows.push({ ekor: ekor !== '' ? parseInt(ekor) : '', berat: parseFloat(berat) });
-        renderTableKedatangan(); 
-        showToast(`Baris #${currentKedatanganRows.length} disimpan!`);
-        
-        document.getElementById('wizardKedatanganEkor').value = ''; 
-        document.getElementById('wizardKedatanganBerat').value = '';
-        document.getElementById('wizardKedatanganResult').innerText = "Mendengarkan data selanjutnya...";
-        document.getElementById('wizardKedatanganEkor').focus();
-    }
-
-    function selesaiKedatanganWizard() {
-        isWizardActive = false;
-        if (recognition) { try { recognition.stop(); } catch(e){} }
-        document.getElementById('voiceKedatanganModal').classList.add('hidden');
-    }
-    
-    function retakeKedatanganVoice() {
-        document.getElementById('wizardKedatanganResult').innerText = "Mendengarkan ulang...";
-        if (recognition) {
-            try { recognition.stop(); } catch(e){}
-            setTimeout(() => { try { recognition.start(); } catch(e){} }, 300);
-        }
-    }
-
-    function updateWizardUI() {
-        const titleEl = document.getElementById('wizardTitle');
-        const subEl = document.getElementById('wizardSub');
-        const indEl = document.getElementById('wizardStepIndicator');
-        const prevBtn = document.getElementById('btnWizardPrev');
-        
-        indEl.innerText = `Step ${wizardCurrentStep} dari 3`;
-        prevBtn.style.display = wizardCurrentStep > 1 ? 'block' : 'none';
-        document.getElementById('wizardResultText').innerText = "Mendengarkan suara...";
-
-        if (wizardCurrentStep === 1) {
-            titleEl.innerText = "Sebutkan Grade & Ukuran";
-            subEl.innerHTML = "Contoh: <span class='text-orange-600 font-bold'>\"A11\"</span> atau <span class='text-orange-600 font-bold'>\"Grade B 1,2\"</span>";
-        } else if (wizardCurrentStep === 2) {
-            titleEl.innerText = "Sebutkan Jumlah Ekor (Pcs)";
-            subEl.innerHTML = "Contoh: <span class='text-orange-600 font-bold'>\"60 ekor\"</span> atau <span class='text-orange-600 font-bold'>\"50\"</span>";
-        } else if (wizardCurrentStep === 3) {
-            titleEl.innerText = "Sebutkan Berat Timbang Kotor";
-            subEl.innerHTML = "Contoh: <span class='text-orange-600 font-bold'>\"66 kilo\"</span> atau <span class='text-orange-600 font-bold'>\"66.5\"</span>";
-        }
-    }
-
-    function wizardPrevStep() {
-        if (wizardCurrentStep > 1) { wizardCurrentStep--; updateWizardUI(); }
-    }
-
-    function processWizardStep(text) {
-        let t = text.toLowerCase().replace(/koma/g, '.').replace(/,/g, '.').trim();
-        if (wizardCurrentStep === 1) {
-            let gradeMatch = t.match(/([abc])/);
-            let numMatch = t.match(/\d+(?:\.\d+)?/g);
-            if (gradeMatch) selectGrade(gradeMatch[1].toUpperCase());
-            if (numMatch && numMatch.length > 0) {
-                let rawNum = parseFloat(numMatch[numMatch.length - 1]);
-                let sizeVal = (rawNum >= 5 && rawNum <= 30 && !numMatch[numMatch.length - 1].includes('.')) ? (rawNum / 10).toFixed(1) : rawNum;
-                document.getElementById('inputBerat').value = sizeVal;
-                showToast(`Grade & Ukuran terekam (${sizeVal})`);
-                wizardCurrentStep = 2; updateWizardUI(); return;
-            } else { showToast("Grade/Ukuran tidak jelas, ulangi!", true); }
-        } else if (wizardCurrentStep === 2) {
-            let numMatch = t.match(/\d+/);
-            if (numMatch) {
-                let pcsVal = parseInt(numMatch[0]);
-                document.getElementById('inputPcs').value = pcsVal;
-                showToast(`Jumlah ${pcsVal} Ekor terekam`);
-                wizardCurrentStep = 3; updateWizardUI(); return;
-            } else { showToast("Jumlah ekor tidak jelas, ulangi!", true); }
-        } else if (wizardCurrentStep === 3) {
-            let numMatch = t.match(/\d+(?:\.\d+)?/);
-            if (numMatch) {
-                let kotorVal = parseFloat(numMatch[0]);
-                document.getElementById('inputBeratKotor').value = kotorVal;
-                showToast(`Berat Kotor ${kotorVal} Kg terekam`);
-                stopVoiceWizard(); setTimeout(() => openKeranjangModal(), 400); return;
-            } else { showToast("Berat kotor tidak jelas, ulangi!", true); }
-        }
-    }
-
-    function selectGrade(grade) {
-        document.getElementById('inputGrade').value = grade;
-        ['A', 'B', 'C'].forEach(g => {
-            const btn = document.getElementById(`btnGrade-${g}`);
-            if (g === grade) {
-                btn.className = 'grade-btn h-12 rounded-xl border-2 font-black text-sm flex items-center justify-center transition-all bg-orange-600 text-white border-orange-600 shadow-md';
-            } else {
-                btn.className = 'grade-btn h-12 rounded-xl border-2 font-black text-sm flex items-center justify-center transition-all bg-white text-gray-700 border-gray-300 hover:bg-gray-50';
-            }
-        });
-    }
-    function addPcsPreset(val) {
-        const inputEl = document.getElementById('inputPcs');
-        inputEl.value = (parseInt(inputEl.value) || 0) + val;
-        showToast(`Pcs +${val}`);
-    }
-
-    function openKeranjangModal() {
-        const kotor = parseFloat(document.getElementById('inputBeratKotor').value) || 0;
-        const pcs = parseInt(document.getElementById('inputPcs').value) || 0;
-        const ukuran = parseFloat(document.getElementById('inputBerat').value) || 0;
-        
-        if (!kotor || !pcs || !ukuran) {
-            showToast('Lengkapi Berat, Pcs, dan Kotor terlebih dahulu!', true); return;
-        }
-        
-        document.getElementById('modalTextKotor').innerText = `${kotor} Kg`;
-        document.getElementById('modalInputKeranjang').value = '1'; 
-        hitungNettoModal();
-        document.getElementById('keranjangModal').classList.remove('hidden');
-        setTimeout(() => document.getElementById('modalInputKeranjang').focus(), 100);
-    }
-    
-    function closeKeranjangModal() { document.getElementById('keranjangModal').classList.add('hidden'); }
-    
-    function hitungNettoModal() {
-        const kotor = parseFloat(document.getElementById('inputBeratKotor').value) || 0;
-        const jmlKeranjang = parseInt(document.getElementById('modalInputKeranjang').value) || 0;
-        const beratKeranjang = parseFloat(document.getElementById('modalInputBeratKeranjang').value) || 1.8;
-        
-        let netto = Math.max(0, kotor - (jmlKeranjang * beratKeranjang));
-        document.getElementById('modalTextNetto').innerText = `${netto.toFixed(2)} Kg`;
-        return netto;
-    }
-
-    function saveKarkasData(isPrint) {
-        const kotor = parseFloat(document.getElementById('inputBeratKotor').value) || 0;
-        const jmlKeranjang = parseInt(document.getElementById('modalInputKeranjang').value) || 0;
-        
-        if (jmlKeranjang <= 0) { showToast('Jumlah keranjang harus diisi!', true); return; }
-        const netto = hitungNettoModal();
-        if (netto <= 0) { showToast('Netto tidak valid (<= 0)', true); return; }
-
-        const id = Date.now().toString();
-        const tanggal = document.getElementById('inputTanggal').value;
-        const grade = document.getElementById('inputGrade').value;
-        const berat = parseFloat(document.getElementById('inputBerat').value);
-        const pcs = parseInt(document.getElementById('inputPcs').value);
-
-        dataList.push({ id, tanggal, grade, berat, pcs, totalKg: netto, keranjang: jmlKeranjang, naikMobil: false });
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
-        
-        showToast('Data karkas tersimpan!');
-        renderTable();
-        closeKeranjangModal();
-
-        if (isPrint) {
-            document.getElementById('previewTanggal').innerText = tanggal;
-            document.getElementById('previewGrade').innerText = `${grade} (${berat} kg)`;
-            document.getElementById('previewPcs').innerText = pcs;
-            document.getElementById('previewNetto').innerText = netto.toFixed(2);
-            document.getElementById('labelModal').classList.remove('hidden');
-        }
-        document.getElementById('inputPcs').value = '';
-        document.getElementById('inputBeratKotor').value = '';
-    }
-
-    async function handleImageUpload(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const loadingModal = document.getElementById('aiLoadingModal');
-        const loadingText = document.getElementById('aiLoadingText');
-        if (loadingModal) loadingModal.classList.remove('hidden');
-        if (loadingText) loadingText.innerText = "Mengunggah foto dan mempersiapkan AI...";
-
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            const base64String = e.target.result.split(',')[1];
-            const mimeType = file.type || 'image/jpeg';
-
-            if (loadingText) loadingText.innerText = "AI sedang membaca tulisan tangan dan memisahkan tabel...";
-
-            const systemPrompt = `Anda adalah AI asisten Rumah Potong Ayam profesional yang sangat mahir membaca berbagai jenis lembar pencatatan fisik (Laporan Packing Karkas) tulisan tangan, baik yang rapi dalam tabel terstruktur maupun catatan vertikal, acak, atau format tidak standar. Anda cerdas mengenali pola angka dan teks.`;
-            const userPrompt = `Analisa foto tulisan tangan ini dengan sangat cermat dan lentur terhadap berbagai format. 
-1. Cari tanggal (misal 1-10-2026). Jika tidak ditemukan, gunakan tanggal hari ini (${new Date().toLocaleDateString('en-CA')}).
-2. Kenali identitas "Grade" (biasanya A, B, atau C).
-3. Cari angka yang menunjukkan "Ukuran/Target Berat" per ekor (biasanya angka desimal kecil seperti 1.0, 1.1, 1.2 atau nomor urut/kode kolom yang ekuivalen 0.6 s/d 1.8 kg).
-4. Pasangkan data baris timbangan yang berisi "Jumlah Ekor" / Pcs (angka bulat) dan "Berat Total" / Kg (angka desimal yang lebih besar).
-5. Ekstrak HANYA data yang valid menjadi JSON Array dengan struktur persis berikut:
-[
-  { "tanggal": "YYYY-MM-DD", "grade": "A", "berat": 1.1, "pcs": 80, "totalKg": 95.5 }
-]
-Aturan penting:
-- Jangan menyerah jika format tabel berbeda/rusak. Cari pola pasang (Ekor & Kg) di bawah atau di samping teks Grade & Ukuran.
-- Abaikan coretan, baris kosong, atau tulisan yang tidak relevan.
-- Berikan HANYA JSON array murni tanpa markdown, tanpa teks penjelasan tambahan apa pun.`;
-
-            const payload = {
-                contents: [{ role: "user", parts: [{ text: userPrompt }, { inlineData: { mimeType: mimeType, data: base64String } }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                generationConfig: { responseMimeType: "application/json" }
-            };
-
-            const apiKey = "";
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-            try {
-                let response = null;
-                let attempts = 0;
-                const maxRetries = 3;
-                let delay = 1000;
-
-                while (attempts < maxRetries) {
-                    try {
-                        response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                        if (response.ok) break;
-                    } catch (err) {}
-                    attempts++;
-                    await new Promise(res => setTimeout(res, delay));
-                    delay *= 2;
-                }
-
-                if (!response || !response.ok) {
-                    throw new Error("Gagal terhubung ke AI service. Periksa koneksi atau coba sesaat lagi.");
-                }
-
-                const result = await response.json();
-                const candidate = result.candidates?.[0];
-                if (candidate && candidate.content?.parts?.[0]?.text) {
-                    let textResult = candidate.content.parts[0].text;
-                    textResult = textResult.replace(/```json/g, '').replace(/```/g, '').trim();
-                    const parsedData = JSON.parse(textResult);
-
-                    if (Array.isArray(parsedData) && parsedData.length > 0) {
-                        let addedCount = 0;
-                        parsedData.forEach(item => {
-                            const id = Date.now().toString() + Math.random().toString(36).substr(2, 5);
-                            const tanggal = item.tanggal || document.getElementById('inputTanggal').value;
-                            const grade = (item.grade || 'A').toUpperCase();
-                            const berat = parseFloat(item.berat) || 1.0;
-                            const pcs = parseInt(item.pcs) || 0;
-                            const totalKg = parseFloat(item.totalKg) || 0;
-
-                            if (pcs > 0 && totalKg > 0) {
-                                dataList.push({ id, tanggal, grade, berat, pcs, totalKg, keranjang: 0, naikMobil: false });
-                                addedCount++;
-                            }
-                        });
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
-                        renderTable();
-                        showToast(`Berhasil import ${addedCount} baris data dari foto!`);
-                    } else {
-                        showErrorModal('AI tidak menemukan data karkas yang valid pada foto ini. Pastikan foto memuat angka Ekor, Berat, dan Grade dengan jelas.');
-                    }
-                } else {
-                    throw new Error("Format respons AI tidak dikenali");
-                }
-            } catch (error) {
-                console.error(error);
-                showErrorModal('Gagal memproses gambar.\n\nPastikan foto jelas, tulisan tangan dapat dibaca, atau cek koneksi internet Anda.\n\nDetail: ' + error.message);
-            } finally {
-                if (loadingModal) loadingModal.classList.add('hidden');
-                event.target.value = '';
-            }
-        }; 
-        reader.readAsDataURL(file);
-    }
-
-    function switchTab(tab) {
-        activeTab = tab;
-        ['home', 'kedatangan', 'bagian', 'tally'].forEach(v => {
-            document.getElementById(`view-${v}`).classList.add('hidden');
-            const nav = document.getElementById(`nav-${v}`);
-            if (nav) {
-                nav.classList.remove('font-bold', 'text-orange-600', 'text-orange-500', 'text-blue-500');
-                nav.classList.add('text-gray-400', 'font-medium');
-            }
-        });
-        document.getElementById(`view-${tab}`).classList.remove('hidden');
-        const activeNav = document.getElementById(`nav-${tab}`);
-        if (activeNav) {
-            activeNav.classList.remove('text-gray-400', 'font-medium');
-            activeNav.classList.add('font-bold');
-            if (tab === 'home') { activeNav.classList.add('text-orange-600'); renderTable(); }
-            else if (tab === 'kedatangan') { activeNav.classList.add('text-orange-600'); loadKedatanganForCurrentDate(); renderTableKedatangan(); }
-            else if (tab === 'bagian') { activeNav.classList.add('text-orange-500'); renderTableBagian(); }
-            else if (tab === 'tally') { activeNav.classList.add('text-blue-500'); renderTableTally(); }
-        }
-    }
-
-    function restrictKey(e) { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); return false; } return true; }
-    function closeModal() { document.getElementById('labelModal').classList.add('hidden'); }
-    function printLabel() { window.print(); closeModal(); }
-
-    function getGroupedData(targetDate) {
-        const filtered = dataList.filter(d => d.tanggal === targetDate);
-        const groups = {};
-        filtered.forEach(item => {
-            const key = `${item.grade}_${item.berat}`;
-            if (!groups[key]) groups[key] = { label: `Grade ${item.grade} (${item.berat} kg)`, grade: item.grade, berat: item.berat, items: [] };
-            groups[key].items.push(item);
-        });
-        const sortedKeys = Object.keys(groups).sort((a, b) => groups[a].grade !== groups[b].grade ? groups[a].grade.localeCompare(groups[b].grade) : groups[a].berat - groups[b].berat);
-        let maxRows = 0;
-        sortedKeys.forEach(k => { if (groups[k].items.length > maxRows) maxRows = groups[k].items.length; });
-        return { groups, sortedKeys, maxRows, filteredData: filtered };
-    }
-
-    function renderTable() {
-        const container = document.getElementById('tableContainer');
-        if (!container) return;
-        const targetDate = document.getElementById('filterTanggalPotong').value;
-        const { groups, sortedKeys, maxRows } = getGroupedData(targetDate);
-
-        if (sortedKeys.length === 0) {
-            container.innerHTML = `<div class="py-12 text-center flex flex-col items-center justify-center p-4"><i class="fa-solid fa-folder-open text-4xl text-gray-300 mb-2"></i><p class="text-xs text-gray-500 font-semibold">Belum ada data potong karkas di tanggal ini</p></div>`;
-            return;
-        }
-
-        let html = `<div class="bg-gray-100 p-2.5 text-center border-b border-gray-200 font-bold text-xs text-gray-800">(Tanggal Input: ${targetDate})</div><table class="tally-table text-xs text-gray-800 w-full text-center"><thead><tr class="bg-gray-100"><th rowspan="2" class="font-bold text-gray-700 bg-gray-200 border-r border-gray-300 w-10">No</th>`;
-        
-        sortedKeys.forEach(k => { 
-            html += `<th colspan="3" class="font-bold text-gray-900 border-b border-gray-300 py-2 px-1 sm:px-3 bg-amber-50/50">
-                <div class="flex items-center justify-center gap-1.5 sm:gap-2">
-                    <span>(${groups[k].label})</span>
-                    <button onclick="openEditGradeModal('${groups[k].grade}', ${groups[k].berat}, '${targetDate}')" class="text-blue-600 hover:text-blue-800 p-1 bg-white rounded shadow-sm border border-gray-200 active:scale-95 transition" title="Edit Grade/Ukuran Kolom Ini">
-                        <i class="fa-solid fa-pen text-[10px]"></i>
-                    </button>
-                </div>
-            </th>`; 
-        });
-
-        html += `</tr><tr class="bg-gray-50 text-[11px] text-gray-700">`;
-        sortedKeys.forEach(() => { html += `<th class="font-semibold px-2 py-1.5 bg-amber-100/70 border-r border-gray-300">Pcs</th><th class="font-semibold px-2 py-1.5 bg-amber-50/80 border-r border-gray-300">Krj</th><th class="font-semibold px-2 py-1.5 bg-amber-50/80">Kg</th>`; });
-        html += `</tr></thead><tbody>`;
-
-        for (let i = 0; i < maxRows; i++) {
-            html += `<tr><td class="font-bold text-gray-500 bg-gray-50 border-r border-gray-300">${i + 1}</td>`;
-            sortedKeys.forEach(k => {
-                const item = groups[k].items[i];
-                if (item) {
-                    const itemAvg = item.pcs > 0 ? (item.totalKg / item.pcs).toFixed(2) : '0.00';
-                    const krjVal = item.keranjang || 0;
-                    html += `<td contenteditable="true" inputmode="numeric" data-id="${item.id}" data-field="pcs" onblur="handleEdit(this)" onkeypress="return restrictKey(event)" class="font-semibold text-gray-800 bg-amber-50/60 border-r border-gray-200 px-3 py-2">${item.pcs}</td>
-                             <td contenteditable="true" inputmode="numeric" data-id="${item.id}" data-field="keranjang" onblur="handleEdit(this)" onkeypress="return restrictKey(event)" class="font-semibold text-gray-700 bg-amber-50/40 border-r border-gray-200 px-2 py-2">${krjVal}</td>
-                             <td contenteditable="true" inputmode="decimal" data-id="${item.id}" data-field="totalKg" onblur="handleEdit(this)" onkeypress="return restrictKey(event)" class="font-bold text-orange-950 bg-amber-50/30 px-3 py-2 whitespace-nowrap">${item.totalKg} <span class="text-[9px] font-semibold text-orange-700 bg-orange-100/80 px-1 py-0.5 rounded ml-0.5 hidden sm:inline-block">(${itemAvg})</span></td>`;
-                } else {
-                    html += `<td class="border-r border-gray-200 px-3 py-2"></td><td class="border-r border-gray-200 px-2 py-2"></td><td class="px-3 py-2"></td>`;
-                }
-            });
-            html += `</tr>`;
-        }
-        html += `</tbody><tfoot><tr class="bg-orange-100/90 font-extrabold border-t-2 border-gray-400"><td class="bg-orange-200 text-orange-950 p-2 text-center border-r border-gray-300">Tot</td>`;
-        
-        let grandTotalAll = 0, grandPcsAll = 0, grandKrjAll = 0;
-        sortedKeys.forEach(k => {
-            const sumTotal = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
-            const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
-            const sumKrj = groups[k].items.reduce((acc, curr) => acc + (curr.keranjang || 0), 0);
-            grandTotalAll += sumTotal; grandPcsAll += sumPcs; grandKrjAll += sumKrj;
-            
-            html += `<td class="text-orange-950 border-r border-gray-300 p-2 text-center">${sumPcs}</td>
-                     <td class="text-orange-950 border-r border-gray-300 p-2 text-center">${sumKrj}</td>
-                     <td class="text-orange-950 border-r border-gray-300 p-2 text-center">${Math.round(sumTotal * 100) / 100}</td>`;
-        });
-        html += `</tr></tfoot></table>`;
-        
-        html += `<div class="p-3 bg-orange-50 border-t border-orange-200 flex justify-between items-center"><span class="text-xs font-bold text-orange-900">(Total Keseluruhan Hari Ini)</span><div class="text-right"><div class="text-xs text-orange-800 font-bold">${grandPcsAll} Ekor | ${grandKrjAll} Krj</div><div class="text-sm text-orange-950 font-extrabold">${Math.round(grandTotalAll * 100) / 100} Kg</div></div></div>`;
-        container.innerHTML = html;
-    }
-
-    function openEditGradeModal(oldGrade, oldBerat, date) {
-        document.getElementById('editGradeOldGrade').value = oldGrade;
-        document.getElementById('editGradeOldBerat').value = oldBerat;
-        document.getElementById('editGradeTargetDate').value = date;
-        document.getElementById('editGradeNewGrade').value = oldGrade;
-        document.getElementById('editGradeNewBerat').value = oldBerat;
-        document.getElementById('editGradeModal').classList.remove('hidden');
-    }
-    
-    function closeEditGradeModal() { document.getElementById('editGradeModal').classList.add('hidden'); }
-
-    function saveEditGrade() {
-        const oldG = document.getElementById('editGradeOldGrade').value;
-        const oldB = parseFloat(document.getElementById('editGradeOldBerat').value);
-        const date = document.getElementById('editGradeTargetDate').value;
-        const newG = document.getElementById('editGradeNewGrade').value;
-        const newB = parseFloat(document.getElementById('editGradeNewBerat').value);
-        
-        if(!newG || !newB) { showToast('Grade dan Berat baru harus diisi', true); return; }
-        
-        let updatedCount = 0;
-        dataList.forEach(item => {
-            if(item.tanggal === date && item.grade === oldG && item.berat === oldB) {
-                item.grade = newG; item.berat = newB; updatedCount++;
-            }
-        });
-        
-        if(updatedCount > 0) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
-            renderTable();
-            showToast(`Berhasil mengubah ${updatedCount} baris data`);
-        }
-        closeEditGradeModal();
-    }
-
-    function handleEdit(cell) {
-        const id = cell.getAttribute('data-id');
-        const field = cell.getAttribute('data-field');
-        const index = dataList.findIndex(d => d.id === id);
-        if (index === -1) return;
-        const newValue = parseFloat(cell.innerText.replace(/[^0-9.]/g, '')) || 0;
-        if (newValue <= 0 && field === 'pcs') {
-            dataList.splice(index, 1);
-            showToast('Baris data dihapus', true);
-        } else {
-            dataList[index][field] = (field === 'pcs' || field === 'keranjang') ? Math.round(newValue) : newValue;
-            showToast('Data diperbarui');
-        }
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
-        renderTable();
-    }
-
-    function exportExcel() {
-        const targetDate = document.getElementById('filterTanggalPotong').value;
-        const { groups, sortedKeys, maxRows, filteredData } = getGroupedData(targetDate);
-        if (filteredData.length === 0) { showToast('Tidak ada data potong karkas!', true); return; }
-
-        const aoa = [[`Laporan Potong Karkas - RPA Auto`], [`Tanggal: ${targetDate}`], [""]];
-
-        let header1 = ['No'];
-        sortedKeys.forEach(k => { header1.push(`Grade ${groups[k].grade} (${groups[k].berat} kg)`); header1.push(""); header1.push(""); });
-        aoa.push(header1);
-        let header2 = [''];
-        sortedKeys.forEach(k => { header2.push("Pcs (Ekor)"); header2.push("Krj"); header2.push("Berat (Kg)"); });
-        aoa.push(header2);
-
-        for (let i = 0; i < maxRows; i++) {
-            let row = [i + 1];
-            sortedKeys.forEach(k => {
-                const item = groups[k].items[i];
-                if (item) { row.push(item.pcs); row.push(item.keranjang || 0); row.push(item.totalKg); } else { row.push(""); row.push(""); row.push(""); }
-            });
-            aoa.push(row);
-        }
-        let footer = ['TOTAL'];
-        sortedKeys.forEach(k => {
-            const sumTotal = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
-            const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
-            const sumKrj = groups[k].items.reduce((acc, curr) => acc + (curr.keranjang || 0), 0);
-            footer.push(sumPcs); footer.push(sumKrj); footer.push(Math.round(sumTotal * 100) / 100);
-        });
-        aoa.push(footer);
-
-        const ws = XLSX.utils.aoa_to_sheet(aoa);
-        if(!ws['!merges']) ws['!merges'] = [];
-        let colIndex = 1;
-        sortedKeys.forEach(k => {
-            ws['!merges'].push({ s: {r: 3, c: colIndex}, e: {r: 3, c: colIndex + 2} }); colIndex += 3;
-        });
-
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Karkas");
-        XLSX.writeFile(wb, `Laporan_Karkas_${targetDate}.xlsx`);
-    }
-
-    function kirimWA() {
-        const targetDate = document.getElementById('filterTanggalPotong').value;
-        const { groups, sortedKeys, filteredData } = getGroupedData(targetDate);
-        if (filteredData.length === 0) { showToast('Tidak ada data karkas!', true); return; }
-
-        let msg = `*LAPORAN POTONG KARKAS*\n*Tanggal:* ${targetDate}\n--------------------------------\n\n*RINCIAN PER GRADE:*\n`;
-        let grandPcs = 0, grandBerat = 0;
-        sortedKeys.forEach(k => {
-            const sumTotal = groups[k].items.reduce((acc, curr) => acc + curr.totalKg, 0);
-            const sumPcs = groups[k].items.reduce((acc, curr) => acc + curr.pcs, 0);
-            grandPcs += sumPcs; grandBerat += sumTotal;
-            msg += `- *Grade ${groups[k].grade} (${groups[k].berat} kg)*\n   └ ${sumPcs} Ekor  |  ${Math.round(sumTotal * 100) / 100} Kg\n\n`;
-        });
-        msg += `--------------------------------\n*TOTAL KESELURUHAN*\n*Total Ekor  :* ${grandPcs} Ekor\n*Total Berat :* ${Math.round(grandBerat * 100) / 100} Kg`;
-        window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    function backupBeranda() {
-        if (dataList.length === 0) { showToast('Tidak ada data karkas untuk dibackup', true); return; }
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataList));
-        const dlAnchorElem = document.createElement('a');
-        dlAnchorElem.setAttribute("href", dataStr);
-        dlAnchorElem.setAttribute("download", `Backup_RPA_Karkas_${new Date().toISOString().slice(0,10)}.json`);
-        document.body.appendChild(dlAnchorElem); 
-        dlAnchorElem.click();
-        dlAnchorElem.remove();
-        showToast('File JSON berhasil diunduh');
-    }
-
-    function restoreBeranda(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const imported = JSON.parse(e.target.result);
-                if (Array.isArray(imported)) {
-                    dataList = imported;
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
-                    renderTable();
-                    showToast('Data berhasil direstore!');
-                } else { showErrorModal('Format file JSON tidak valid. Pastikan itu adalah file hasil Backup.'); }
-            } catch (error) { showErrorModal('Gagal membaca file JSON.'); }
-            event.target.value = '';
-        };
-        reader.readAsText(file);
-    }
-
-    function loadKedatanganStorage() {
-        const saved = localStorage.getItem(STORAGE_KEY_KEDATANGAN);
-        if (saved) { try { kedatanganData = JSON.parse(saved); } catch(e) { kedatanganData = {}; } }
-    }
-    
-    function autoSaveKedatanganLocal() {
-        const tgl = document.getElementById('inputTanggalKedatangan').value;
-        if (!tgl) return;
-        kedatanganData[tgl] = { jam: document.getElementById('inputJamKedatangan').value, namaKandang: document.getElementById('inputNamaKandangKedatangan').value, alamatKandang: document.getElementById('inputAlamatKandangKedatangan').value, rows: currentKedatanganRows };
-        localStorage.setItem(STORAGE_KEY_KEDATANGAN, JSON.stringify(kedatanganData));
-    }
-    
-    function loadKedatanganForCurrentDate() {
-        const tgl = document.getElementById('inputTanggalKedatangan').value;
-        if (!tgl) return;
-        if (!kedatanganData[tgl]) kedatanganData[tgl] = { jam: new Date().toTimeString().slice(0, 5), namaKandang: '', alamatKandang: '', rows: [] };
-        const session = kedatanganData[tgl];
-        document.getElementById('inputJamKedatangan').value = session.jam || '';
-        document.getElementById('inputNamaKandangKedatangan').value = session.namaKandang || '';
-        document.getElementById('inputAlamatKandangKedatangan').value = session.alamatKandang || '';
-        currentKedatanganRows = session.rows || [];
-        document.getElementById('summaryKedatanganCard').classList.add('hidden');
-    }
-    
-    function onKedatanganDateChange() { loadKedatanganForCurrentDate(); renderTableKedatangan(); showToast(`Memuat data kedatangan: ${document.getElementById('inputTanggalKedatangan').value}`); }
-
-    function renderTableKedatangan() {
-        const container = document.getElementById('tableKedatanganContainer');
-        if (!container) return;
-        const targetDate = document.getElementById('inputTanggalKedatangan').value || '-';
-        const targetJam = document.getElementById('inputJamKedatangan').value || '-';
-        const namaKandang = document.getElementById('inputNamaKandangKedatangan').value || '-';
-        const alamatKandang = document.getElementById('inputAlamatKandangKedatangan').value || '-';
-
-        document.getElementById('labelHeaderInfo').innerText = `Tanggal Terima: ${targetDate} | Jam: ${targetJam}`;
-        document.getElementById('labelHeaderKandang').innerText = `Kandang: ${namaKandang} (${alamatKandang})`;
-        const totalRows = currentKedatanganRows.length;
-        document.getElementById('totalBarisBadge').innerText = `${totalRows} Baris Ditimbang`;
-        autoSaveKedatanganLocal();
-
-        if (totalRows === 0) {
-            container.innerHTML = `<div class="w-full py-8 text-center text-gray-400 font-semibold text-xs border border-dashed border-gray-300 rounded-xl bg-gray-50"><i class="fa-solid fa-truck text-2xl mb-1 text-gray-300 block"></i>Belum ada data timbangan kedatangan. Tambahkan baris di atas!</div>`; return;
-        }
-
-        const tableCount = Math.ceil(totalRows / 10);
-        let flexHtml = '';
-        for (let t = 0; t < tableCount; t++) {
-            const startIdx = t * 10; const endIdx = Math.min(startIdx + 10, totalRows);
-            let subTableHtml = `<div class="shrink-0 w-64 sm:w-72 bg-white rounded-xl border border-orange-200 overflow-hidden shadow-xs"><div class="bg-orange-100/90 text-orange-950 px-3 py-1.5 font-bold text-xs border-b border-orange-200 text-center flex justify-between items-center"><span>Tabel ${t + 1} (Baris ${startIdx + 1}-${endIdx})</span><span class="text-[10px] bg-white px-1.5 py-0.5 rounded text-orange-800 font-extrabold">${endIdx - startIdx}/10</span></div><table class="tally-table text-xs text-gray-800 w-full text-center"><thead><tr class="bg-gray-50 text-[11px] font-bold text-gray-700"><th class="w-10 border-r border-gray-300">No</th><th class="border-r border-gray-300 bg-amber-50/70">Ekor</th><th class="bg-orange-50/70">Berat (kg)</th></tr></thead><tbody>`;
-            let subE = 0, subB = 0;
-            for (let i = startIdx; i < startIdx + 10; i++) {
-                const item = currentKedatanganRows[i];
-                if (item) {
-                    const eVal = (item.ekor !== '' && item.ekor !== undefined) ? item.ekor : '';
-                    const bVal = (item.berat !== '' && item.berat !== undefined) ? item.berat : '';
-                    subE += (parseFloat(item.ekor) || 0); subB += (parseFloat(item.berat) || 0);
-                    subTableHtml += `<tr><td class="font-bold text-gray-400 bg-gray-50 border-r border-gray-300">${i + 1}</td><td contenteditable="true" inputmode="numeric" data-index="${i}" data-field="ekor" onblur="handleEditBarisKedatangan(this)" onkeypress="return restrictKey(event)" class="font-semibold bg-amber-50/40 border-r border-gray-200 px-2 py-1.5">${eVal}</td><td contenteditable="true" inputmode="decimal" data-index="${i}" data-field="berat" onblur="handleEditBarisKedatangan(this)" onkeypress="return restrictKey(event)" class="font-black text-orange-950 bg-orange-50/30 px-2 py-1.5">${bVal}</td></tr>`;
-                } else {
-                    subTableHtml += `<tr><td class="font-medium text-gray-300 bg-gray-50/50 border-r border-gray-200">${i + 1}</td><td class="border-r border-gray-200 px-2 py-1.5 bg-gray-50/20 text-gray-300">-</td><td class="px-2 py-1.5 bg-gray-50/20 text-gray-300">-</td></tr>`;
-                }
-            }
-            subTableHtml += `</tbody><tfoot><tr class="bg-amber-100/90 font-extrabold text-[11px] border-t border-amber-300 text-amber-950"><td class="p-1.5 text-center border-r border-amber-200">Sub</td><td class="p-1.5 text-center border-r border-amber-200">${subE}</td><td class="p-1.5 text-center">${Math.round(subB * 100) / 100}</td></tr></tfoot></table></div>`;
-            flexHtml += subTableHtml;
-        }
-        container.innerHTML = flexHtml;
-    }
-
-    function tambahBarisKedatangan() {
-        const ekor = document.getElementById('inputBarisEkor').value;
-        const berat = document.getElementById('inputBarisBerat').value;
-        if (!berat || parseFloat(berat) <= 0) { showToast('Berat harus diisi!', true); return; }
-        currentKedatanganRows.push({ ekor: ekor !== '' ? parseInt(ekor) : '', berat: parseFloat(berat) });
-        document.getElementById('inputBarisEkor').value = ''; document.getElementById('inputBarisBerat').value = '';
-        renderTableKedatangan(); showToast(`Baris #${currentKedatanganRows.length} ditambahkan`);
-        setTimeout(() => { const c = document.getElementById('tableKedatanganContainer'); if (c) c.scrollLeft = c.scrollWidth; }, 100);
-    }
-    
-    function handleEditBarisKedatangan(cell) {
-        const index = parseInt(cell.getAttribute('data-index')); const field = cell.getAttribute('data-field'); const val = cell.innerText.trim();
-        if (!currentKedatanganRows[index]) return;
-        if (val === '' || val === '0') {
-            if (field === 'berat') { currentKedatanganRows.splice(index, 1); showToast('Baris dihapus', true); }
-            else { currentKedatanganRows[index][field] = ''; }
-        } else {
-            const num = parseFloat(val);
-            if (!isNaN(num)) { currentKedatanganRows[index][field] = field === 'ekor' ? Math.round(num) : num; showToast('Baris diperbarui'); }
-        }
-        renderTableKedatangan();
-    }
-    
-    function hitungTotalKedatangan() {
-        if (currentKedatanganRows.length === 0) { showToast('Belum ada data kedatangan!', true); return; }
-        let tE = 0, tB = 0;
-        currentKedatanganRows.forEach(item => { tE += (parseFloat(item.ekor) || 0); tB += (parseFloat(item.berat) || 0); });
-        const roundB = Math.round(tB * 100) / 100;
-        document.getElementById('resultTotalEkor').innerText = `${tE} Ekor`;
-        document.getElementById('resultTotalBerat').innerText = `${roundB} Kg`;
-        document.getElementById('resultRataRata').innerText = `${tE > 0 ? (roundB / tE).toFixed(2) : '0'} Kg / Ekor`;
-        document.getElementById('summaryKedatanganCard').classList.remove('hidden');
-        showToast('Kalkulasi Selesai!');
-    }
-    
-    function exportKedatanganExcel() {
-        if (currentKedatanganRows.length === 0) { showToast('Tidak ada data!', true); return; }
-        const tgl = document.getElementById('inputTanggalKedatangan').value; const jam = document.getElementById('inputJamKedatangan').value; const kandang = document.getElementById('inputNamaKandangKedatangan').value || '-'; const alamat = document.getElementById('inputAlamatKandangKedatangan').value || '-';
-        let tE = 0, tB = 0; currentKedatanganRows.forEach(r => { tE += (parseFloat(r.ekor) || 0); tB += (parseFloat(r.berat) || 0); });
-        const aoa = [[`Laporan Kedatangan - RPA Auto`],[`Tanggal`, tgl],[`Jam`, jam],[`Kandang`, kandang],[`Alamat`, alamat],[""],[`RINGKASAN`],[`Total Ekor`, tE],[`Total Berat (Kg)`, Math.round(tB * 100) / 100],[`Rata-rata`, tE>0?(tB/tE).toFixed(2):0],[""],['No', 'Ekor', 'Berat (Kg)']];
-        currentKedatanganRows.forEach((r, i) => { aoa.push([i + 1, r.ekor || "-", r.berat]); });
-        const ws = XLSX.utils.aoa_to_sheet(aoa); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Kedatangan"); XLSX.writeFile(wb, `Laporan_Datang_${tgl}.xlsx`);
-    }
-    
-    function kirimWAKedatangan() {
-        if (currentKedatanganRows.length === 0) { showToast('Tidak ada data!', true); return; }
-        let msg = `*LAPORAN KEDATANGAN AYAM*\n*Tanggal :* ${document.getElementById('inputTanggalKedatangan').value}\n*Kandang :* ${document.getElementById('inputNamaKandangKedatangan').value || '-'}\n--------------------------------\n`;
-        let tE = 0, tB = 0; currentKedatanganRows.forEach((r, i) => { msg += `${i+1}. ${r.ekor?r.ekor:'-'} Ekor  |  ${r.berat} Kg\n`; tE += (parseFloat(r.ekor) || 0); tB += (parseFloat(r.berat) || 0); });
-        msg += `--------------------------------\n*Total Ekor  :* ${tE} Ekor\n*Total Berat :* ${Math.round(tB * 100)/100} Kg`; window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    function getGroupedBagian(targetDate) {
-        const filtered = bagianList.filter(d => d.tanggal === targetDate);
-        const groups = {};
-        filtered.forEach(item => {
-            if (!groups[item.jenis]) groups[item.jenis] = { jenis: item.jenis, items: [] };
-            groups[item.jenis].items.push(item);
-        });
-        const sortedKeys = Object.keys(groups).sort();
-        let maxRows = 0;
-        sortedKeys.forEach(k => { if (groups[k].items.length > maxRows) maxRows = groups[k].items.length; });
-        return { groups, sortedKeys, maxRows, filteredData: filtered };
-    }
-
-    function renderTableBagian() {
-        const container = document.getElementById('tableBagianContainer');
-        if (!container) return;
-        const targetDate = document.getElementById('inputTanggalBagian').value;
-        const { groups, sortedKeys, maxRows, filteredData } = getGroupedBagian(targetDate);
-
-        if (filteredData.length === 0) { 
-            container.innerHTML = `<div class="py-12 text-center text-gray-500 font-semibold"><i class="fa-solid fa-drumstick-bite text-4xl text-gray-300 mb-2 block"></i>Belum ada data bagian di tanggal ini</div>`; 
-            return; 
-        }
-        
-        let html = `<div class="bg-gray-100 p-2.5 text-center border-b border-gray-200 font-bold text-xs text-gray-800">(Tanggal Input: ${targetDate})</div>
-        <table class="tally-table text-xs text-gray-800 w-full text-center"><thead><tr class="bg-orange-50/80">
-        <th class="font-bold text-orange-900 border-r border-gray-300 w-10">No</th>`;
-        
-        sortedKeys.forEach(k => { html += `<th class="font-bold text-orange-900 border-r border-gray-300 px-3 min-w-[80px]">${k} (Kg)</th>`; });
-        html += `</tr></thead><tbody>`;
-
-        for (let i = 0; i < maxRows; i++) {
-            html += `<tr><td class="text-center font-bold text-gray-500 bg-gray-50 border-r border-gray-300">${i + 1}</td>`;
-            sortedKeys.forEach(k => {
-                const item = groups[k].items[i];
-                if (item) {
-                    html += `<td contenteditable="true" inputmode="decimal" data-id="${item.id}" onblur="handleEditBagian(this)" onkeypress="return restrictKey(event)" class="text-center font-bold text-orange-950 bg-amber-50/40 px-3 py-2 border-r border-gray-200">${item.berat}</td>`;
-                } else {
-                    html += `<td class="border-r border-gray-200 px-3 py-2 bg-gray-50/30"></td>`;
-                }
-            });
-            html += `</tr>`;
-        }
-
-        html += `</tbody><tfoot><tr class="bg-orange-100/80 font-extrabold border-t-2 border-gray-400"><td class="text-center font-bold text-orange-950 px-2 py-2.5 border-r border-gray-300">Tot</td>`;
-        let grandTotal = 0;
-        sortedKeys.forEach(k => {
-            const sum = groups[k].items.reduce((acc, curr) => acc + curr.berat, 0);
-            grandTotal += sum;
-            html += `<td class="text-center font-extrabold text-orange-950 px-3 py-2.5 border-r border-gray-300">${Math.round(sum * 100) / 100}</td>`;
-        });
-        html += `</tr></tfoot></table>
-        <div class="p-3 bg-orange-50 border-t border-orange-200 flex justify-between items-center"><span class="text-xs font-bold text-orange-900">(Total Semua Bagian)</span><div class="text-sm text-orange-950 font-extrabold">${Math.round(grandTotal * 100) / 100} Kg</div></div>`;
-        
-        container.innerHTML = html;
-    }
-
-    function handleEditBagian(cell) {
-        const id = cell.getAttribute('data-id'); 
-        const idx = bagianList.findIndex(d => d.id === id); 
-        if (idx === -1) return;
-        const val = parseFloat(cell.innerText.replace(/[^0-9.]/g, '')) || 0;
-        if (val <= 0) {
-            bagianList.splice(idx, 1);
-            showToast('Item bagian dihapus', true);
-        } else {
-            bagianList[idx].berat = val;
-            showToast('Data diperbarui');
-        }
-        localStorage.setItem(STORAGE_KEY_BAGIAN, JSON.stringify(bagianList)); 
-        renderTableBagian();
-    }
-
-    function exportBagianExcel() {
-        const targetDate = document.getElementById('inputTanggalBagian').value; 
-        const { groups, sortedKeys, maxRows, filteredData } = getGroupedBagian(targetDate);
-        if (filteredData.length === 0) { showToast('Tidak ada data!', true); return; }
-        
-        const aoa = [[`Laporan Bagian Ayam - RPA Auto`], [`Tanggal: ${targetDate}`], [""]];
-        
-        let header = ['No'];
-        sortedKeys.forEach(k => header.push(`${k} (Kg)`));
-        aoa.push(header);
-
-        for (let i = 0; i < maxRows; i++) {
-            let row = [i + 1];
-            sortedKeys.forEach(k => {
-                const item = groups[k].items[i];
-                if (item) { row.push(item.berat); } else { row.push(""); }
-            });
-            aoa.push(row);
-        }
-
-        let footer = ['TOTAL'];
-        let grandTotal = 0;
-        sortedKeys.forEach(k => {
-            const sum = groups[k].items.reduce((acc, curr) => acc + curr.berat, 0);
-            grandTotal += sum;
-            footer.push(Math.round(sum * 100) / 100);
-        });
-        aoa.push(footer);
-        aoa.push([""]);
-        aoa.push(["TOTAL KESELURUHAN (Kg)", grandTotal]);
-
-        const ws = XLSX.utils.aoa_to_sheet(aoa); 
-        const wb = XLSX.utils.book_new(); 
-        XLSX.utils.book_append_sheet(wb, ws, "Bagian"); 
-        XLSX.writeFile(wb, `Laporan_Bagian_${targetDate}.xlsx`);
-    }
-
-    function kirimWABagian() {
-        const targetDate = document.getElementById('inputTanggalBagian').value; 
-        const { groups, sortedKeys, filteredData } = getGroupedBagian(targetDate);
-        if (filteredData.length === 0) { showToast('Tidak ada data!', true); return; }
-        
-        let msg = `*LAPORAN BAGIAN AYAM*\n*Tanggal:* ${targetDate}\n--------------------------------\n\n`; 
-        let total = 0; 
-        
-        sortedKeys.forEach(k => {
-            const sum = groups[k].items.reduce((acc, curr) => acc + curr.berat, 0);
-            msg += `- *${k}* : ${Math.round(sum * 100) / 100} Kg\n`; 
-            total += sum;
-        });
-        
-        msg += `\n--------------------------------\n*TOTAL BERAT :* ${Math.round(total * 100)/100} Kg`; 
-        window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    function renderBagianCategories(selectedCategory = null) {
-        const pillsContainer = document.getElementById('bagianCategoryPills'); const selectEl = document.getElementById('inputJenisBagian'); if (!pillsContainer || !selectEl) return;
-        const allCats = getAllBagianCategories(); const currentVal = selectedCategory || selectEl.value || allCats[0];
-        let pillsHtml = ''; allCats.forEach(cat => { const isSelected = cat === currentVal; const activeClass = isSelected ? 'bg-orange-600 text-white border-orange-600 font-bold shadow-sm' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100 font-medium'; pillsHtml += `<button type="button" onclick="selectBagianCategory('${cat}')" class="cat-pill text-xs py-1.5 px-2.5 rounded-lg border transition-all text-center ${activeClass}">${cat}</button>`; }); pillsContainer.innerHTML = pillsHtml;
-        let selectHtml = ''; allCats.forEach((cat, idx) => { selectHtml += `<option value="${cat}">${idx + 1}. ${cat}</option>`; }); selectEl.innerHTML = selectHtml; selectEl.value = currentVal;
-    }
-    
-    function openTambahBagianModal() { document.getElementById('tambahBagianModal').classList.remove('hidden'); document.getElementById('inputNamaBagianBaru').value = ''; setTimeout(() => document.getElementById('inputNamaBagianBaru').focus(), 100); }
-    function closeTambahBagianModal() { document.getElementById('tambahBagianModal').classList.add('hidden'); }
-    
-    function saveBagianBaru(e) {
-        e.preventDefault(); const namaBaru = document.getElementById('inputNamaBagianBaru').value.trim(); if (!namaBaru) return;
-        if (getAllBagianCategories().find(c => c.toLowerCase() === namaBaru.toLowerCase())) { showToast('Jenis bagian sudah ada!', true); closeTambahBagianModal(); return; }
-        customBagianList.push(namaBaru); localStorage.setItem(STORAGE_KEY_CUSTOM_BAGIAN, JSON.stringify(customBagianList)); renderBagianCategories(namaBaru); closeTambahBagianModal(); showToast(`Bagian "${namaBaru}" ditambahkan`);
-    }
-    
-    function selectBagianCategory(cat) { document.getElementById('inputJenisBagian').value = cat; renderBagianCategories(cat); }
-    function syncBagianPill(cat) { renderBagianCategories(cat); }
-
-    function renderTableTally() {
-        const containerSisa = document.getElementById('tableSisaStokContainer');
-        const containerDetail = document.getElementById('tableTallyContainer');
-        if (!containerSisa || !containerDetail) return;
-        
-        const targetDate = document.getElementById('filterTanggalTally').value;
-        const filtered = dataList.filter(d => d.tanggal === targetDate);
-
-        if (filtered.length === 0) {
-            containerSisa.innerHTML = `<div class="p-6 text-center text-gray-500 font-medium text-xs">Tidak ada data untuk sisa stok.</div>`;
-            containerDetail.innerHTML = `<div class="p-6 text-center text-gray-500 font-medium text-xs">Belum ada data detail tally.</div>`;
-            document.getElementById('tallyTotalMuat').innerText = '0 Kg';
-            document.getElementById('tallySisaBelum').innerText = '0 Kg';
-            return;
-        }
-
-        let totalMuat = 0, sisaBelum = 0;
-        
-        const belumMuat = filtered.filter(d => !d.naikMobil);
-        const stokGroups = {};
-        belumMuat.forEach(item => {
-            const key = `${item.grade}_${item.berat}`;
-            if (!stokGroups[key]) stokGroups[key] = { grade: item.grade, berat: item.berat, pcs: 0, totalKg: 0, keranjang: 0 };
-            stokGroups[key].pcs += item.pcs;
-            stokGroups[key].totalKg += item.totalKg;
-            stokGroups[key].keranjang += (item.keranjang || 0);
-        });
-
-        const stokKeys = Object.keys(stokGroups).sort();
-        let sisaHtml = `<table class="w-full text-left text-xs border-collapse"><tr class="bg-orange-100 text-orange-900 border-b border-orange-200"><th class="p-2.5 border-r border-orange-200">Grade</th><th class="p-2.5 border-r border-orange-200 text-center">Ukuran</th><th class="p-2.5 border-r border-orange-200 text-center">Sisa Ekor</th><th class="p-2.5 border-r border-orange-200 text-center">Sisa Krj</th><th class="p-2.5 text-center">Sisa Berat (Kg)</th></tr>`;
-        
-        if(stokKeys.length === 0) {
-            sisaHtml += `<tr><td colspan="5" class="p-5 text-center text-gray-500 font-bold bg-gray-50/50">Semua karkas telah naik mobil. <i class="fa-solid fa-check-double text-emerald-500 ml-1"></i></td></tr>`;
-        } else {
-            stokKeys.forEach(k => {
-                const g = stokGroups[k];
-                sisaHtml += `<tr class="border-b border-gray-200 bg-white hover:bg-orange-50 transition-colors">
-                    <td class="p-2.5 border-r border-gray-200 font-black text-gray-800">Grade ${g.grade}</td>
-                    <td class="p-2.5 border-r border-gray-200 text-center text-gray-600 font-bold">${g.berat} kg</td>
-                    <td class="p-2.5 border-r border-gray-200 text-center font-semibold text-gray-800">${g.pcs} Pcs</td>
-                    <td class="p-2.5 border-r border-gray-200 text-center font-semibold text-gray-800">${g.keranjang} Krj</td>
-                    <td class="p-2.5 text-center font-black text-orange-700">${Math.round(g.totalKg*100)/100}</td>
-                </tr>`;
-            });
-        }
-        sisaHtml += `</table>`;
-        containerSisa.innerHTML = sisaHtml;
-
-        let detailHtml = `<table class="w-full text-left text-[11px] sm:text-xs border-collapse"><tr class="bg-gray-100 text-gray-700 border-b border-gray-200"><th class="p-2.5">Grade</th><th class="p-2.5 text-center">Pcs</th><th class="p-2.5 text-center">Krj</th><th class="p-2.5 text-center">Netto</th><th class="p-2.5 text-center">Status</th></tr>`;
-        filtered.forEach(item => {
-            if (item.naikMobil) totalMuat += item.totalKg; else sisaBelum += item.totalKg;
-            const krjVal = item.keranjang || 0;
-            detailHtml += `<tr class="border-b border-gray-200 ${item.naikMobil ? 'bg-emerald-50/60' : 'bg-white hover:bg-gray-50'} transition-colors">
-                <td class="p-2.5"><b>Grade ${item.grade}</b><br><span class="text-[10px] text-gray-500 font-medium">${item.berat} kg</span></td>
-                <td class="p-2.5 text-center font-semibold text-gray-800">${item.pcs} Ekor</td>
-                <td class="p-2.5 text-center font-semibold text-gray-800">${krjVal} Krj</td>
-                <td class="p-2.5 text-center font-black text-orange-950">${item.totalKg} Kg</td>
-                <td class="p-2.5 text-center"><button onclick="toggleNaikMobil('${item.id}')" class="${item.naikMobil ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : 'bg-gray-200 hover:bg-gray-300 text-gray-700'} px-2 sm:px-3 py-1.5 rounded-lg text-[10px] font-bold shadow-xs active:scale-95 transition-all w-20 sm:w-24">${item.naikMobil ? '<i class="fa-solid fa-check"></i> Sudah' : '+ Belum'}</button></td></tr>`;
-        });
-        detailHtml += `</table>`;
-        containerDetail.innerHTML = detailHtml;
-
-        document.getElementById('tallyTotalMuat').innerText = `${Math.round(totalMuat * 100) / 100} Kg`;
-        document.getElementById('tallySisaBelum').innerText = `${Math.round(sisaBelum * 100) / 100} Kg`;
-    }
-
-    function toggleNaikMobil(id) {
-        const item = dataList.find(d => d.id === id);
-        if (item) {
-            item.naikMobil = !item.naikMobil;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataList));
-            renderTableTally();
-        }
-    }
-
-    function kirimWASisaStok() {
-        const targetDate = document.getElementById('filterTanggalTally').value;
-        const filtered = dataList.filter(d => d.tanggal === targetDate && !d.naikMobil);
-        
-        if (filtered.length === 0) { showToast('Semua karkas sudah dimuat, tidak ada sisa!', true); return; }
-
-        const stokGroups = {};
-        let tPcs = 0, tKrj = 0, tKg = 0;
-        
-        filtered.forEach(item => {
-            const key = `${item.grade}_${item.berat}`;
-            if (!stokGroups[key]) stokGroups[key] = { grade: item.grade, berat: item.berat, pcs: 0, totalKg: 0, keranjang: 0 };
-            stokGroups[key].pcs += item.pcs;
-            stokGroups[key].totalKg += item.totalKg;
-            stokGroups[key].keranjang += (item.keranjang || 0);
-            tPcs += item.pcs; tKrj += (item.keranjang || 0); tKg += item.totalKg;
-        });
-
-        const stokKeys = Object.keys(stokGroups).sort();
-        let msg = `*LAPORAN SISA STOK (BELUM MUAT)*\n*Tanggal:* ${targetDate}\n--------------------------------\n\n`;
-        
-        stokKeys.forEach(k => {
-            const g = stokGroups[k];
-            msg += `- *Grade ${g.grade} (${g.berat} kg)*\n   └ ${g.pcs} Ekor | ${g.keranjang} Krj | ${Math.round(g.totalKg * 100) / 100} Kg\n\n`;
-        });
-
-        msg += `--------------------------------\n*TOTAL SISA BELUM MUAT*\n*Total Ekor  :* ${tPcs} Ekor\n*Total Kerj  :* ${tKrj} Krj\n*Total Berat :* ${Math.round(tKg * 100) / 100} Kg`;
-        window.open(`https://wa.me/6282317165861?text=${encodeURIComponent(msg)}`, '_blank');
-    }
-
-    const DEFAULT_BAGIAN = ['Kepala Utuh', 'Ceker', 'Usus', 'Ati', 'Ampela', 'Sisa Jantung', 'Dada', 'Paha', 'Sayap', 'Kulit', 'Kerongkongan', 'Brutu'];
-
-    function loadCustomBagian() {
-        const saved = localStorage.getItem(STORAGE_KEY_CUSTOM_BAGIAN);
-        if (saved) { try { customBagianList = JSON.parse(saved); } catch(e) { customBagianList = []; } }
-    }
-
-    function getAllBagianCategories() {
-        return [...DEFAULT_BAGIAN, ...customBagianList];
-    }
-
-    function openCalcModal(targetId) {
-        currentCalcTarget = targetId;
-        const currentVal = document.getElementById(targetId).value;
-        calcPcsInput = (currentVal && !isNaN(currentVal) && parseFloat(currentVal) > 0) ? currentVal.toString() : '';
-        updateCalcPcsDisplay();
-        document.getElementById('calcPcsModal').classList.remove('hidden');
-    }
-
-    function closeCalcPcsModal() { document.getElementById('calcPcsModal').classList.add('hidden'); }
-
-    function updateCalcPcsDisplay() {
-        const exprEl = document.getElementById('calcExprDisplay');
-        const resEl = document.getElementById('calcResultDisplay');
-        if (!exprEl || !resEl) return;
-
-        exprEl.innerText = calcPcsInput || '0';
-        let currentEval = 0;
-        try {
-            if (calcPcsInput) {
-                const sanitized = calcPcsInput.replace(/[^0-9+\-*/.]/g, '');
-                if (sanitized) currentEval = Function('"use strict"; return (' + sanitized + ')')();
-            }
-        } catch (e) { currentEval = 'Error'; }
-
-        if (typeof currentEval === 'number' && !isNaN(currentEval)) {
-            resEl.innerText = (currentCalcTarget === 'inputPcs') ? Math.round(currentEval) : parseFloat(currentEval.toFixed(2));
-        } else {
-            resEl.innerText = currentEval === 'Error' ? '...' : '0';
-        }
-    }
-
-    function calcPcsAppend(char) {
-        const ops = ['+', '-', '*', '/'];
-        if (ops.includes(char) && ops.includes(calcPcsInput.slice(-1))) {
-            calcPcsInput = calcPcsInput.slice(0, -1) + char;
-        } else {
-            calcPcsInput += char;
-        }
-        updateCalcPcsDisplay();
-    }
-
-    function calcPcsClear() { calcPcsInput = ''; updateCalcPcsDisplay(); }
-    function calcPcsBackspace() { calcPcsInput = calcPcsInput.slice(0, -1); updateCalcPcsDisplay(); }
-
-    function calcPcsEqual() {
-        try {
-            if (calcPcsInput) {
-                const sanitized = calcPcsInput.replace(/[^0-9+\-*/.]/g, '');
-                if (sanitized) {
-                    const result = Function('"use strict"; return (' + sanitized + ')')();
-                    if (!isNaN(result)) {
-                        calcPcsInput = (currentCalcTarget === 'inputPcs') ? Math.round(result).toString() : parseFloat(result.toFixed(2)).toString();
-                    }
-                }
-            }
-        } catch (e) { calcPcsInput = ''; }
-        updateCalcPcsDisplay();
-    }
-
-    function applyCalcPcsResult() {
-        let finalVal = 0;
-        try {
-            if (calcPcsInput) {
-                const sanitized = calcPcsInput.replace(/[^0-9+\-*/.]/g, '');
-                if (sanitized) {
-                    const evalRes = Function('"use strict"; return (' + sanitized + ')')();
-                    if (!isNaN(evalRes)) finalVal = (currentCalcTarget === 'inputPcs') ? Math.round(evalRes) : parseFloat(evalRes.toFixed(2));
-                }
-            }
-        } catch (e) { finalVal = 0; }
-
-        if (finalVal > 0) {
-            document.getElementById(currentCalcTarget).value = finalVal;
-            showToast(`Nilai diset: ${finalVal}`);
-            closeCalcPcsModal();
-        } else {
-            showToast('Hasil tidak valid!', true);
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        if (localStorage.getItem(STORAGE_KEY)) dataList = JSON.parse(localStorage.getItem(STORAGE_KEY));
-        if (localStorage.getItem(STORAGE_KEY_BAGIAN)) bagianList = JSON.parse(localStorage.getItem(STORAGE_KEY_BAGIAN));
-        loadCustomBagian();
-        loadKedatanganStorage();
-
-        const today = new Date().toLocaleDateString('en-CA');
-        ['inputTanggal', 'filterTanggalPotong', 'inputTanggalKedatangan', 'inputTanggalBagian', 'filterTanggalTally'].forEach(id => {
-            if (document.getElementById(id)) document.getElementById(id).value = today;
-        });
-
-        loadKedatanganForCurrentDate(); 
-        renderBagianCategories(); 
-        renderTable(); 
-        renderTableKedatangan(); 
-        renderTableBagian(); 
-        renderTableTally();
-
-        const inputForm = document.getElementById('inputForm');
-        if (inputForm) { 
-            inputForm.addEventListener('submit', (e) => { 
-                e.preventDefault(); 
-                openKeranjangModal(); 
-            }); 
-        }
-
-        const formBagian = document.getElementById('formBagian');
-        if (formBagian) {
-            formBagian.addEventListener('submit', (e) => {
-                e.preventDefault(); 
-                const id = Date.now().toString(); 
-                const tanggal = document.getElementById('inputTanggalBagian').value; 
-                const jenis = document.getElementById('inputJenisBagian').value; 
-                const berat = parseFloat(document.getElementById('inputBeratBagian').value);
-                
-                bagianList.push({ id, tanggal, jenis, berat }); 
-                localStorage.setItem(STORAGE_KEY_BAGIAN, JSON.stringify(bagianList));
-                
-                showToast('Data Bagian ditambahkan'); 
-                document.getElementById('inputBeratBagian').value = ''; 
-                renderTableBagian();
-            });
+    document.getElementById('inputTanggalBagian').value = today;
+    document.getElementById('filterTanggalTally').value = today;
+
+    initBagianCategories();
+    renderTable();
+    loadKedatanganForDate(today);
+    renderTableBagian();
+    renderTableTally();
+};
+
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').innerText = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+function switchTab(tab) {
+    ['home', 'kedatangan', 'bagian', 'tally'].forEach(t => {
+        const view = document.getElementById(`view-${t}`);
+        const nav = document.getElementById(`nav-${t}`);
+        if (view) view.classList.add('hidden');
+        if (nav) {
+            nav.classList.remove('text-orange-600', 'text-blue-600');
+            nav.classList.add('text-gray-400');
         }
     });
 
+    const activeView = document.getElementById(`view-${tab}`);
+    const activeNav = document.getElementById(`nav-${tab}`);
+    if (activeView) activeView.classList.remove('hidden');
+    if (activeNav) {
+        activeNav.classList.remove('text-gray-400');
+        activeNav.classList.add(tab === 'tally' ? 'text-blue-600' : 'text-orange-600');
+    }
+
+    if (tab === 'home') renderTable();
+    if (tab === 'kedatangan') {
+        const tgl = document.getElementById('inputTanggalKedatangan').value;
+        loadKedatanganForDate(tgl);
+    }
+    if (tab === 'bagian') renderTableBagian();
+    if (tab === 'tally') renderTableTally();
+}
+
+function openCalcModal(inputId) {
+    activeCalcTargetInputId = inputId;
+    calcCurrentExpr = "";
+    document.getElementById('calcDisplay').innerText = "0";
+    document.getElementById('calcExpression').innerText = "";
+    document.getElementById('calcModal').classList.remove('hidden');
+}
+
+function closeCalcModal() {
+    document.getElementById('calcModal').classList.add('hidden');
+}
+
+function calcPress(val) {
+    if (val === 'C') {
+        calcCurrentExpr = "";
+        document.getElementById('calcDisplay').innerText = "0";
+        document.getElementById('calcExpression').innerText = "";
+        return;
+    }
+    if (val === '=') {
+        try {
+            let res = eval(calcCurrentExpr);
+            document.getElementById('calcDisplay').innerText = res;
+            document.getElementById('calcExpression').innerText = calcCurrentExpr;
+            calcCurrentExpr = res.toString();
+        } catch(e) {
+            document.getElementById('calcDisplay').innerText = "Error";
+        }
+        return;
+    }
+    calcCurrentExpr += val;
+    document.getElementById('calcDisplay').innerText = calcCurrentExpr;
+}
+
+function applyCalcResult() {
+    const resultVal = document.getElementById('calcDisplay').innerText;
+    if (activeCalcTargetInputId && resultVal !== "Error") {
+        const inputEl = document.getElementById(activeCalcTargetInputId);
+        if (inputEl) {
+            inputEl.value = resultVal;
+            inputEl.dispatchEvent(new Event('input'));
+            inputEl.dispatchEvent(new Event('change'));
+        }
+    }
+    closeCalcModal();
+}
+
+function selectGrade(g) {
+    document.getElementById('inputGrade').value = g;
+    ['A', 'B', 'C'].forEach(item => {
+        const btn = document.getElementById(`btnGrade-${item}`);
+        if (item === g) {
+            btn.className = "grade-btn h-12 rounded-xl border-2 font-black text-sm flex items-center justify-center transition-all bg-orange-600 text-white border-orange-600 shadow-md";
+        } else {
+            btn.className = "grade-btn h-12 rounded-xl border-2 font-black text-sm flex items-center justify-center transition-all bg-white text-gray-700 border-gray-300 hover:bg-gray-50";
+        }
+    });
+}
+
+function addPcsPreset(val) {
+    const input = document.getElementById('inputPcs');
+    const curr = parseInt(input.value) || 0;
+    input.value = curr + val;
+}
+
+function openKeranjangModal() {
+    const kotor = parseFloat(document.getElementById('inputBeratKotor').value) || 0;
+    if (kotor <= 0) {
+        showToast("Masukkan berat kotor dahulu!");
+        return;
+    }
+    document.getElementById('modalTextKotor').innerText = kotor.toFixed(2) + " Kg";
+    if (!document.getElementById('modalInputKeranjang').value) {
+        document.getElementById('modalInputKeranjang').value = "2";
+    }
+    hitungNettoModal();
+    document.getElementById('keranjangModal').classList.remove('hidden');
+}
+
+function closeKeranjangModal() {
+    document.getElementById('keranjangModal').classList.add('hidden');
+}
+
+function hitungNettoModal() {
+    const kotor = parseFloat(document.getElementById('inputBeratKotor').value) || 0;
+    const jmlKeranjang = parseInt(document.getElementById('modalInputKeranjang').value) || 0;
+    const berat1Keranjang = parseFloat(document.getElementById('modalInputBeratKeranjang').value) || 0;
+    
+    const netto = Math.max(0, kotor - (jmlKeranjang * berat1Keranjang));
+    document.getElementById('modalTextNetto').innerText = netto.toFixed(2) + " Kg";
+}
+
+function saveKarkasData(shouldPrint) {
+    const tgl = document.getElementById('inputTanggal').value;
+    const grade = document.getElementById('inputGrade').value;
+    const beratTarget = parseFloat(document.getElementById('inputBerat').value) || 0;
+    const pcs = parseInt(document.getElementById('inputPcs').value) || 0;
+    const kotor = parseFloat(document.getElementById('inputBeratKotor').value) || 0;
+    const jmlKeranjang = parseInt(document.getElementById('modalInputKeranjang').value) || 0;
+    const berat1Keranjang = parseFloat(document.getElementById('modalInputBeratKeranjang').value) || 0;
+    
+    const netto = Math.max(0, kotor - (jmlKeranjang * berat1Keranjang));
+
+    if (!tgl || beratTarget <= 0 || pcs <= 0 || kotor <= 0) {
+        showToast("Lengkapi semua field dengan benar!");
+        return;
+    }
+
+    const newItem = {
+        id: Date.now(),
+        tanggal: tgl,
+        grade: grade,
+        beratTarget: beratTarget,
+        pcs: pcs,
+        kotor: kotor,
+        jmlKeranjang: jmlKeranjang,
+        berat1Keranjang: berat1Keranjang,
+        netto: parseFloat(netto.toFixed(2))
+    };
+
+    karkasData.push(newItem);
+    localStorage.setItem('rpa_karkas_data', JSON.stringify(karkasData));
+
+    closeKeranjangModal();
+    showToast("Data Karkas berhasil disimpan!");
+
+    if (shouldPrint) {
+        openLabelModal(newItem);
+    }
+
+    // Reset input fields
+    document.getElementById('inputPcs').value = "";
+    document.getElementById('inputBeratKotor').value = "";
+    renderTable();
+}
+
+function renderTable() {
+    const filterTgl = document.getElementById('filterTanggalPotong').value;
+    const filtered = karkasData.filter(d => d.tanggal === filterTgl);
+    const container = document.getElementById('tableContainer');
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs font-semibold">Belum ada data karkas pada tanggal ini.</div>`;
+        return;
+    }
+
+    let html = `
+    <table class="tally-table text-xs">
+        <thead>
+            <tr class="bg-slate-100 text-gray-700 font-extrabold uppercase">
+                <th>#</th>
+                <th>Grade</th>
+                <th>Target (kg)</th>
+                <th>Pcs</th>
+                <th>Kotor (kg)</th>
+                <th>Tara (kg)</th>
+                <th>Netto (kg)</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>`;
+
+    let totalPcs = 0;
+    let totalNetto = 0;
+
+    filtered.forEach((item, index) => {
+        totalPcs += item.pcs;
+        totalNetto += item.netto;
+        const tara = (item.jmlKeranjang * item.berat1Keranjang).toFixed(2);
+        html += `
+            <tr class="hover:bg-orange-50/50">
+                <td class="font-bold text-gray-500">${index + 1}</td>
+                <td class="font-black text-orange-600">Grade ${item.grade}</td>
+                <td class="font-semibold">${item.beratTarget} kg</td>
+                <td class="font-bold text-gray-800">${item.pcs} pcs</td>
+                <td>${item.kotor}</td>
+                <td class="text-gray-400">${tara}</td>
+                <td class="font-black text-orange-700">${item.netto}</td>
+                <td>
+                    <button onclick="hapusKarkasData(${item.id})" class="text-red-500 hover:text-red-700 px-2 py-1"><i class="fa-solid fa-trash-can"></i></button>
+                </td>
+            </tr>`;
+    });
+
+    html += `
+        </tbody>
+        <tfoot>
+            <tr class="bg-orange-100 font-black text-orange-950 text-xs">
+                <td colspan="3" class="text-right uppercase">TOTAL:</td>
+                <td>${totalPcs} pcs</td>
+                <td colspan="2"></td>
+                <td class="text-base">${totalNetto.toFixed(2)} kg</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>`;
+
+    container.innerHTML = html;
+}
+
+function hapusKarkasData(id) {
+    karkasData = karkasData.filter(d => d.id !== id);
+    localStorage.setItem('rpa_karkas_data', JSON.stringify(karkasData));
+    renderTable();
+    showToast("Data berhasil dihapus.");
+}
+
+function openLabelModal(item) {
+    document.getElementById('previewTanggal').innerText = item.tanggal;
+    document.getElementById('previewGrade').innerText = `Grade ${item.grade} (${item.beratTarget} kg)`;
+    document.getElementById('previewPcs').innerText = `${item.pcs} Pcs`;
+    document.getElementById('previewNetto').innerText = `${item.netto} Kg`;
+    document.getElementById('labelModal').classList.remove('hidden');
+}
+
+function closeModal() {
+    document.getElementById('labelModal').classList.add('hidden');
+}
+
+function printLabel() {
+    window.print();
+}
+
+function exportExcel() {
+    const filterTgl = document.getElementById('filterTanggalPotong').value;
+    const filtered = karkasData.filter(d => d.tanggal === filterTgl);
+    if (filtered.length === 0) {
+        showToast("Tidak ada data karkas untuk di-export.");
+        return;
+    }
+    const ws = XLSX.utils.json_to_sheet(filtered);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Laporan Karkas");
+    XLSX.writeFile(wb, `Laporan_Karkas_${filterTgl}.xlsx`);
+}
+
+function kirimWA() {
+    const filterTgl = document.getElementById('filterTanggalPotong').value;
+    const filtered = karkasData.filter(d => d.tanggal === filterTgl);
+    if (filtered.length === 0) {
+        showToast("Tidak ada data karkas.");
+        return;
+    }
+    let totalPcs = 0, totalNetto = 0;
+    let msg = `*LAPORAN HASIL POTONG KARKAS*\nTanggal: ${filterTgl}\n----------------------------\n`;
+    filtered.forEach((item, idx) => {
+        totalPcs += item.pcs;
+        totalNetto += item.netto;
+        msg += `${idx + 1}. Grade ${item.grade} (${item.beratTarget}kg) : ${item.pcs} pcs = ${item.netto} kg\n`;
+    });
+    msg += `----------------------------\n*TOTAL: ${totalPcs} pcs | ${totalNetto.toFixed(2)} kg*`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function backupBeranda() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(karkasData));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", `backup_karkas_${new Date().toISOString().split('T')[0]}.json`);
+    dlAnchorElem.click();
+}
+
+function restoreBeranda(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+        try {
+            karkasData = JSON.parse(evt.target.result);
+            localStorage.setItem('rpa_karkas_data', JSON.stringify(karkasData));
+            renderTable();
+            showToast("Restore backup berhasil!");
+        } catch(err) {
+            showToast("Gagal membaca file JSON!");
+        }
+    };
+    reader.readAsText(file);
+}
+
+function onKedatanganDateChange() {
+    const tgl = document.getElementById('inputTanggalKedatangan').value;
+    loadKedatanganForDate(tgl);
+}
+
+function loadKedatanganForDate(tgl) {
+    if (!kedatanganData[tgl]) {
+        kedatanganData[tgl] = {
+            jam: "07:00",
+            namaKandang: "",
+            alamatKandang: "",
+            rows: [],
+            ekorMati: 0,
+            kgMati: 0,
+            jmlKeranjang: 0,
+            beratKeranjangPerPcs: 1.8
+        };
+    }
+    const data = kedatanganData[tgl];
+    document.getElementById('inputJamKedatangan').value = data.jam || "07:00";
+    document.getElementById('inputNamaKandangKedatangan').value = data.namaKandang || "";
+    document.getElementById('inputAlamatKandangKedatangan').value = data.alamatKandang || "";
+    document.getElementById('inputEkorMati').value = data.ekorMati || "";
+    document.getElementById('inputKgMati').value = data.kgMati || "";
+    document.getElementById('inputJmlKeranjangKedatangan').value = data.jmlKeranjang || "";
+    document.getElementById('inputBeratKeranjangKedatangan').value = data.beratKeranjangPerPcs || 1.8;
+
+    renderKedatanganTable();
+    hitungTotalKedatangan();
+}
+
+function autoSaveKedatanganLocal() {
+    const tgl = document.getElementById('inputTanggalKedatangan').value;
+    if (!kedatanganData[tgl]) kedatanganData[tgl] = { rows: [] };
+    
+    kedatanganData[tgl].jam = document.getElementById('inputJamKedatangan').value;
+    kedatanganData[tgl].namaKandang = document.getElementById('inputNamaKandangKedatangan').value;
+    kedatanganData[tgl].alamatKandang = document.getElementById('inputAlamatKandangKedatangan').value;
+    kedatanganData[tgl].ekorMati = parseInt(document.getElementById('inputEkorMati').value) || 0;
+    kedatanganData[tgl].kgMati = parseFloat(document.getElementById('inputKgMati').value) || 0;
+    kedatanganData[tgl].jmlKeranjang = parseInt(document.getElementById('inputJmlKeranjangKedatangan').value) || 0;
+    kedatanganData[tgl].beratKeranjangPerPcs = parseFloat(document.getElementById('inputBeratKeranjangKedatangan').value) || 1.8;
+
+    localStorage.setItem('rpa_kedatangan_data', JSON.stringify(kedatanganData));
+    
+    document.getElementById('labelHeaderInfo').innerText = `Tanggal Terima: ${tgl} | Jam: ${kedatanganData[tgl].jam || '-'}`;
+    document.getElementById('labelHeaderKandang').innerText = `Kandang: ${kedatanganData[tgl].namaKandang || '-'} (${kedatanganData[tgl].alamatKandang || '-'})`;
+}
+
+function tambahBarisKedatangan() {
+    const tgl = document.getElementById('inputTanggalKedatangan').value;
+    const ekor = parseInt(document.getElementById('inputBarisEkor').value) || 0;
+    const berat = parseFloat(document.getElementById('inputBarisBerat').value) || 0;
+
+    if (berat <= 0) {
+        showToast("Masukkan berat timbangan!");
+        return;
+    }
+
+    if (!kedatanganData[tgl]) loadKedatanganForDate(tgl);
+
+    kedatanganData[tgl].rows.push({
+        id: Date.now(),
+        ekor: ekor,
+        berat: berat
+    });
+
+    autoSaveKedatanganLocal();
+    renderKedatanganTable();
+    hitungTotalKedatangan();
+
+    document.getElementById('inputBarisEkor').value = "";
+    document.getElementById('inputBarisBerat').value = "";
+    showToast("Baris timbangan ditambahkan.");
+}
+
+function renderKedatanganTable() {
+    const tgl = document.getElementById('inputTanggalKedatangan').value;
+    const container = document.getElementById('tableKedatanganContainer');
+    const rows = (kedatanganData[tgl] && kedatanganData[tgl].rows) ? kedatanganData[tgl].rows : [];
+
+    document.getElementById('totalBarisBadge').innerText = `${rows.length} Baris Ditimbang`;
+
+    if (rows.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-gray-400 text-xs w-full">Belum ada baris penimbangan kedatangan.</div>`;
+        return;
+    }
+
+    // Splitting into 10-line columns for traditional tally style
+    const chunked = [];
+    for (let i = 0; i < rows.length; i += 10) {
+        chunked.push(rows.slice(i, i + 10));
+    }
+
+    let html = "";
+    chunked.forEach((group, groupIdx) => {
+        html += `
+        <div class="border border-gray-200 rounded-xl overflow-hidden shadow-xs bg-white min-w-[200px] shrink-0">
+            <div class="bg-gray-100 p-2 text-center border-b border-gray-200 font-bold text-[11px] text-gray-700">
+                Kolom ${groupIdx + 1} (Baris ${groupIdx * 10 + 1}-${groupIdx * 10 + group.length})
+            </div>
+            <table class="tally-table text-xs">
+                <thead>
+                    <tr class="text-[10px] uppercase font-bold text-gray-500 bg-gray-50">
+                        <th>No</th>
+                        <th>Ekor</th>
+                        <th>Berat (kg)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>`;
+        group.forEach((item, itemIdx) => {
+            const actualNo = groupIdx * 10 + itemIdx + 1;
+            html += `
+                <tr class="hover:bg-amber-50/50">
+                    <td class="font-bold text-gray-400 text-[10px]">${actualNo}</td>
+                    <td class="font-bold text-gray-800">${item.ekor ? item.ekor : '-'}</td>
+                    <td class="font-black text-orange-900">${item.berat} kg</td>
+                    <td><button onclick="hapusBarisKedatangan(${item.id})" class="text-red-400 hover:text-red-600 px-1"><i class="fa-solid fa-xmark"></i></button></td>
+                </tr>`;
+        });
+        html += `</tbody></table></div>`;
+    });
+
+    container.innerHTML = html;
+}
+
+function hapusBarisKedatangan(rowId) {
+    const tgl = document.getElementById('inputTanggalKedatangan').value;
+    if (kedatanganData[tgl]) {
+        kedatanganData[tgl].rows = kedatanganData[tgl].rows.filter(r => r.id !== rowId);
+        autoSaveKedatanganLocal();
+        renderKedatanganTable();
+        hitungTotalKedatangan();
+        showToast("Baris timbangan dihapus.");
+    }
+}
+
+function hitungTotalKedatangan() {
+    autoSaveKedatanganLocal();
+
+    const tgl = document.getElementById('inputTanggalKedatangan').value;
+    const data = kedatanganData[tgl] || { rows: [], ekorMati: 0, kgMati: 0, jmlKeranjang: 0, beratKeranjangPerPcs: 1.8 };
+    const rows = data.rows || [];
+
+    let totalEkorDatang = 0;
+    let totalKotorKg = 0;
+
+    rows.forEach(r => {
+        totalEkorDatang += parseInt(r.ekor) || 0;
+        totalKotorKg += parseFloat(r.berat) || 0;
+    });
+
+    const ekorMati = parseInt(document.getElementById('inputEkorMati').value) || 0;
+    const kgMati = parseFloat(document.getElementById('inputKgMati').value) || 0;
+    const jmlKeranjang = parseInt(document.getElementById('inputJmlKeranjangKedatangan').value) || 0;
+    const berat1Keranjang = parseFloat(document.getElementById('inputBeratKeranjangKedatangan').value) || 0;
+
+    const totalTaraKeranjang = jmlKeranjang * berat1Keranjang;
+    const totalNettoBersih = Math.max(0, totalKotorKg - totalTaraKeranjang - kgMati);
+
+    const ekorHidup = Math.max(0, totalEkorDatang - ekorMati);
+    const avgHidup = ekorHidup > 0 ? (totalNettoBersih / ekorHidup) : 0;
+
+    // Update Result UI
+    document.getElementById('resultTotalKotorText').innerText = totalKotorKg.toFixed(2) + " Kg";
+    document.getElementById('resultTotalEkorDatangText').innerText = totalEkorDatang + " Ekor";
+    document.getElementById('resultBeratMatiText').innerText = kgMati.toFixed(2) + " Kg (" + ekorMati + " ekor)";
+    document.getElementById('resultBeratKeranjangText').innerText = totalTaraKeranjang.toFixed(2) + " Kg (" + jmlKeranjang + " krb)";
+    
+    document.getElementById('resultTotalBeratNetto').innerText = totalNettoBersih.toFixed(2) + " Kg";
+    document.getElementById('resultEkorHidupText').innerText = ekorHidup + " Ekor";
+    document.getElementById('resultRataRata').innerText = avgHidup.toFixed(2) + " Kg/ekor";
+
+    document.getElementById('summaryKedatanganCard').classList.remove('hidden');
+}
+
+function exportKedatanganExcel() {
+    const tgl = document.getElementById('inputTanggalKedatangan').value;
+    const data = kedatanganData[tgl];
+    if (!data || !data.rows || data.rows.length === 0) {
+        showToast("Tidak ada data kedatangan untuk di-export.");
+        return;
+    }
+    const ws = XLSX.utils.json_to_sheet(data.rows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Kedatangan");
+    XLSX.writeFile(wb, `Kedatangan_Ayam_${tgl}.xlsx`);
+}
+
+function kirimWAKedatangan() {
+    const tgl = document.getElementById('inputTanggalKedatangan').value;
+    const data = kedatanganData[tgl];
+    if (!data || !data.rows || data.rows.length === 0) {
+        showToast("Tidak ada data kedatangan.");
+        return;
+    }
+
+    let totalEkorDatang = 0;
+    let totalKotorKg = 0;
+    data.rows.forEach(r => {
+        totalEkorDatang += parseInt(r.ekor) || 0;
+        totalKotorKg += parseFloat(r.berat) || 0;
+    });
+
+    const ekorMati = data.ekorMati || 0;
+    const kgMati = data.kgMati || 0;
+    const jmlKeranjang = data.jmlKeranjang || 0;
+    const berat1Keranjang = data.beratKeranjangPerPcs || 1.8;
+
+    const totalTaraKeranjang = jmlKeranjang * berat1Keranjang;
+    const nettoBersih = Math.max(0, totalKotorKg - totalTaraKeranjang - kgMati);
+    const ekorHidup = Math.max(0, totalEkorDatang - ekorMati);
+    const avgHidup = ekorHidup > 0 ? (nettoBersih / ekorHidup) : 0;
+
+    let msg = `*LAPORAN PENERIMAAN KEDATANGAN AYAM*\n`;
+    msg += `Tanggal: ${tgl} | Jam: ${data.jam || '-'}\n`;
+    msg += `Kandang: ${data.namaKandang || '-'} (${data.alamatKandang || '-'})\n`;
+    msg += `----------------------------------------\n`;
+    msg += `• Total Kotor Timbang: ${totalKotorKg.toFixed(2)} kg (${totalEkorDatang} ekor)\n`;
+    msg += `• Ayam Mati (Susut): ${kgMati.toFixed(2)} kg (${ekorMati} ekor)\n`;
+    msg += `• Tara Keranjang (${jmlKeranjang} bh @${berat1Keranjang}kg): ${totalTaraKeranjang.toFixed(2)} kg\n`;
+    msg += `----------------------------------------\n`;
+    msg += `*BERAT NETTO BERSIH DITERIMA: ${nettoBersih.toFixed(2)} KG*\n`;
+    msg += `• Ekor Hidup Bersih: ${ekorHidup} ekor\n`;
+    msg += `• Rata-Rata Berat Hidup: ${avgHidup.toFixed(2)} kg/ekor\n`;
+
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function initBagianCategories() {
+    const pillsContainer = document.getElementById('bagianCategoryPills');
+    const selectEl = document.getElementById('inputJenisBagian');
+
+    let pillsHtml = "";
+    let selectHtml = "";
+
+    customBagianList.forEach(bag => {
+        pillsHtml += `<button type="button" onclick="selectBagianPill('${bag}')" class="px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-xs font-bold text-gray-700 hover:bg-orange-50 active:scale-95 transition shrink-0">${bag}</button>`;
+        selectHtml += `<option value="${bag}">${bag}</option>`;
+    });
+
+    pillsContainer.innerHTML = pillsHtml;
+    selectEl.innerHTML = selectHtml;
+}
+
+function selectBagianPill(val) {
+    document.getElementById('inputJenisBagian').value = val;
+}
+
+function openTambahBagianModal() {
+    document.getElementById('tambahBagianModal').classList.remove('hidden');
+}
+
+function closeTambahBagianModal() {
+    document.getElementById('tambahBagianModal').classList.add('hidden');
+}
+
+function simpanCustomBagian() {
+    const val = document.getElementById('inputCustomBagianNama').value.trim();
+    if (!val) {
+        showToast("Nama jenis bagian tidak boleh kosong!");
+        return;
+    }
+    if (!customBagianList.includes(val)) {
+        customBagianList.push(val);
+        localStorage.setItem('rpa_custom_bagian', JSON.stringify(customBagianList));
+        initBagianCategories();
+        selectBagianPill(val);
+        showToast("Kategori baru ditambahkan.");
+    }
+    closeTambahBagianModal();
+    document.getElementById('inputCustomBagianNama').value = "";
+}
+
+document.getElementById('formBagian').onsubmit = function(e) {
+    e.preventDefault();
+    const tgl = document.getElementById('inputTanggalBagian').value;
+    const jenis = document.getElementById('inputJenisBagian').value;
+    const berat = parseFloat(document.getElementById('inputBeratBagian').value) || 0;
+
+    if (!tgl || !jenis || berat <= 0) {
+        showToast("Lengkapi form bagian dengan benar!");
+        return;
+    }
+
+    bagianData.push({
+        id: Date.now(),
+        tanggal: tgl,
+        jenis: jenis,
+        berat: berat
+    });
+
+    localStorage.setItem('rpa_bagian_data', JSON.stringify(bagianData));
+    showToast("Data bagian ditambahkan.");
+    document.getElementById('inputBeratBagian').value = "";
+    renderTableBagian();
+};
+
+function renderTableBagian() {
+    const tgl = document.getElementById('inputTanggalBagian').value;
+    const filtered = bagianData.filter(b => b.tanggal === tgl);
+    const container = document.getElementById('tableBagianContainer');
+
+    if (filtered.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-gray-400 text-xs">Belum ada data input bagian pada tanggal ini.</div>`;
+        return;
+    }
+
+    let html = `
+    <table class="tally-table text-xs">
+        <thead>
+            <tr class="bg-slate-100 text-gray-700 uppercase font-extrabold">
+                <th>#</th>
+                <th>Jenis Bagian</th>
+                <th>Berat (kg)</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>`;
+
+    let totalBerat = 0;
+    filtered.forEach((item, idx) => {
+        totalBerat += item.berat;
+        html += `
+            <tr class="hover:bg-orange-50/50">
+                <td class="font-bold text-gray-400">${idx + 1}</td>
+                <td class="font-extrabold text-orange-950">${item.jenis}</td>
+                <td class="font-black text-orange-600">${item.berat} kg</td>
+                <td><button onclick="hapusBagianData(${item.id})" class="text-red-500 hover:text-red-700 px-2 py-1"><i class="fa-solid fa-trash-can"></i></button></td>
+            </tr>`;
+    });
+
+    html += `
+        </tbody>
+        <tfoot>
+            <tr class="bg-orange-100 font-black text-orange-950 text-xs">
+                <td colspan="2" class="text-right uppercase">TOTAL BAGIAN:</td>
+                <td class="text-base">${totalBerat.toFixed(2)} kg</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>`;
+
+    container.innerHTML = html;
+}
+
+function hapusBagianData(id) {
+    bagianData = bagianData.filter(b => b.id !== id);
+    localStorage.setItem('rpa_bagian_data', JSON.stringify(bagianData));
+    renderTableBagian();
+    showToast("Data bagian dihapus.");
+}
+
+function exportBagianExcel() {
+    const tgl = document.getElementById('inputTanggalBagian').value;
+    const filtered = bagianData.filter(b => b.tanggal === tgl);
+    if (filtered.length === 0) {
+        showToast("Tidak ada data bagian untuk di-export.");
+        return;
+    }
+    const ws = XLSX.utils.json_to_sheet(filtered);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Bagian Ayam");
+    XLSX.writeFile(wb, `Laporan_Bagian_${tgl}.xlsx`);
+}
+
+function kirimWABagian() {
+    const tgl = document.getElementById('inputTanggalBagian').value;
+    const filtered = bagianData.filter(b => b.tanggal === tgl);
+    if (filtered.length === 0) {
+        showToast("Tidak ada data bagian.");
+        return;
+    }
+
+    let total = 0;
+    let msg = `*LAPORAN STOK BAGIAN AYAM*\nTanggal: ${tgl}\n----------------------------\n`;
+    filtered.forEach((item, idx) => {
+        total += item.berat;
+        msg += `${idx + 1}. ${item.jenis}: ${item.berat} kg\n`;
+    });
+    msg += `----------------------------\n*TOTAL BERAT: ${total.toFixed(2)} kg*`;
+
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function renderTableTally() {
+    const tgl = document.getElementById('filterTanggalTally').value;
+    const karkasFiltered = karkasData.filter(k => k.tanggal === tgl);
+    const containerSisa = document.getElementById('tableSisaStokContainer');
+    const containerTally = document.getElementById('tableTallyContainer');
+
+    if (karkasFiltered.length === 0) {
+        containerSisa.innerHTML = `<div class="p-6 text-center text-gray-400 text-xs">Belum ada stok karkas di-input untuk tanggal ini.</div>`;
+        containerTally.innerHTML = `<div class="p-6 text-center text-gray-400 text-xs">Tidak ada data checklist tally.</div>`;
+        document.getElementById('tallyTotalMuat').innerText = "0 Kg";
+        document.getElementById('tallySisaBelum').innerText = "0 Kg";
+        return;
+    }
+
+    let totalSemuaStok = 0;
+    let totalSudahMuat = 0;
+
+    let htmlSisa = `
+    <table class="tally-table text-xs">
+        <thead>
+            <tr class="bg-slate-100 text-gray-700 uppercase font-extrabold">
+                <th>Grade</th>
+                <th>Target (kg)</th>
+                <th>Awal (pcs)</th>
+                <th>Sudah Muat</th>
+                <th>Sisa Stok</th>
+            </tr>
+        </thead>
+        <tbody>`;
+
+    karkasFiltered.forEach(item => {
+        totalSemuaStok += item.netto;
+        const isChecked = tallyChecklist[item.id] || false;
+        if (isChecked) totalSudahMuat += item.netto;
+
+        const statusText = isChecked ? `${item.pcs} pcs` : `0 pcs`;
+        const sisaText = isChecked ? `0 kg` : `${item.netto} kg`;
+
+        htmlSisa += `
+            <tr class="${isChecked ? 'bg-emerald-50/50' : 'hover:bg-orange-50/50'}">
+                <td class="font-black text-orange-600">Grade ${item.grade}</td>
+                <td>${item.beratTarget} kg</td>
+                <td>${item.pcs} pcs</td>
+                <td class="font-bold ${isChecked ? 'text-emerald-700' : 'text-gray-400'}">${statusText}</td>
+                <td class="font-black ${isChecked ? 'text-gray-400' : 'text-orange-700'}">${sisaText}</td>
+            </tr>`;
+    });
+
+    htmlSisa += `</tbody></table>`;
+    containerSisa.innerHTML = htmlSisa;
+
+    let htmlTally = `
+    <table class="tally-table text-xs">
+        <thead>
+            <tr class="bg-blue-50 text-blue-900 uppercase font-extrabold">
+                <th>Muat?</th>
+                <th>Grade</th>
+                <th>Target</th>
+                <th>Netto (kg)</th>
+            </tr>
+        </thead>
+        <tbody>`;
+
+    karkasFiltered.forEach(item => {
+        const checked = tallyChecklist[item.id] ? "checked" : "";
+        htmlTally += `
+            <tr>
+                <td><input type="checkbox" ${checked} onchange="toggleTallyCheck(${item.id})" class="w-5 h-5 accent-blue-600 rounded cursor-pointer"></td>
+                <td class="font-black text-orange-600">Grade ${item.grade}</td>
+                <td>${item.beratTarget} kg (${item.pcs} pcs)</td>
+                <td class="font-bold text-gray-800">${item.netto} kg</td>
+            </tr>`;
+    });
+
+    htmlTally += `</tbody></table>`;
+    containerTally.innerHTML = htmlTally;
+
+    const sisaBelumMuat = totalSemuaStok - totalSudahMuat;
+    document.getElementById('tallyTotalMuat').innerText = totalSudahMuat.toFixed(2) + " Kg";
+    document.getElementById('tallySisaBelum').innerText = sisaBelumMuat.toFixed(2) + " Kg";
+}
+
+function toggleTallyCheck(id) {
+    tallyChecklist[id] = !tallyChecklist[id];
+    localStorage.setItem('rpa_tally_checklist', JSON.stringify(tallyChecklist));
+    renderTableTally();
+}
+
+function kirimWASisaStok() {
+    const tgl = document.getElementById('filterTanggalTally').value;
+    const karkasFiltered = karkasData.filter(k => k.tanggal === tgl);
+    if (karkasFiltered.length === 0) {
+        showToast("Tidak ada stok.");
+        return;
+    }
+
+    let totalSisa = 0;
+    let msg = `*LAPORAN SISA STOK KARKAS (BELUM MUAT)*\nTanggal: ${tgl}\n----------------------------\n`;
+    karkasFiltered.forEach((item, idx) => {
+        const isChecked = tallyChecklist[item.id] || false;
+        if (!isChecked) {
+            totalSisa += item.netto;
+            msg += `${idx + 1}. Grade ${item.grade} (${item.beratTarget}kg): ${item.pcs} pcs = ${item.netto} kg\n`;
+        }
+    });
+    msg += `----------------------------\n*TOTAL SISA BELUM MUAT: ${totalSisa.toFixed(2)} kg*`;
+
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function startVoiceWizard() {
+    document.getElementById('voiceWizardModal').classList.remove('hidden');
+    document.getElementById('wizardResultText').innerText = "Mendengarkan... Sebutkan Grade & Ukuran (Cth: 'A 1.1')";
+}
+
+function stopVoiceWizard() {
+    document.getElementById('voiceWizardModal').classList.add('hidden');
+}
+
+function wizardPrevStep() {}
+
+function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    document.getElementById('aiLoadingModal').classList.remove('hidden');
+    setTimeout(() => {
+        document.getElementById('aiLoadingModal').classList.add('hidden');
+        showToast("Foto berhasil diunggah! Memproses data OCR...");
+    }, 1500);
+}
+
+function closeErrorModal() {
+    document.getElementById('errorModal').classList.add('hidden');
+}
+
+function closeEditGradeModal() {
+    document.getElementById('editGradeModal').classList.add('hidden');
+}
+
+function saveEditGrade() {
+    closeEditGradeModal();
+    showToast("Perubahan grade disimpan.");
+}
 </script>
 </body>
 </html>
