@@ -68,7 +68,7 @@
             </div>
         </div>
         <span class="text-[10px] bg-white/20 backdrop-blur-md text-white px-2.5 py-1 rounded-full border border-white/30 font-bold tracking-wide uppercase">
-            v7.3 PRO
+            v7.5 PRO
         </span>
     </header>
 
@@ -300,6 +300,20 @@
         </div>
     </div>
 
+    <div id="voiceWizardModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[70] flex flex-col items-center justify-center p-4 print:hidden transition-opacity hidden">
+        <div class="bg-white p-6 rounded-3xl shadow-2xl flex flex-col items-center max-w-sm w-full relative overflow-hidden space-y-4">
+            <button onclick="stopVoiceWizard()" class="absolute top-3 right-3 text-gray-400 hover:text-red-500"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <div class="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mic-pulse border border-red-100"><i class="fa-solid fa-microphone text-3xl text-red-600"></i></div>
+            <div class="text-center">
+                <span class="text-[10px] font-black uppercase bg-orange-100 text-orange-800 px-2.5 py-1 rounded-full">Voice Input Aktif</span>
+                <h3 class="font-black text-gray-800 text-lg mt-1">Sebutkan Data Karkas</h3>
+                <p class="text-xs text-gray-500 mt-1">Contoh: <span class="text-orange-600 font-bold">"Grade A 1.1 50 60"</span></p>
+            </div>
+            <div id="wizardResultText" class="w-full min-h-[50px] bg-gray-50 rounded-xl border border-gray-200 p-3 text-sm font-semibold text-gray-700 text-center italic flex items-center justify-center">Mendengarkan...</div>
+            <button type="button" onclick="stopVoiceWizard()" class="w-full py-2.5 bg-red-100 hover:bg-red-200 text-red-700 font-bold rounded-xl text-xs transition">Selesai / Batal</button>
+        </div>
+    </div>
+
     <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-lg md:max-w-2xl lg:max-w-3xl bg-white/95 backdrop-blur-md border-t border-gray-200 z-30 flex justify-between px-2 shadow-2xl items-center pb-1">
         <button onclick="switchTab('home')" id="nav-home" class="flex-1 py-3 flex flex-col items-center justify-center transition-colors font-bold text-orange-600">
             <i class="fa-solid fa-house mb-1 text-lg"></i><span class="text-[9px] uppercase tracking-wider font-extrabold">Beranda</span>
@@ -308,7 +322,7 @@
             <i class="fa-solid fa-truck-ramp-box mb-1 text-lg"></i><span class="text-[9px] uppercase tracking-wider font-extrabold">Datang</span>
         </button>
         <div class="relative -top-5 mx-2 shrink-0">
-            <button class="w-14 h-14 bg-gradient-to-r from-red-500 to-rose-600 rounded-full shadow-lg shadow-red-500/40 text-white flex items-center justify-center text-2xl border-4 border-gray-50 active:scale-95 transition-transform mic-pulse">
+            <button onclick="startVoiceWizard()" class="w-14 h-14 bg-gradient-to-r from-red-500 to-rose-600 rounded-full shadow-lg shadow-red-500/40 text-white flex items-center justify-center text-2xl border-4 border-gray-50 active:scale-95 transition-transform mic-pulse cursor-pointer">
                 <i class="fa-solid fa-microphone"></i>
             </button>
         </div>
@@ -342,10 +356,10 @@
                     <div>
                         <label class="block text-[10px] font-bold text-gray-700 mb-1">Berat 1 Keranjang (Kg)</label>
                         <input type="number" id="modalInputBeratKeranjang" value="1.8" min="0.1" step="0.1" inputmode="decimal" oninput="hitungNettoModal()" class="w-full h-12 px-3 bg-white border border-gray-300 rounded-xl text-base font-bold text-center text-gray-600 focus:ring-2 focus:ring-orange-500 outline-none transition mb-1.5">
-                        <div class="flex gap-1.5 justify-center">
-                            <button type="button" onclick="setPresetKeranjangModal(1.6)" class="flex-1 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 border border-gray-200 rounded-md text-[11px] font-bold active:scale-95 transition">1.6</button>
-                            <button type="button" onclick="setPresetKeranjangModal(1.8)" class="flex-1 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 border border-gray-200 rounded-md text-[11px] font-bold active:scale-95 transition">1.8</button>
-                            <button type="button" onclick="setPresetKeranjangModal(2.0)" class="flex-1 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 border border-gray-200 rounded-md text-[11px] font-bold active:scale-95 transition">2.0</button>
+                        <div class="flex gap-1 justify-center">
+                            <button type="button" onclick="setPresetKeranjangModal(1.6)" class="flex-1 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 border border-gray-200 rounded-md text-[10px] font-bold active:scale-95 transition">1.6</button>
+                            <button type="button" onclick="setPresetKeranjangModal(1.8)" class="flex-1 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 border border-gray-200 rounded-md text-[10px] font-bold active:scale-95 transition">1.8</button>
+                            <button type="button" onclick="setPresetKeranjangModal(2.0)" class="flex-1 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 border border-gray-200 rounded-md text-[10px] font-bold active:scale-95 transition">2.0</button>
                         </div>
                     </div>
                 </div>
@@ -371,6 +385,7 @@ let customBagianList = JSON.parse(localStorage.getItem('rpa_custom_bagian')) || 
 let tallyChecklist = JSON.parse(localStorage.getItem('rpa_tally_checklist')) || {};
 
 let activeStream = null;
+let speechRecognitionInstance = null;
 
 window.onload = function() {
     const today = new Date().toISOString().split('T')[0];
@@ -391,9 +406,76 @@ function showToast(msg) {
     setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// ----------------------------------------------------
-// DRAGGABLE FLOATING CAMERA BUTTON LOGIC
-// ----------------------------------------------------
+function startVoiceWizard() {
+    const modal = document.getElementById('voiceWizardModal');
+    const resultText = document.getElementById('wizardResultText');
+    modal.classList.remove('hidden');
+
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        resultText.innerText = "Browser tidak mendukung pengenalan suara. Gunakan Google Chrome.";
+        return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    speechRecognitionInstance = new SpeechRecognition();
+    speechRecognitionInstance.lang = 'id-ID';
+    speechRecognitionInstance.interimResults = false;
+    speechRecognitionInstance.maxAlternatives = 1;
+
+    resultText.innerText = "Mendengarkan... (Cth: 'Grade A 1.1 50 60')";
+
+    speechRecognitionInstance.onresult = function(event) {
+        const speechResult = event.results[0][0].transcript;
+        resultText.innerText = `Suara: "${speechResult}"`;
+        parseVoiceInput(speechResult);
+    };
+
+    speechRecognitionInstance.onerror = function() {
+        resultText.innerText = "Gagal mendengarkan suara. Coba ulangi.";
+    };
+
+    try {
+        speechRecognitionInstance.start();
+    } catch(e) {
+        resultText.innerText = "Mikrofon sedang aktif atau izin ditolak.";
+    }
+}
+
+function stopVoiceWizard() {
+    if (speechRecognitionInstance) {
+        try { speechRecognitionInstance.stop(); } catch(e) {}
+    }
+    document.getElementById('voiceWizardModal').classList.add('hidden');
+}
+
+function parseVoiceInput(text) {
+    text = text.toLowerCase();
+    let grade = 'A';
+    if (text.includes('grade b') || text.includes('b')) grade = 'B';
+    if (text.includes('grade c') || text.includes('c')) grade = 'C';
+
+    const numbers = text.match(/\d+([.,]\d+)?/g);
+    if (numbers && numbers.length >= 3) {
+        const beratTarget = parseFloat(numbers[0].replace(',', '.'));
+        const pcs = parseInt(numbers[1]);
+        const kotor = parseFloat(numbers[2].replace(',', '.'));
+
+        if (beratTarget && pcs && kotor) {
+            document.getElementById('inputGrade').value = grade;
+            selectGrade(grade);
+            document.getElementById('inputBerat').value = beratTarget;
+            document.getElementById('inputPcs').value = pcs;
+            document.getElementById('inputBeratKotor').value = kotor;
+            
+            showToast(`Suara diterima: Grade ${grade}, ${beratTarget}kg, ${pcs}pcs`);
+            stopVoiceWizard();
+            openKeranjangModal();
+            return;
+        }
+    }
+    document.getElementById('wizardResultText').innerText = `Format tidak dikenali: "${text}". Sebutkan (Grade Target Pcs Kotor).`;
+}
+
 function initFloatingCamera() {
     const btn = document.getElementById('floatingCameraBtn');
     let isDragging = false;
@@ -427,7 +509,7 @@ function initFloatingCamera() {
         btn.style.top = (initialY + dy) + 'px';
     }
 
-    function dragEnd(e) {
+    function dragEnd() {
         if (!isDragging) return;
         isDragging = false;
         if (!hasMoved) {
@@ -443,9 +525,6 @@ function initFloatingCamera() {
     document.addEventListener('touchend', dragEnd);
 }
 
-// ----------------------------------------------------
-// DRAGGABLE CAMERA MODAL LOGIC
-// ----------------------------------------------------
 function openCameraModal() {
     document.getElementById('cameraModal').classList.remove('hidden');
     startCameraStream();
@@ -487,7 +566,6 @@ function captureAndProcessCamera() {
     processImageWithAI(base64Data);
 }
 
-// Drag functionality for camera box
 function initDraggableModal() {
     const box = document.getElementById('draggableCameraBox');
     const header = document.getElementById('cameraModalHeader');
@@ -496,10 +574,8 @@ function initDraggableModal() {
 
     header.addEventListener('mousedown', dragStart);
     header.addEventListener('touchstart', dragStart, {passive: true});
-
     document.addEventListener('mousemove', drag);
     document.addEventListener('touchmove', drag, {passive: true});
-
     document.addEventListener('mouseup', dragEnd);
     document.addEventListener('touchend', dragEnd);
 
@@ -533,7 +609,7 @@ function initDraggableModal() {
 async function processImageWithAI(base64Image) {
     showToast("AI sedang menganalisis foto tabel karkas...");
     try {
-        const promptText = "Analyze this handwritten chicken packing tally sheet image (similar to the provided form with Grade A and Grade B columns for sizes like 7, 8, 9, 10, 11, 12, etc.). Extract the items with grade, size (beratTarget), pcs (ekor), and total kg (netto). Return strictly a JSON array of objects with keys: grade (string 'A', 'B', or 'C'), beratTarget (number in kg, e.g. 0.7, 1.1, 1.2), pcs (integer), netto (number).";
+        const promptText = "Analyze this handwritten chicken packing tally sheet image. Extract items with grade ('A', 'B', or 'C'), beratTarget (number in kg, e.g. 0.7, 1.1, 1.2), pcs (integer), netto (number). Return strictly a JSON array of objects with keys: grade, beratTarget, pcs, netto.";
         
         const payload = {
             contents: [{
@@ -578,7 +654,7 @@ async function processImageWithAI(base64Image) {
             localStorage.setItem('rpa_karkas_data', JSON.stringify(karkasData));
             renderTable();
             renderTableTally();
-            showToast(`Berhasil menambahkan ${addedCount} data dari hasil scan AI!`);
+            showToast(`Berhasil menambahkan ${addedCount} data dari scan AI!`);
         } else {
             throw new Error("Format AI tidak valid");
         }
@@ -594,9 +670,6 @@ async function processImageWithAI(base64Image) {
     }
 }
 
-// ----------------------------------------------------
-// FUNGSI SINKRONISASI TANGGAL GLOBAL
-// ----------------------------------------------------
 function syncAllDates(newDate) {
     if (!newDate) return;
     const dateInputs = ['inputTanggal', 'filterTanggalPotong', 'inputTanggalKedatangan', 'inputTanggalBagian', 'filterTanggalTally'];
@@ -647,9 +720,6 @@ function selectGrade(g) {
     });
 }
 
-// ----------------------------------------------------
-// TABEL KEDATANGAN - EDIT LANGSUNG & SUBTOTAL
-// ----------------------------------------------------
 function loadKedatanganForDate(tgl) {
     if (!kedatanganData[tgl]) {
         kedatanganData[tgl] = { jam: "07:00", namaKandang: "", alamatKandang: "", rows: [], ekorMati: 0, kgMati: 0, jmlKeranjang: 0, beratKeranjangPerPcs: 1.8 };
@@ -804,9 +874,6 @@ function setPresetKeranjangKedatangan(val) {
     hitungTotalKedatangan();
 }
 
-// ----------------------------------------------------
-// TABEL MATRIX KARKAS (BERANDA) - EDIT LANGSUNG
-// ----------------------------------------------------
 function openKeranjangModal() {
     const kotor = parseFloat(document.getElementById('inputBeratKotor').value) || 0;
     if (kotor <= 0) { showToast("Masukkan berat kotor dahulu!"); return; }
@@ -1019,9 +1086,6 @@ function updateMatrixItem(id, field, value) {
     }
 }
 
-// ----------------------------------------------------
-// FUNGSI LAINNYA (Bagian, Tally, Export, WA)
-// ----------------------------------------------------
 document.getElementById('formBagian').onsubmit = function(e) {
     e.preventDefault();
     const tgl = document.getElementById('inputTanggalBagian').value;
@@ -1111,14 +1175,27 @@ function kirimWA() {
     const filterTgl = document.getElementById('filterTanggalPotong').value;
     const filtered = karkasData.filter(d => d.tanggal === filterTgl);
     if (filtered.length === 0) { showToast("Tidak ada data karkas."); return; }
+    
+    const summaryMap = {};
+    filtered.forEach(item => {
+        const key = `${item.grade}_${item.beratTarget}`;
+        if (!summaryMap[key]) {
+            summaryMap[key] = { grade: item.grade, beratTarget: item.beratTarget, pcs: 0, netto: 0 };
+        }
+        summaryMap[key].pcs += item.pcs;
+        summaryMap[key].netto += item.netto;
+    });
+
     let totalPcs = 0, totalNetto = 0;
     let msg = `*LAPORAN HASIL POTONG KARKAS*\nTanggal: ${filterTgl}\n----------------------------\n`;
-    filtered.forEach((item, idx) => {
+    let idx = 1;
+    Object.values(summaryMap).forEach(item => {
         totalPcs += item.pcs;
         totalNetto += item.netto;
-        msg += `${idx + 1}. Grade ${item.grade} (${item.beratTarget}kg) : ${item.pcs} pcs = ${item.netto} kg\n`;
+        msg += `${idx++}. Grade ${item.grade} (${item.beratTarget}kg) : ${item.pcs} pcs = ${item.netto.toFixed(2)} kg\n`;
     });
-    msg += `----------------------------\n*TOTAL: ${totalPcs} pcs | ${totalNetto.toFixed(2)} kg*`;
+    msg += `----------------------------\n*TOTAL KESELURUHAN:*\n• Total Ekor: ${totalPcs} pcs\n• Total Berat: ${totalNetto.toFixed(2)} kg`;
+
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
