@@ -49,6 +49,12 @@
 </head>
 <body class="bg-slate-100 text-gray-800 font-sans antialiased min-h-screen">
 
+<div id="loadingOverlay" class="fixed inset-0 bg-slate-900/85 backdrop-blur-sm z-[100] hidden flex-col items-center justify-center text-white transition-opacity">
+    <i class="fa-solid fa-circle-notch fa-spin text-5xl text-orange-500 mb-4 drop-shadow-lg"></i>
+    <h3 class="font-black text-xl tracking-wide">AI Memproses Foto...</h3>
+    <p class="text-sm text-gray-300 mt-2 max-w-xs text-center">Sedang mengenali dan mengekstrak tulisan tangan tabel karkas. Mohon tunggu sebentar.</p>
+</div>
+
 <div class="max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto bg-gray-50 min-h-screen relative pb-32 shadow-2xl print:hidden border-x border-gray-200">
     <header class="bg-gradient-to-r from-orange-600 via-orange-500 to-amber-600 text-white p-4 shadow-md sticky top-0 z-20 flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -68,7 +74,7 @@
             </div>
         </div>
         <span class="text-[10px] bg-white/20 backdrop-blur-md text-white px-2.5 py-1 rounded-full border border-white/30 font-bold tracking-wide uppercase">
-            v7.5 PRO
+            v8.0 PRO
         </span>
     </header>
 
@@ -97,7 +103,7 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 mb-1">Ukuran (Target Berat kg, Cth: 0.7, 1.1)</label>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Ukuran (Target Berat kg, Cth: 0.7, 11)</label>
                     <input type="number" id="inputBerat" min="0.1" step="0.1" inputmode="decimal" required placeholder="Cth: 1.1" class="w-full h-12 px-3 bg-gray-50 border border-gray-300 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-orange-500 focus:bg-white outline-none transition">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
@@ -193,11 +199,6 @@
                             <div>
                                 <label class="block text-[10px] font-bold text-gray-600 mb-0.5">Kg / Keranjang</label>
                                 <input type="number" id="inputBeratKeranjangKedatangan" min="0" step="0.1" value="1.8" placeholder="1.8" class="w-full h-10 px-2.5 bg-white border border-amber-300 rounded-lg text-sm font-bold text-amber-950 outline-none focus:ring-2 focus:ring-amber-500 mb-1" oninput="hitungTotalKedatangan()">
-                                <div class="flex gap-1">
-                                    <button type="button" onclick="setPresetKeranjangKedatangan(1.6)" class="flex-1 text-[9px] bg-amber-100 hover:bg-amber-200 border border-amber-200 rounded py-0.5 font-bold text-amber-800 transition">1.6</button>
-                                    <button type="button" onclick="setPresetKeranjangKedatangan(1.8)" class="flex-1 text-[9px] bg-amber-100 hover:bg-amber-200 border border-amber-200 rounded py-0.5 font-bold text-amber-800 transition">1.8</button>
-                                    <button type="button" onclick="setPresetKeranjangKedatangan(2.0)" class="flex-1 text-[9px] bg-amber-100 hover:bg-amber-200 border border-amber-200 rounded py-0.5 font-bold text-amber-800 transition">2.0</button>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -276,26 +277,36 @@
         </div>
     </div>
 
-    <!-- DRAGGABLE CAMERA SCAN POPUP -->
     <div id="cameraModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
         <div id="draggableCameraBox" class="bg-white rounded-2xl shadow-2xl w-full max-w-xs overflow-hidden border border-orange-200 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-move">
             <div id="cameraModalHeader" class="bg-gradient-to-r from-orange-600 to-amber-600 text-white p-3 flex justify-between items-center cursor-grab active:cursor-grabbing select-none">
-                <h3 class="font-bold text-xs flex items-center gap-2"><i class="fa-solid fa-camera"></i> Scan Tally Karkas (AI)</h3>
+                <h3 class="font-bold text-xs flex items-center gap-2"><i class="fa-solid fa-camera"></i> Scan Tulisan Tangan (AI)</h3>
                 <button type="button" onclick="closeCameraModal()" class="text-white hover:text-gray-200 text-sm"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-4 space-y-3 bg-gray-50 text-center">
-                <div class="relative bg-black rounded-xl overflow-hidden aspect-video flex items-center justify-center border border-gray-300">
+                <div class="relative bg-black rounded-xl overflow-hidden aspect-[4/3] flex items-center justify-center border border-gray-300 shadow-inner">
                     <video id="cameraVideo" autoplay playsinline class="w-full h-full object-cover"></video>
                     <canvas id="cameraCanvas" class="hidden"></canvas>
                     <div id="cameraPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-white bg-slate-900/50 text-xs">
                         <i class="fa-solid fa-camera-rotate text-2xl mb-1"></i> Kamera siap
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <button type="button" onclick="startCameraStream()" class="py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow transition">Buka Kamera</button>
-                    <button type="button" onclick="captureAndProcessCamera()" class="py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl text-xs shadow transition">Ambil & Scan</button>
+                <div class="grid grid-cols-2 gap-2 mt-2">
+                    <button type="button" onclick="startCameraStream()" class="py-2.5 bg-slate-800 hover:bg-slate-900 active:scale-95 text-white font-bold rounded-xl text-xs shadow transition"><i class="fa-solid fa-video"></i> Buka Kamera</button>
+                    <button type="button" onclick="captureAndProcessCamera()" class="py-2.5 bg-orange-600 hover:bg-orange-700 active:scale-95 text-white font-bold rounded-xl text-xs shadow transition"><i class="fa-solid fa-expand"></i> Ambil & Scan</button>
                 </div>
-                <div class="text-[10px] text-gray-500">Posisikan tabel tulisan tangan di depan kamera lalu klik Ambil & Scan.</div>
+                
+                <!-- Setup API Key Box -->
+                <div id="apiSetupBox" class="mt-3 text-left bg-orange-50 p-3 rounded-xl border border-orange-200 hidden">
+                    <label class="text-[10px] font-bold text-orange-900 block mb-1">🔑 Setup API Key AI (Wajib 1x Saja)</label>
+                    <div class="flex gap-1.5 mt-1">
+                        <input type="password" id="geminiApiKey" placeholder="Masukkan Gemini API Key..." class="flex-1 text-xs p-2 border border-orange-300 rounded-lg outline-none focus:border-orange-500 focus:ring-2 ring-orange-200">
+                        <button type="button" onclick="saveApiKey()" class="bg-orange-600 hover:bg-orange-700 text-white text-xs px-3 rounded-lg font-bold shadow-sm transition">Simpan</button>
+                    </div>
+                    <div class="mt-2 text-[9.5px] text-gray-600 leading-tight">Untuk membaca tulisan tangan secara akurat, sistem membutuhkan API Key dari Google AI Studio. <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-600 font-bold underline">Klik disini untuk dapat gratis</a>.</div>
+                </div>
+                
+                <div class="text-[10px] text-gray-500 leading-tight">Posisikan tabel tulisan tangan di depan kamera dengan pencahayaan baik, lalu klik Ambil & Scan.</div>
             </div>
         </div>
     </div>
@@ -307,10 +318,11 @@
             <div class="text-center">
                 <span class="text-[10px] font-black uppercase bg-orange-100 text-orange-800 px-2.5 py-1 rounded-full">Voice Input Aktif</span>
                 <h3 class="font-black text-gray-800 text-lg mt-1">Sebutkan Data Karkas</h3>
-                <p class="text-xs text-gray-500 mt-1">Contoh: <span class="text-orange-600 font-bold">"Grade A 1.1 50 60"</span></p>
+                <p class="text-xs text-gray-500 mt-1">Contoh: <span class="text-orange-600 font-bold">"A11 50 60"</span></p>
+                <p class="text-[10px] text-gray-400 mt-0.5">(Artinya: Grade A 11kg, 50 ekor, 60kg kotor)</p>
             </div>
             <div id="wizardResultText" class="w-full min-h-[50px] bg-gray-50 rounded-xl border border-gray-200 p-3 text-sm font-semibold text-gray-700 text-center italic flex items-center justify-center">Mendengarkan...</div>
-            <button type="button" onclick="stopVoiceWizard()" class="w-full py-2.5 bg-red-100 hover:bg-red-200 text-red-700 font-bold rounded-xl text-xs transition">Selesai / Batal</button>
+            <button type="button" onclick="stopVoiceWizard()" class="w-full py-2.5 bg-red-100 hover:bg-red-200 text-red-700 font-bold rounded-xl text-xs transition">Batal</button>
         </div>
     </div>
 
@@ -388,8 +400,12 @@ let activeStream = null;
 let speechRecognitionInstance = null;
 
 window.onload = function() {
-    const today = new Date().toISOString().split('T')[0];
-    syncAllDates(today);
+    // FIX TANGGAL: Menggunakan Timezone Lokal bukan UTC
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const localDate = new Date(now.getTime() - offset).toISOString().split('T')[0];
+    
+    syncAllDates(localDate);
     
     let selectHtml = "";
     customBagianList.forEach(bag => { selectHtml += `<option value="${bag}">${bag}</option>`; });
@@ -397,6 +413,7 @@ window.onload = function() {
 
     initDraggableModal();
     initFloatingCamera();
+    checkApiKeyUI();
 };
 
 function showToast(msg) {
@@ -412,7 +429,7 @@ function startVoiceWizard() {
     modal.classList.remove('hidden');
 
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        resultText.innerText = "Browser tidak mendukung pengenalan suara. Gunakan Google Chrome.";
+        resultText.innerText = "Browser tidak mendukung pengenalan suara. Gunakan Google Chrome Android.";
         return;
     }
 
@@ -422,7 +439,7 @@ function startVoiceWizard() {
     speechRecognitionInstance.interimResults = false;
     speechRecognitionInstance.maxAlternatives = 1;
 
-    resultText.innerText = "Mendengarkan... (Cth: 'Grade A 1.1 50 60')";
+    resultText.innerText = "Mendengarkan... (Cth: 'A11 50 60')";
 
     speechRecognitionInstance.onresult = function(event) {
         const speechResult = event.results[0][0].transcript;
@@ -430,8 +447,8 @@ function startVoiceWizard() {
         parseVoiceInput(speechResult);
     };
 
-    speechRecognitionInstance.onerror = function() {
-        resultText.innerText = "Gagal mendengarkan suara. Coba ulangi.";
+    speechRecognitionInstance.onerror = function(e) {
+        resultText.innerText = "Gagal mendengarkan suara ("+e.error+"). Coba ulangi.";
     };
 
     try {
@@ -450,10 +467,18 @@ function stopVoiceWizard() {
 
 function parseVoiceInput(text) {
     text = text.toLowerCase();
-    let grade = 'A';
-    if (text.includes('grade b') || text.includes('b')) grade = 'B';
-    if (text.includes('grade c') || text.includes('c')) grade = 'C';
+    
+    // PERBAIKAN: Terjemahkan kata sandi "A11" menjadi "A 11" 
+    // Supaya dipisah antara Grade dan Target Berat
+    text = text.replace(/\b([a-c])(\d+)\b/g, "$1 $2");
 
+    let grade = 'A';
+    // Deteksi Grade
+    if (text.includes('grade b') || /\bb\b/.test(text)) grade = 'B';
+    else if (text.includes('grade c') || /\bc\b/.test(text)) grade = 'C';
+    else if (text.includes('grade a') || /\ba\b/.test(text)) grade = 'A';
+
+    // Ekstrak Angka (Target Berat, Pcs, Netto Kotor)
     const numbers = text.match(/\d+([.,]\d+)?/g);
     if (numbers && numbers.length >= 3) {
         const beratTarget = parseFloat(numbers[0].replace(',', '.'));
@@ -467,13 +492,33 @@ function parseVoiceInput(text) {
             document.getElementById('inputPcs').value = pcs;
             document.getElementById('inputBeratKotor').value = kotor;
             
-            showToast(`Suara diterima: Grade ${grade}, ${beratTarget}kg, ${pcs}pcs`);
+            showToast(`Diterima: Grade ${grade}, ${beratTarget}kg, ${pcs}pcs`);
             stopVoiceWizard();
             openKeranjangModal();
             return;
         }
     }
-    document.getElementById('wizardResultText').innerText = `Format tidak dikenali: "${text}". Sebutkan (Grade Target Pcs Kotor).`;
+    document.getElementById('wizardResultText').innerText = `Format tidak dikenali: "${text}". Coba ulangi sebut "A11 50 60".`;
+}
+
+function checkApiKeyUI() {
+    const key = localStorage.getItem('rpa_gemini_api_key');
+    if (key && key.length > 10) {
+        document.getElementById('apiSetupBox').classList.add('hidden');
+    } else {
+        document.getElementById('apiSetupBox').classList.remove('hidden');
+    }
+}
+
+function saveApiKey() {
+    const val = document.getElementById('geminiApiKey').value.trim();
+    if (val.length > 15) {
+        localStorage.setItem('rpa_gemini_api_key', val);
+        showToast("API Key Berhasil Disimpan!");
+        checkApiKeyUI();
+    } else {
+        showToast("API Key tidak valid.");
+    }
 }
 
 function initFloatingCamera() {
@@ -526,6 +571,7 @@ function initFloatingCamera() {
 }
 
 function openCameraModal() {
+    checkApiKeyUI();
     document.getElementById('cameraModal').classList.remove('hidden');
     startCameraStream();
 }
@@ -541,29 +587,119 @@ function closeCameraModal() {
 async function startCameraStream() {
     try {
         const video = document.getElementById('cameraVideo');
-        activeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+        // Setup resolusi tinggi untuk OCR tulisan tangan
+        activeStream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }, 
+            audio: false 
+        });
         video.srcObject = activeStream;
         document.getElementById('cameraPlaceholder').classList.add('hidden');
     } catch (err) {
-        showToast("Gagal mengakses kamera perangkat.");
+        showToast("Kamera tidak dapat diakses.");
     }
 }
 
 function captureAndProcessCamera() {
     const video = document.getElementById('cameraVideo');
     const canvas = document.getElementById('cameraCanvas');
+    
     if (!video.srcObject) {
-        showToast("Kamera belum aktif.");
+        showToast("Kamera belum siap.");
         return;
     }
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
+    
+    const apiKey = localStorage.getItem('rpa_gemini_api_key');
+    if (!apiKey || apiKey.length < 15) {
+        document.getElementById('apiSetupBox').classList.remove('hidden');
+        showToast("Wajib masukkan Google Gemini API Key untuk membaca tulisan.");
+        return;
+    }
+
+    canvas.width = video.videoWidth || 1280;
+    canvas.height = video.videoHeight || 720;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     
-    const base64Data = canvas.toDataURL('image/jpeg').split(',')[1];
+    // Kompresi ringan agar upload API cepat
+    const base64Data = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
     closeCameraModal();
-    processImageWithAI(base64Data);
+    
+    processImageWithAI(base64Data, apiKey);
+}
+
+async function processImageWithAI(base64Image, apiKey) {
+    // Tampilkan Loading Overlay Global
+    const loading = document.getElementById('loadingOverlay');
+    loading.classList.remove('hidden');
+    loading.classList.add('flex');
+    
+    try {
+        const promptText = "Analyze this handwritten chicken packing tally sheet image. Extract items with grade ('A', 'B', or 'C'), beratTarget (number in kg, e.g. 0.7, 1.1, 11, 1.2), pcs (integer), netto (number). Return strictly a JSON array of objects with keys: grade, beratTarget, pcs, netto.";
+        
+        const payload = {
+            contents: [{
+                role: "user",
+                parts: [
+                    { text: promptText },
+                    { inlineData: { mimeType: "image/jpeg", data: base64Image } }
+                ]
+            }],
+            generationConfig: { responseMimeType: "application/json" }
+        };
+
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        const resp = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        
+        const result = await resp.json();
+        if(result.error) throw new Error(result.error.message);
+
+        const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        
+        if (jsonText) {
+            const parsedArray = JSON.parse(jsonText);
+            const tgl = document.getElementById('inputTanggal').value;
+            let addedCount = 0;
+            
+            parsedArray.forEach(item => {
+                if (item.grade && item.beratTarget && item.pcs && item.netto) {
+                    karkasData.push({
+                        id: Date.now() + Math.random(),
+                        tanggal: tgl,
+                        grade: item.grade.toUpperCase(),
+                        beratTarget: parseFloat(item.beratTarget),
+                        pcs: parseInt(item.pcs),
+                        kotor: parseFloat(item.netto),
+                        jmlKeranjang: 0,
+                        berat1Keranjang: 0,
+                        netto: parseFloat(item.netto)
+                    });
+                    addedCount++;
+                }
+            });
+            
+            if (addedCount > 0) {
+                localStorage.setItem('rpa_karkas_data', JSON.stringify(karkasData));
+                renderTable();
+                renderTableTally();
+                showToast(`Sukses! ${addedCount} baris data berhasil terbaca dari tulisan tangan.`);
+            } else {
+                showToast("Tabel kosong atau gagal terbaca oleh AI.");
+            }
+        } else {
+            throw new Error("Format AI tidak valid");
+        }
+    } catch (err) {
+        console.error(err);
+        showToast("Gagal menganalisis gambar: " + err.message);
+    } finally {
+        // Tutup overlay
+        loading.classList.add('hidden');
+        loading.classList.remove('flex');
+    }
 }
 
 function initDraggableModal() {
@@ -603,70 +739,6 @@ function initDraggableModal() {
 
     function dragEnd() {
         isDragging = false;
-    }
-}
-
-async function processImageWithAI(base64Image) {
-    showToast("AI sedang menganalisis foto tabel karkas...");
-    try {
-        const promptText = "Analyze this handwritten chicken packing tally sheet image. Extract items with grade ('A', 'B', or 'C'), beratTarget (number in kg, e.g. 0.7, 1.1, 1.2), pcs (integer), netto (number). Return strictly a JSON array of objects with keys: grade, beratTarget, pcs, netto.";
-        
-        const payload = {
-            contents: [{
-                role: "user",
-                parts: [
-                    { text: promptText },
-                    { inlineData: { mimeType: "image/jpeg", data: base64Image } }
-                ]
-            }],
-            generationConfig: { responseMimeType: "application/json" }
-        };
-
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=`;
-        const resp = await fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const result = await resp.json();
-        const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-        
-        if (jsonText) {
-            const parsedArray = JSON.parse(jsonText);
-            const tgl = document.getElementById('inputTanggal').value;
-            let addedCount = 0;
-            parsedArray.forEach(item => {
-                if (item.grade && item.beratTarget && item.pcs && item.netto) {
-                    karkasData.push({
-                        id: Date.now() + Math.random(),
-                        tanggal: tgl,
-                        grade: item.grade.toUpperCase(),
-                        beratTarget: parseFloat(item.beratTarget),
-                        pcs: parseInt(item.pcs),
-                        kotor: parseFloat(item.netto),
-                        jmlKeranjang: 0,
-                        berat1Keranjang: 0,
-                        netto: parseFloat(item.netto)
-                    });
-                    addedCount++;
-                }
-            });
-            localStorage.setItem('rpa_karkas_data', JSON.stringify(karkasData));
-            renderTable();
-            renderTableTally();
-            showToast(`Berhasil menambahkan ${addedCount} data dari scan AI!`);
-        } else {
-            throw new Error("Format AI tidak valid");
-        }
-    } catch (err) {
-        showToast("Gagal memproses gambar. Menambahkan data contoh...");
-        const tgl = document.getElementById('inputTanggal').value;
-        karkasData.push({ id: Date.now(), tanggal: tgl, grade: 'A', beratTarget: 1.1, pcs: 80, kotor: 91.8, jmlKeranjang: 0, berat1Keranjang: 0, netto: 91.8 });
-        karkasData.push({ id: Date.now()+1, tanggal: tgl, grade: 'A', beratTarget: 1.2, pcs: 80, kotor: 97.2, jmlKeranjang: 0, berat1Keranjang: 0, netto: 97.2 });
-        localStorage.setItem('rpa_karkas_data', JSON.stringify(karkasData));
-        renderTable();
-        renderTableTally();
-        showToast("Data contoh berhasil dimasukkan.");
     }
 }
 
@@ -867,11 +939,6 @@ function hitungTotalKedatangan() {
     document.getElementById('resultBeratMatiText').innerText = kgMati.toFixed(2) + " Kg";
     document.getElementById('resultBeratKeranjangText').innerText = totalTaraKeranjang.toFixed(2) + " Kg";
     document.getElementById('resultTotalBeratNetto').innerText = totalNettoBersih.toFixed(2) + " Kg";
-}
-
-function setPresetKeranjangKedatangan(val) {
-    document.getElementById('inputBeratKeranjangKedatangan').value = val;
-    hitungTotalKedatangan();
 }
 
 function openKeranjangModal() {
