@@ -1,0 +1,16 @@
+{
+  "name": "KIPER App",
+  "short_name": "KIPER",
+  "description": "Karkas Input Program Entry Report",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Circle-icons-box.svg/512px-Circle-icons-box.svg.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
