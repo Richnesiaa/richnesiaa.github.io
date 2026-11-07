@@ -66,33 +66,35 @@
 
     <!-- ==================== 1. MENU UTAMA ==================== -->
     <div id="view-menu" class="view-container active bg-transparent">
-        <header id="main-header" class="relative px-6 pt-8 pb-6 rounded-b-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-6 sticky top-0 z-10 overflow-hidden border-b border-white/60 transition-all duration-300">
-            <div class="absolute inset-0 bg-white/60 backdrop-blur-2xl z-[-20]"></div>
-            <div id="header-bg" class="absolute inset-0 bg-cover bg-center z-[-15] opacity-0 transition-opacity duration-500"></div>
-            <div id="header-overlay" class="absolute inset-0 bg-gradient-to-b from-white/70 to-white/95 z-[-10] transition-colors duration-300"></div>
+        <div class="w-full px-4 pt-4 pb-2 sticky top-0 z-30 flex justify-center pointer-events-none">
+            <header id="main-header" class="pointer-events-auto relative w-full max-w-5xl px-6 py-5 rounded-[2rem] shadow-[0_12px_40px_rgb(0,0,0,0.08)] border border-white/80 overflow-hidden transition-all duration-300">
+                <div class="absolute inset-0 bg-white/70 backdrop-blur-2xl z-[-20]"></div>
+                <div id="header-bg" class="absolute inset-0 bg-cover bg-center z-[-15] opacity-0 transition-opacity duration-500"></div>
+                <div id="header-overlay" class="absolute inset-0 bg-gradient-to-b from-white/70 to-white/95 z-[-10] transition-colors duration-300"></div>
 
-            <div class="relative flex justify-between items-center z-10">
-                <div>
-                    <h2 id="header-title" class="text-[26px] font-extrabold text-slate-800 tracking-tight transition-colors duration-300">Halo, Admin</h2>
-                    <p id="header-subtitle" class="text-sm text-slate-600 mt-0.5 font-medium transition-colors duration-300">Pilih menu untuk mulai input</p>
-                    <div id="offline-indicator" class="hidden mt-1 text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold inline-block">⚡ Mode Offline Aktif</div>
+                <div class="relative flex justify-between items-center z-10">
+                    <div>
+                        <h2 id="header-title" class="text-[26px] font-extrabold text-slate-800 tracking-tight transition-colors duration-300">Halo, Admin</h2>
+                        <p id="header-subtitle" class="text-sm text-slate-600 mt-0.5 font-medium transition-colors duration-300">Pilih menu untuk mulai input</p>
+                        <div id="offline-indicator" class="hidden mt-1 text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold inline-block">⚡ Mode Offline Aktif</div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <button id="header-btn-sync" onclick="syncToCloud()" class="w-11 h-11 flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 backdrop-blur-md rounded-full shadow-sm border border-emerald-200 transition-all duration-300 active:scale-90 text-emerald-600" title="Sync ke Google Sheets">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M12 12v7"/><path d="m9 16 3-3 3 3"/></svg>
+                        </button>
+                        <button id="header-btn-settings" onclick="openSettingsModal()" class="w-11 h-11 flex items-center justify-center bg-slate-100 hover:bg-slate-200 backdrop-blur-md rounded-full shadow-sm border border-slate-200 transition-all duration-300 active:scale-90 text-slate-600" title="Pengaturan Sistem">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                        <input type="file" id="header-upload" class="hidden" accept="image/*" onchange="handleHeaderUpload(event)">
+                    </div>
                 </div>
-                
-                <div class="flex items-center gap-2">
-                    <button id="header-btn-sync" onclick="syncToCloud()" class="w-11 h-11 flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 backdrop-blur-md rounded-full shadow-sm border border-emerald-200 transition-all duration-300 active:scale-90 text-emerald-600" title="Sync ke Google Sheets">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M12 12v7"/><path d="m9 16 3-3 3 3"/></svg>
-                    </button>
-                    <button id="header-btn-settings" onclick="openSettingsModal()" class="w-11 h-11 flex items-center justify-center bg-slate-100 hover:bg-slate-200 backdrop-blur-md rounded-full shadow-sm border border-slate-200 transition-all duration-300 active:scale-90 text-slate-600" title="Pengaturan Sistem">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
-                    </button>
-                    <input type="file" id="header-upload" class="hidden" accept="image/*" onchange="handleHeaderUpload(event)">
-                </div>
-            </div>
-        </header>
+            </header>
+        </div>
 
-        <main class="flex-1 px-6 pb-12 page-enter-fade">
+        <main class="flex-1 w-full max-w-5xl mx-auto px-4 md:px-6 pb-12 pt-2 page-enter-fade">
             <!-- Grid Menu Utama -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 <button onclick="navigateTo('view-kedatangan')" class="group relative bg-white/60 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_8px_20px_rgb(0,0,0,0.03)] border border-white/80 hover:bg-white/80 hover:border-teal-200 transition-all duration-300 text-left flex items-center space-x-4 active:scale-95">
                     <div class="w-14 h-14 rounded-2xl flex-shrink-0 overflow-hidden shadow-md border border-slate-200 bg-slate-100">
                         <img src="icon datang.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Kedatangan Ayam">
@@ -121,7 +123,7 @@
                     <div><h4 class="font-bold text-slate-800 text-lg">Barang Keluar / Retur</h4><p class="text-xs text-slate-500 mt-1 font-medium">Distribusi, Ekspedisi & Retur</p></div>
                 </button>
                 
-                <button onclick="navigateTo('view-masterdata')" class="group relative bg-slate-800 p-5 rounded-[1.5rem] shadow-[0_8px_20px_rgb(0,0,0,0.03)] border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-left flex items-center space-x-4 active:scale-95 md:col-span-2">
+                <button onclick="navigateTo('view-masterdata')" class="group relative bg-slate-800 p-5 rounded-[1.5rem] shadow-[0_8px_20px_rgb(0,0,0,0.03)] border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-left flex items-center space-x-4 active:scale-95 sm:col-span-2 lg:col-span-4">
                     <div class="w-14 h-14 rounded-2xl flex-shrink-0 overflow-hidden shadow-md border border-slate-600 bg-slate-100">
                         <img src="icon master data.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Master Data">
                     </div>
@@ -130,7 +132,7 @@
             </div>
 
             <!-- Penghitung Ayam Gantung -->
-            <div class="mt-8 bg-white/60 backdrop-blur-xl p-6 rounded-[1.5rem] shadow-[0_8px_20px_rgb(0,0,0,0.04)] border border-white/80 text-center flex flex-col items-center">
+            <div class="mt-8 max-w-2xl mx-auto bg-white/60 backdrop-blur-xl p-6 rounded-[1.5rem] shadow-[0_8px_20px_rgb(0,0,0,0.04)] border border-white/80 text-center flex flex-col items-center">
                 <div class="flex items-center gap-2 mb-1 text-slate-700 font-bold">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                     <h3>Penghitung Ayam Gantung</h3>
@@ -149,11 +151,13 @@
 
     <!-- ==================== 2. KEDATANGAN AYAM VIEW ==================== -->
     <div id="view-kedatangan" class="view-container bg-slate-50">
-        <div class="bg-white h-16 flex items-center px-4 shadow-sm sticky top-0 z-20">
-            <button onclick="goBack()" class="p-2 rounded-full hover:bg-slate-100 active:bg-slate-200 transition-colors mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
-            <h1 class="text-lg font-bold text-slate-800">Kedatangan Ayam</h1>
+        <div class="bg-white shadow-sm sticky top-0 z-20 border-b border-slate-200">
+            <div class="w-full max-w-5xl mx-auto h-16 flex items-center px-4">
+                <button onclick="goBack()" class="p-2 rounded-full hover:bg-slate-100 active:bg-slate-200 transition-colors mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+                <h1 class="text-lg font-bold text-slate-800">Kedatangan Ayam</h1>
+            </div>
         </div>
-        <div class="flex-1 p-4 md:p-6 overflow-y-auto page-enter-fade pb-12">
+        <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto page-enter-fade pb-12">
             <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:p-6 mb-6">
                 <div class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
@@ -229,11 +233,13 @@
 
     <!-- ==================== 3. BY PRODUCT VIEW ==================== -->
     <div id="view-byproduct" class="view-container bg-slate-50 relative">
-        <div class="bg-white h-16 flex items-center px-4 shadow-sm sticky top-0 z-20">
-            <button onclick="goBack()" class="p-2 rounded-full hover:bg-slate-100 mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
-            <h1 class="text-lg font-bold text-slate-800">By Product Masuk</h1>
+        <div class="bg-white shadow-sm sticky top-0 z-20 border-b border-slate-200">
+            <div class="w-full max-w-5xl mx-auto h-16 flex items-center px-4">
+                <button onclick="goBack()" class="p-2 rounded-full hover:bg-slate-100 mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+                <h1 class="text-lg font-bold text-slate-800">By Product Masuk</h1>
+            </div>
         </div>
-        <div class="flex-1 p-4 overflow-y-auto page-enter-fade pb-24">
+        <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto page-enter-fade pb-24">
             <div class="bg-white px-4 py-3 border border-slate-200 rounded-xl shadow-sm grid grid-cols-2 gap-4 mb-4">
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal</label><input type="date" id="bp-tanggal" onchange="loadBpData()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm"></div>
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Mobil Ke-</label><input type="number" id="bp-mobil" onchange="loadBpData()" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-center font-bold text-amber-700"></div>
@@ -278,20 +284,24 @@
 
     <!-- ==================== 4. KARKAS VIEW ==================== -->
     <div id="view-karkas" class="view-container bg-slate-50 relative">
-        <div class="bg-white h-16 flex items-center px-4 shadow-sm sticky top-0 z-20">
-            <button onclick="goBack()" class="p-2 rounded-full hover:bg-slate-100 mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
-            <h1 class="text-lg font-bold text-slate-800">Karkas</h1>
+        <div class="bg-white shadow-sm sticky top-0 z-20 border-b border-slate-200">
+            <div class="w-full max-w-5xl mx-auto h-16 flex items-center px-4">
+                <button onclick="goBack()" class="p-2 rounded-full hover:bg-slate-100 mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+                <h1 class="text-lg font-bold text-slate-800">Karkas</h1>
+            </div>
         </div>
-        <div class="bg-white px-4 py-3 border-b border-slate-200 shadow-sm grid grid-cols-2 gap-4">
-             <div><label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Produksi</label><input type="date" id="filter-tanggal-karkas" onchange="loadDataKarkas()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm"></div>
-             <div><label class="block text-xs font-semibold text-slate-600 mb-1">Mobil Ke-</label><input type="number" id="filter-mobil-karkas" onchange="loadDataKarkas()" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-center font-bold text-red-700"></div>
+        <div class="bg-white border-b border-slate-200 shadow-sm relative z-10">
+            <div class="w-full max-w-5xl mx-auto px-4 py-3 grid grid-cols-2 gap-4 md:gap-6">
+                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Produksi</label><input type="date" id="filter-tanggal-karkas" onchange="loadDataKarkas()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm"></div>
+                 <div><label class="block text-xs font-semibold text-slate-600 mb-1">Mobil Ke-</label><input type="number" id="filter-mobil-karkas" onchange="loadDataKarkas()" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-center font-bold text-red-700"></div>
+            </div>
         </div>
-        <div class="px-4 pt-5 pb-1 flex gap-3">
+        <div class="w-full max-w-5xl mx-auto px-4 pt-5 pb-1 flex gap-3 md:gap-6">
             <button onclick="startKarkasInput()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-md active:scale-95 transition-all flex items-center justify-center space-x-2"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14"/><path d="M5 12h14"/></svg><span class="text-sm tracking-wide">Input Manual</span></button>
             <button onclick="checkApiKeyAndScan()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow-md active:scale-95 transition-all flex items-center justify-center space-x-2"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span class="text-sm tracking-wide">Scan AI</span></button>
             <input type="file" id="ai-scan-karkas" accept="image/*" capture="environment" class="hidden" onchange="processAiScan(event)">
         </div>
-        <div class="flex-1 p-4 md:p-6 overflow-y-auto pb-24 page-enter-fade">
+        <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto pb-24 page-enter-fade">
             <!-- FOTO BUKTI KARKAS -->
             <div class="mb-6 bg-white p-4 rounded-xl border shadow-sm">
                 <div class="flex justify-between items-center mb-3">
@@ -332,23 +342,30 @@
 
     <!-- ==================== 5. KELUAR BARANG & RETUR ==================== -->
     <div id="view-keluar" class="view-container bg-slate-50">
-        <div class="bg-white h-16 flex items-center px-4 shadow-sm sticky top-0 z-20">
-            <button onclick="navigateTo('view-menu')" class="p-2 rounded-full hover:bg-slate-100 mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
-            <h1 class="text-lg font-bold text-slate-800">Distribusi & Retur</h1>
+        <div class="bg-white shadow-sm sticky top-0 z-20 border-b border-slate-200">
+            <div class="w-full max-w-5xl mx-auto h-16 flex items-center px-4">
+                <button onclick="navigateTo('view-menu')" class="p-2 rounded-full hover:bg-slate-100 mr-2"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+                <h1 class="text-lg font-bold text-slate-800">Distribusi & Retur</h1>
+            </div>
         </div>
-        <div class="flex-1 p-6 page-enter-fade">
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="openKeluarForm('keluar-karkas')" class="bg-red-50 p-5 rounded-2xl border border-red-100 shadow-sm active:scale-95 transition flex flex-col items-center justify-center text-center"><span class="font-bold text-red-800 text-sm">Keluar Karkas</span></button>
-                <button onclick="openKeluarForm('keluar-bp')" class="bg-amber-50 p-5 rounded-2xl border border-amber-100 shadow-sm active:scale-95 transition flex flex-col items-center justify-center text-center"><span class="font-bold text-amber-800 text-sm">Keluar By Prod.</span></button>
-                <button onclick="openKeluarForm('retur-karkas')" class="bg-slate-100 p-5 rounded-2xl border border-slate-200 shadow-sm active:scale-95 transition flex flex-col items-center justify-center text-center"><span class="font-bold text-slate-700 text-sm">Retur Karkas</span></button>
-                <button onclick="openKeluarForm('retur-bp')" class="bg-slate-100 p-5 rounded-2xl border border-slate-200 shadow-sm active:scale-95 transition flex flex-col items-center justify-center text-center"><span class="font-bold text-slate-700 text-sm">Retur By Prod.</span></button>
+        <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 page-enter-fade">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-4">
+                <button onclick="openKeluarForm('keluar-karkas')" class="bg-red-50 p-6 md:p-8 rounded-2xl border border-red-100 shadow-sm active:scale-95 transition flex flex-col items-center justify-center text-center"><span class="font-bold text-red-800 text-sm md:text-base">Keluar Karkas</span></button>
+                <button onclick="openKeluarForm('keluar-bp')" class="bg-amber-50 p-6 md:p-8 rounded-2xl border border-amber-100 shadow-sm active:scale-95 transition flex flex-col items-center justify-center text-center"><span class="font-bold text-amber-800 text-sm md:text-base">Keluar By Prod.</span></button>
+                <button onclick="openKeluarForm('retur-karkas')" class="bg-slate-100 p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm active:scale-95 transition flex flex-col items-center justify-center text-center"><span class="font-bold text-slate-700 text-sm md:text-base">Retur Karkas</span></button>
+                <button onclick="openKeluarForm('retur-bp')" class="bg-slate-100 p-6 md:p-8 rounded-2xl border border-slate-200 shadow-sm active:scale-95 transition flex flex-col items-center justify-center text-center"><span class="font-bold text-slate-700 text-sm md:text-base">Retur By Prod.</span></button>
             </div>
         </div>
     </div>
     <!-- Form Transaksi Dinamis -->
     <div id="view-form-transaksi" class="view-container bg-slate-50">
-        <div class="bg-white h-16 flex items-center px-4 shadow-sm sticky top-0 z-20"><button onclick="navigateTo('view-keluar')" class="p-2 rounded-full hover:bg-slate-100"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button><h1 id="transaksi-title" class="text-lg font-bold text-slate-800 ml-2">Form Transaksi</h1></div>
-        <div class="flex-1 p-4 overflow-y-auto page-enter-fade">
+        <div class="bg-white shadow-sm sticky top-0 z-20 border-b border-slate-200">
+            <div class="w-full max-w-5xl mx-auto h-16 flex items-center px-4">
+                <button onclick="navigateTo('view-keluar')" class="p-2 rounded-full hover:bg-slate-100"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+                <h1 id="transaksi-title" class="text-lg font-bold text-slate-800 ml-2">Form Transaksi</h1>
+            </div>
+        </div>
+        <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto page-enter-fade">
             <div class="bg-white px-4 py-3 border border-slate-200 rounded-xl shadow-sm grid grid-cols-2 gap-4 mb-4">
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Tgl Asal Prod.</label><input type="date" id="transaksi-tanggal" onchange="refreshDropdownTransaksi()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm"></div>
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Mobil Asal</label><input type="number" id="transaksi-mobil" onchange="refreshDropdownTransaksi()" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-center font-bold text-blue-700"></div>
@@ -385,14 +402,19 @@
 
     <!-- ==================== 6. MASTER DATA STOK ==================== -->
     <div id="view-masterdata" class="view-container bg-slate-100">
-        <div class="bg-slate-800 h-16 flex items-center px-4 shadow-md sticky top-0 z-20"><button onclick="goBack()" class="p-2 rounded-full hover:bg-slate-700 text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button><h1 class="text-lg font-bold text-white ml-2">Data Stok Master</h1></div>
-        <div class="px-4 py-4 bg-white shadow-sm border-b border-slate-200">
-            <div class="grid grid-cols-2 gap-4">
+        <div class="bg-slate-800 shadow-md sticky top-0 z-20">
+            <div class="w-full max-w-5xl mx-auto h-16 flex items-center px-4">
+                <button onclick="goBack()" class="p-2 rounded-full hover:bg-slate-700 text-white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg></button>
+                <h1 class="text-lg font-bold text-white ml-2">Data Stok Master</h1>
+            </div>
+        </div>
+        <div class="bg-white shadow-sm border-b border-slate-200 w-full relative z-10">
+            <div class="w-full max-w-5xl mx-auto px-4 py-4 grid grid-cols-2 gap-4 md:gap-6">
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal</label><input type="date" id="md-tanggal" onchange="renderMasterData()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm"></div>
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Mobil Ke-</label><input type="number" id="md-mobil" onchange="renderMasterData()" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-center font-bold text-slate-800"></div>
             </div>
         </div>
-        <div class="flex-1 p-4 overflow-y-auto page-enter-fade pb-12 space-y-6">
+        <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto page-enter-fade pb-12 space-y-6">
             <div><h3 class="font-black text-red-700 mb-2 text-sm uppercase tracking-wide">📦 Stok Karkas</h3><div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><div id="md-karkas-list" class="flex flex-col"></div></div></div>
             <div><h3 class="font-black text-amber-700 mb-2 text-sm uppercase tracking-wide">📦 Stok By Product</h3><div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><div id="md-bp-list" class="flex flex-col"></div></div></div>
         </div>
