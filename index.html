@@ -30,7 +30,7 @@
             overflow-x: hidden;
         }
 
-        .view-container { display: none; min-height: 100vh; width: 100%; padding-top: 4rem; /* Untuk tinggi navbar 64px */ }
+        .view-container { display: none; min-height: 100vh; width: 100%; padding-top: 4rem; }
         .view-container.active { display: flex; flex-direction: column; }
 
         .page-enter-fade { animation: fadeIn 0.3s ease-out forwards; }
@@ -71,17 +71,22 @@
             <button id="nav-back-btn" onclick="goBack()" class="hidden p-2 -ml-2 rounded-full hover:bg-slate-100 text-slate-700 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
             </button>
-            <!-- Logo -->
-            <img id="nav-logo" src="icon.png" class="w-8 h-8 rounded-lg shadow-sm object-cover bg-slate-800" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Circle-icons-box.svg/512px-Circle-icons-box.svg.png'">
-            <!-- Judul (Dinamis) -->
-            <h1 id="nav-title" class="font-black text-xl text-slate-800 tracking-tight truncate max-w-[200px] md:max-w-md">KIPER</h1>
-            <div id="offline-indicator" class="hidden ml-2 text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">⚡ Offline</div>
+            <!-- Logo & Title (Bisa diklik untuk pulang ke Beranda) -->
+            <div onclick="navigateTo('view-menu')" class="flex items-center gap-3 cursor-pointer group">
+                <img id="nav-logo" src="icon.png" class="w-8 h-8 rounded-lg shadow-sm object-cover bg-slate-800 group-hover:scale-105 transition-transform" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Circle-icons-box.svg/512px-Circle-icons-box.svg.png'">
+                <h1 id="nav-title" class="font-black text-xl text-slate-800 tracking-tight truncate max-w-[170px] md:max-w-md group-hover:text-teal-700 transition-colors">KIPER</h1>
+            </div>
+            <div id="offline-indicator" class="hidden ml-2 text-[10px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">OFFLINE</div>
         </div>
         
-        <!-- Hamburger Button -->
-        <button onclick="toggleDrawer()" class="p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 text-slate-600 transition-colors active:scale-95 shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
-        </button>
+        <div class="flex items-center gap-2">
+            <!-- Tombol Auto Sync Teks -->
+            <button id="nav-autosync-btn" onclick="toggleAutoSync()" class="px-2 md:px-3 py-1.5 text-[10px] md:text-xs font-bold rounded-lg border transition-colors active:scale-95 shadow-sm"></button>
+            <!-- Hamburger Button -->
+            <button onclick="toggleDrawer()" class="p-2.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 text-slate-600 transition-colors active:scale-95 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+            </button>
+        </div>
     </nav>
 
     <!-- ==================== HAMBURGER DRAWER (MENU SAMPING) ==================== -->
@@ -93,31 +98,30 @@
         </div>
         
         <div class="p-5 flex-1 overflow-y-auto space-y-6">
-            <!-- Sync Cloud -->
-            <button onclick="syncToCloud()" class="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 p-4 rounded-xl flex items-center justify-center gap-3 font-bold transition active:scale-95 shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M12 12v7"/><path d="m9 16 3-3 3 3"/></svg>
-                Sync ke Google Sheets
-            </button>
-            
             <div class="space-y-3">
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Pengaturan Aplikasi</h3>
                 
                 <!-- Background Config -->
                 <button onclick="triggerHeaderUpload()" class="w-full text-left p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex justify-between items-center transition active:scale-95 shadow-sm">
-                    <span class="font-semibold text-sm text-slate-700 flex items-center gap-2">🖼️ Ubah Cover Depan</span>
+                    <span class="font-semibold text-sm text-slate-700 flex items-center gap-2">Ubah Cover Depan</span>
                     <span class="text-slate-400">&rarr;</span>
                 </button>
 
-                <!-- API & Cloud URLs -->
+                <!-- API URLs & Sinkronisasi -->
                 <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-4 shadow-sm">
-                    <div class="flex justify-between items-center cursor-pointer active:scale-95 transition" onclick="promptGasUrl()">
-                        <span class="text-xs font-bold text-slate-600">☁️ Tautan Sheets API</span>
-                        <span id="drawer-gas-status" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Kosong</span>
+                    <div class="flex justify-between items-center cursor-pointer active:scale-95 transition" onclick="setupGoogleSheets()">
+                        <span class="text-xs font-bold text-slate-600">Tautan Google Sheets</span>
+                        <span id="drawer-gs-status" class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-600">Kosong</span>
                     </div>
-                    <div class="border-t border-slate-200 border-dashed"></div>
                     <div class="flex justify-between items-center cursor-pointer active:scale-95 transition" onclick="promptAiKey()">
-                        <span class="text-xs font-bold text-slate-600">🤖 Kunci Gemini AI</span>
-                        <span id="drawer-ai-status" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Kosong</span>
+                        <span class="text-xs font-bold text-slate-600">Kunci Gemini AI</span>
+                        <span id="drawer-ai-status" class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-600">Kosong</span>
+                    </div>
+                    <!-- Sync Manual Button Text Only -->
+                    <div class="pt-3 mt-1 border-t border-slate-200">
+                        <button onclick="syncToGoogleSheets(false)" class="w-full py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg font-bold text-sm shadow-sm active:scale-95 transition-transform">
+                            Sinkronisasi Data Sekarang
+                        </button>
                     </div>
                 </div>
             </div>
@@ -125,8 +129,7 @@
             <!-- WhatsApp Link -->
             <div class="pt-4 border-t border-slate-100 mt-auto">
                 <button onclick="generateTeamLink()" class="w-full py-3.5 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl font-bold text-sm shadow flex justify-center items-center gap-2 active:scale-95 transition-transform">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-                    Buat Link Undangan Tim
+                    Buat Link Undangan Tim (WA)
                 </button>
             </div>
         </div>
@@ -220,7 +223,7 @@
     <div id="view-kedatangan" class="view-container bg-slate-50">
         <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto page-enter-fade pb-12">
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 mb-6">
-                <!-- FORM KEDATANGAN (Tetap Sama, hanya tanpa header khusus) -->
+                <!-- FORM KEDATANGAN -->
                 <div class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
@@ -249,7 +252,7 @@
 
                     <!-- FOTO BUKTI KEDATANGAN -->
                     <div class="mt-4 border-t border-slate-200 pt-4">
-                        <h4 class="font-bold text-slate-700 mb-3 text-sm flex items-center gap-2">📸 Foto Dokumentasi (Bukti)</h4>
+                        <h4 class="font-bold text-slate-700 mb-3 text-sm flex items-center gap-2">Foto Dokumentasi Bukti</h4>
                         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3" id="kedatangan-photos">
                             <!-- Injected by JS -->
                         </div>
@@ -318,7 +321,7 @@
             <!-- FOTO BUKTI BY PRODUCT -->
             <div class="mb-5 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <div class="flex justify-between items-center mb-3">
-                    <h4 class="font-bold text-slate-700 text-sm flex items-center gap-1">📸 Galeri Foto Sampel</h4>
+                    <h4 class="font-bold text-slate-700 text-sm flex items-center gap-1">Galeri Foto Sampel</h4>
                     <button onclick="promptPhoto('bp')" class="text-[10px] bg-amber-100 text-amber-700 px-3 py-1.5 rounded font-bold uppercase active:scale-90 transition">+ Tambah Foto</button>
                 </div>
                 <div class="flex overflow-x-auto gap-3 pb-2 custom-scrollbar" id="bp-photos"></div>
@@ -330,10 +333,10 @@
         
         <div class="fixed bottom-6 right-6 z-30 flex flex-col items-end">
             <div id="export-menu-bp" class="hidden flex-col items-end transform origin-bottom scale-95 opacity-0 transition-all duration-200">
-                <button onclick="reportExcelBp(event)" class="bg-emerald-600 text-white px-5 py-3 rounded-full shadow-lg font-bold text-sm flex items-center justify-center gap-2 mb-4 active:scale-95 hover:bg-emerald-700">📊 Excel</button>
-                <button onclick="reportWaBp(event)" class="bg-[#25D366] text-white px-5 py-3 rounded-full shadow-lg font-bold text-sm flex items-center justify-center gap-2 mb-4 active:scale-95 hover:bg-[#20bd5a]">💬 WhatsApp</button>
+                <button onclick="reportExcelBp(event)" class="bg-emerald-600 text-white px-5 py-3 rounded-full shadow-lg font-bold text-sm flex items-center justify-center gap-2 mb-4 active:scale-95 hover:bg-emerald-700">Export Excel</button>
+                <button onclick="reportWaBp(event)" class="bg-[#25D366] text-white px-5 py-3 rounded-full shadow-lg font-bold text-sm flex items-center justify-center gap-2 mb-4 active:scale-95 hover:bg-[#20bd5a]">Kirim WhatsApp</button>
             </div>
-            <button onclick="toggleExportMenu('export-menu-bp')" class="bg-amber-500 hover:bg-amber-600 text-white p-4 rounded-full shadow-xl active:scale-90 flex items-center justify-center transition-transform"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></button>
+            <button onclick="toggleExportMenu('export-menu-bp')" class="bg-amber-500 hover:bg-amber-600 text-white p-4 rounded-full shadow-xl active:scale-90 flex items-center justify-center transition-transform font-bold">EXPORT</button>
         </div>
     </div>
 
@@ -348,15 +351,15 @@
         </div>
         <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto pb-24 page-enter-fade">
             <div class="w-full flex gap-3 md:gap-6 mb-5 mt-2">
-                <button onclick="startKarkasInput()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center justify-center space-x-2"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14"/><path d="M5 12h14"/></svg><span class="text-sm tracking-wide">Input Manual</span></button>
-                <button onclick="checkApiKeyAndScan()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center justify-center space-x-2"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span class="text-sm tracking-wide">Scan AI</span></button>
+                <button onclick="startKarkasInput()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center justify-center space-x-2"><span class="text-sm tracking-wide">Input Manual</span></button>
+                <button onclick="checkApiKeyAndScan()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center justify-center space-x-2"><span class="text-sm tracking-wide">Scan AI</span></button>
                 <input type="file" id="ai-scan-karkas" accept="image/*" capture="environment" class="hidden" onchange="processAiScan(event)">
             </div>
             
             <!-- FOTO BUKTI KARKAS -->
             <div class="mb-6 bg-white p-4 rounded-xl border shadow-sm">
                 <div class="flex justify-between items-center mb-3">
-                    <h4 class="font-bold text-slate-700 text-sm flex items-center gap-1">📸 Galeri Foto Karkas</h4>
+                    <h4 class="font-bold text-slate-700 text-sm flex items-center gap-1">Galeri Foto Karkas</h4>
                     <button onclick="promptPhoto('karkas')" class="text-[10px] bg-red-100 text-red-700 px-3 py-1.5 rounded font-bold uppercase active:scale-90 transition">+ Tambah Foto</button>
                 </div>
                 <div class="flex overflow-x-auto gap-3 pb-2 custom-scrollbar" id="karkas-photos"></div>
@@ -367,10 +370,10 @@
         
         <div class="fixed bottom-6 right-6 z-30 flex flex-col items-end">
             <div id="export-menu-karkas" class="hidden flex-col items-end transform origin-bottom scale-95 opacity-0 transition-all duration-200">
-                <button onclick="reportExcelKarkas(event)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-full shadow-lg font-bold text-sm flex items-center justify-center gap-2 mb-4 active:scale-95">📊 Excel</button>
-                <button onclick="openWaExportModal(event)" class="bg-[#25D366] hover:bg-[#20bd5a] text-white px-5 py-3 rounded-full shadow-lg font-bold text-sm flex items-center justify-center gap-2 mb-4 active:scale-95">💬 WhatsApp</button>
+                <button onclick="reportExcelKarkas(event)" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-full shadow-lg font-bold text-sm flex items-center justify-center gap-2 mb-4 active:scale-95">Export Excel</button>
+                <button onclick="openWaExportModal(event)" class="bg-[#25D366] hover:bg-[#20bd5a] text-white px-5 py-3 rounded-full shadow-lg font-bold text-sm flex items-center justify-center gap-2 mb-4 active:scale-95">Kirim WhatsApp</button>
             </div>
-            <button onclick="toggleExportMenu('export-menu-karkas')" class="bg-red-500 hover:bg-red-600 text-white p-4 rounded-full shadow-xl active:scale-90 flex items-center justify-center transition-transform"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></button>
+            <button onclick="toggleExportMenu('export-menu-karkas')" class="bg-red-500 hover:bg-red-600 text-white p-4 rounded-full shadow-xl active:scale-90 flex items-center justify-center transition-transform font-bold">EXPORT</button>
         </div>
     </div>
 
@@ -398,7 +401,7 @@
             <!-- FOTO BUKTI TRANSAKSI -->
             <div class="mb-5 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <div class="flex justify-between items-center mb-3">
-                    <h4 class="font-bold text-slate-700 text-sm flex items-center gap-1">📸 Foto Transaksi</h4>
+                    <h4 class="font-bold text-slate-700 text-sm flex items-center gap-1">Foto Transaksi</h4>
                     <button onclick="promptPhoto('transaksi')" class="text-[10px] bg-blue-100 text-blue-700 px-3 py-1.5 rounded font-bold uppercase active:scale-90 transition">+ Tambah Foto</button>
                 </div>
                 <div class="flex overflow-x-auto gap-3 pb-2 custom-scrollbar" id="transaksi-photos"></div>
@@ -417,7 +420,7 @@
             
             <div class="flex justify-between items-center mb-3">
                 <h4 class="font-bold text-slate-700 text-sm">Histori Transaksi</h4>
-                <button onclick="openSuratJalanModal()" class="text-[10px] bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded font-bold uppercase active:scale-90 transition shadow-sm flex items-center gap-1">🖨️ Surat Jalan</button>
+                <button onclick="openSuratJalanModal()" class="text-[10px] bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 rounded font-bold uppercase active:scale-90 transition shadow-sm flex items-center gap-1">Cetak Surat Jalan</button>
             </div>
             <div id="transaksi-list" class="space-y-2 pb-12"></div>
         </div>
@@ -433,8 +436,8 @@
             </div>
         </div>
         <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto page-enter-fade pb-12 space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
-            <div><h3 class="font-black text-red-700 mb-2 text-sm uppercase tracking-wide">📦 Stok Karkas</h3><div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><div id="md-karkas-list" class="flex flex-col"></div></div></div>
-            <div><h3 class="font-black text-amber-700 mb-2 text-sm uppercase tracking-wide">📦 Stok By Product</h3><div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><div id="md-bp-list" class="flex flex-col"></div></div></div>
+            <div><h3 class="font-black text-red-700 mb-2 text-sm uppercase tracking-wide">Stok Karkas</h3><div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><div id="md-karkas-list" class="flex flex-col"></div></div></div>
+            <div><h3 class="font-black text-amber-700 mb-2 text-sm uppercase tracking-wide">Stok By Product</h3><div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><div id="md-bp-list" class="flex flex-col"></div></div></div>
         </div>
     </div>
 
@@ -451,7 +454,6 @@
         <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-sm p-8 transform scale-95 transition-transform duration-300 flex flex-col items-center relative">
             <button onclick="closeCalculator()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 hover:bg-slate-200 rounded-full p-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
             <div class="flex items-center gap-2 mb-2 text-teal-600 font-bold mt-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 <h3>Penghitung Ayam Gantung</h3>
             </div>
             <p class="text-xs text-slate-500 mb-8 text-center">Hitung manual ekoran yang masuk (Otomatis tersimpan)</p>
@@ -465,25 +467,14 @@
         </div>
     </div>
 
-    <!-- Modals lainnya (WA Choice, Crop, Loading AI, Cloud Sync, Surat Jalan) -->
+    <!-- Modals lainnya -->
     <div id="modal-wa-choice" class="hidden fixed inset-0 bg-slate-900/60 z-[100] justify-center items-center p-4 opacity-0 transition-opacity duration-300"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 flex flex-col"><h3 class="font-bold text-slate-800 text-lg mb-2">Pilih Laporan WhatsApp</h3><p class="text-xs text-slate-500 mb-4">Pilih cakupan data karkas yang ingin dikirim.</p><div class="space-y-3"><button onclick="reportWaKarkas('current')" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-sm">Hanya Mobil Saat Ini</button><button onclick="reportWaKarkas('all')" class="w-full py-3 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-bold text-sm shadow-sm">Semua Mobil Disatukan</button><button onclick="closeWaExportModal()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-semibold text-xs mt-2">Batal</button></div></div></div>
     <div id="modal-crop" class="hidden fixed inset-0 bg-slate-900/90 z-[100] flex-col justify-center items-center p-4 opacity-0 transition-opacity duration-300"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm flex flex-col overflow-hidden"><div class="px-5 py-4 border-b bg-slate-50 flex justify-between items-center"><h3 class="font-bold text-slate-700">Sesuaikan Background</h3><button onclick="closeCropModal()" class="text-slate-400">✕</button></div><div class="p-4 bg-slate-100"><div class="w-full h-[250px] bg-slate-200 rounded-xl overflow-hidden relative"><img id="crop-image-target" class="max-w-full block" src="" alt=""></div></div><div class="p-4 flex gap-3"><button onclick="closeCropModal()" class="flex-1 py-3 bg-slate-200 rounded-xl font-bold">Batal</button><button onclick="applyCrop()" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold">Simpan</button></div></div></div>
+    
+    <!-- Modal Loading Global (AI & Sync) -->
     <div id="modal-ai-loading" class="hidden fixed inset-0 bg-slate-900/90 z-[200] flex-col justify-center items-center p-4"><div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-teal-500 mb-6"></div><p class="text-white font-bold text-lg animate-pulse text-center" id="loading-message-text">Memproses AI...</p></div>
 
-    <!-- MODAL CLOUD SYNC -->
-    <div id="modal-cloud-sync" class="hidden fixed inset-0 bg-slate-900/90 z-[200] flex-col justify-center items-center p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center transform scale-95 transition-transform duration-300">
-            <div class="animate-bounce mb-4 text-5xl">☁️</div>
-            <h3 class="font-black text-slate-800 text-xl mb-2" id="sync-title">Sedang Sinkronisasi...</h3>
-            <p class="text-sm text-slate-500 mb-6" id="sync-message">Mengirim data ke Google Sheets, pastikan koneksi stabil.</p>
-            <div class="w-full bg-slate-200 rounded-full h-2.5 mb-4 overflow-hidden">
-                <div id="sync-progress" class="bg-emerald-500 h-2.5 rounded-full w-0 transition-all duration-300"></div>
-            </div>
-            <button id="sync-close-btn" onclick="closeSyncModal()" class="hidden w-full py-3 bg-slate-800 text-white rounded-xl font-bold mt-2 hover:bg-slate-900">Tutup</button>
-        </div>
-    </div>
-
-    <!-- MODAL MULTI-STEP KARKAS (TETAP SAMA) -->
+    <!-- MODAL MULTI-STEP KARKAS -->
     <div id="modal-karkas" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 items-start pt-12 justify-center p-4 opacity-0 transition-opacity duration-300 overflow-y-auto">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
             <div class="px-5 py-4 border-b border-slate-100 flex flex-col items-center bg-slate-50 rounded-t-2xl shrink-0"><div class="w-full flex justify-between items-center"><h3 class="font-bold text-slate-700 text-base" id="karkas-step-title">Input Karkas</h3><button onclick="closeKarkasModal()" class="text-slate-400 bg-slate-200 hover:bg-slate-300 rounded-full p-1 transition">✕</button></div></div>
@@ -494,7 +485,7 @@
                 <div id="step-karkas-4" class="karkas-step hidden flex-col h-full"><p class="text-sm font-semibold text-slate-500 mb-3 text-center">Berat Kotor (Kg)</p><input type="number" id="karkas-kotor" step="0.01" class="w-full bg-slate-50 border border-slate-300 text-3xl rounded-xl px-4 py-3 font-bold text-center focus:border-red-500 focus:ring-1 focus:ring-red-500" placeholder="0.00"><div class="mt-auto pt-6 flex gap-3"><button onclick="prevKarkasStep()" class="px-4 py-3 bg-slate-100 text-slate-600 rounded-xl font-semibold">Kembali</button><button onclick="nextKarkasStep('kotor')" class="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold shadow-md">Lanjut</button></div></div>
                 <div id="step-karkas-5" class="karkas-step hidden flex-col h-full"><p class="text-sm font-semibold text-slate-500 mb-3 text-center">Jumlah Keranjang</p><input type="number" id="karkas-jml-keranjang" class="w-full bg-slate-50 border border-slate-300 text-3xl rounded-xl px-4 py-3 font-bold text-center focus:border-red-500 focus:ring-1 focus:ring-red-500" placeholder="0"><div class="mt-auto pt-6 flex gap-3"><button onclick="prevKarkasStep()" class="px-4 py-3 bg-slate-100 text-slate-600 rounded-xl font-semibold">Kembali</button><button onclick="nextKarkasStep('jmlKeranjang')" class="flex-1 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold shadow-md">Lanjut</button></div></div>
                 <div id="step-karkas-6" class="karkas-step hidden flex-col h-full"><p class="text-sm font-semibold text-slate-500 mb-3 text-center">Berat per Keranjang (Kg)</p><input type="number" id="karkas-berat-keranjang" step="0.01" class="w-full bg-slate-50 border border-slate-300 text-3xl rounded-xl px-4 py-3 font-bold text-center focus:border-red-500 focus:ring-1 focus:ring-red-500" placeholder="2.00"><div class="mt-auto pt-6 flex gap-3"><button onclick="prevKarkasStep()" class="px-4 py-3 bg-slate-100 text-slate-600 rounded-xl font-semibold">Kembali</button><button onclick="generateLabelPreview()" class="flex-1 py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold shadow-md">Lihat Label &rarr;</button></div></div>
-                <div id="step-karkas-7" class="karkas-step hidden flex-col h-full"><p class="text-sm font-semibold text-slate-500 mb-2 text-center">Preview Label Keranjang</p><div id="print-label-area" class="w-full max-w-[220px] mx-auto max-h-[35vh] overflow-y-auto rounded-lg mb-3 space-y-3"></div><div class="mt-auto flex flex-col gap-2"><div class="flex gap-2"><button onclick="submitKarkasOnly()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-xs">Simpan Saja</button><button id="btn-cetak-step" onclick="cetakBluetoothBertahap()" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs">Cetak (1/1)</button></div><button onclick="hubungkanPrinterBT()" id="bt-status-label" class="w-full py-2 bg-slate-100 text-slate-700 border rounded-xl font-semibold text-xs hover:bg-slate-200">🔍 Sambungkan Printer BT</button><button onclick="prevKarkasStep()" class="w-full py-1 text-slate-400 hover:text-slate-600 text-xs">Kembali</button></div></div>
+                <div id="step-karkas-7" class="karkas-step hidden flex-col h-full"><p class="text-sm font-semibold text-slate-500 mb-2 text-center">Preview Label Keranjang</p><div id="print-label-area" class="w-full max-w-[220px] mx-auto max-h-[35vh] overflow-y-auto rounded-lg mb-3 space-y-3"></div><div class="mt-auto flex flex-col gap-2"><div class="flex gap-2"><button onclick="submitKarkasOnly()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-xs">Simpan Saja</button><button id="btn-cetak-step" onclick="cetakBluetoothBertahap()" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs">Cetak (1/1)</button></div><button onclick="hubungkanPrinterBT()" id="bt-status-label" class="w-full py-2 bg-slate-100 text-slate-700 border rounded-xl font-semibold text-xs hover:bg-slate-200">Sambungkan Printer BT</button><button onclick="prevKarkasStep()" class="w-full py-1 text-slate-400 hover:text-slate-600 text-xs">Kembali</button></div></div>
             </div>
         </div>
     </div>
@@ -511,8 +502,8 @@
                     <!-- Preview HTML disuntik dari JS -->
                 </div>
                 <div class="flex flex-col gap-2 mt-auto">
-                    <button onclick="cetakSuratJalanBT()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md flex justify-center items-center gap-2">🖨️ Cetak ke Printer BT</button>
-                    <button onclick="hubungkanPrinterBT()" id="bt-status-sj" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border rounded-xl font-semibold text-xs mt-2 transition">🔍 Cek Sambungan Printer</button>
+                    <button onclick="cetakSuratJalanBT()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md flex justify-center items-center gap-2">Cetak ke Printer BT</button>
+                    <button onclick="hubungkanPrinterBT()" id="bt-status-sj" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border rounded-xl font-semibold text-xs mt-2 transition">Cek Sambungan Printer</button>
                 </div>
             </div>
         </div>
@@ -523,10 +514,16 @@
         // DAFTARKAN SERVICE WORKER (OFFLINE)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
-            if (!navigator.onLine) { document.getElementById('offline-indicator').classList.remove('hidden'); }
-            window.addEventListener('offline', () => document.getElementById('offline-indicator').classList.remove('hidden'));
-            window.addEventListener('online', () => document.getElementById('offline-indicator').classList.add('hidden'));
         }
+        
+        // EVENT LISTENER KONEKSI PWA & AUTO SYNC
+        let isAutoSyncOn = localStorage.getItem('kiper_autosync') === 'true';
+
+        window.addEventListener('offline', () => document.getElementById('offline-indicator').classList.remove('hidden'));
+        window.addEventListener('online', () => {
+            document.getElementById('offline-indicator').classList.add('hidden');
+            if (isAutoSyncOn) syncToGoogleSheets(true);
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -534,12 +531,14 @@
             if (token) {
                 try {
                     const decoded = JSON.parse(atob(token));
-                    if (decoded.g) localStorage.setItem('kiper_gas_url', decoded.g);
                     if (decoded.a) localStorage.setItem('kiper_gemini_api_key', decoded.a);
-                    alert("✅ SETUP PERANGKAT BERHASIL!\n\nPerangkat HP ini sudah terhubung ke sistem Cloud Google Sheets & AI Gemini secara otomatis.");
+                    if (decoded.s) localStorage.setItem('kiper_gs_url', decoded.s);
+                    alert("✅ SETUP PERANGKAT BERHASIL!\n\nPerangkat HP ini sudah terhubung ke pengaturan AI dan Google Sheets.");
                     window.history.replaceState({}, document.title, window.location.pathname);
                 } catch(e) {}
             }
+            
+            if (!navigator.onLine) document.getElementById('offline-indicator').classList.remove('hidden');
 
             const today = new Date().toISOString().split('T')[0];
             document.querySelectorAll('input[type="date"]').forEach(el => el.value = today);
@@ -553,7 +552,143 @@
             
             const savedDb = localStorage.getItem('kiper_kedatangan_db'); if (savedDb) { try { appDatabase = JSON.parse(savedDb); } catch(e) {} }
             loadDataTimbangan(); loadDataKarkas(); loadBpData(); refreshDropdownTransaksi();
+            updateAutoSyncUI();
+            updateDrawerStatus();
         });
+
+        // ----------------------------------------------------------------------
+        // FUNGSI AUTO SYNC & MANUAL SYNC
+        // ----------------------------------------------------------------------
+        function updateAutoSyncUI() {
+            const btn = document.getElementById('nav-autosync-btn');
+            if(isAutoSyncOn) {
+                btn.innerText = 'Auto-Sync: ON';
+                btn.className = 'px-2 md:px-3 py-1.5 text-[10px] md:text-xs font-bold rounded-lg bg-emerald-100 text-emerald-700 transition-colors border border-emerald-200';
+            } else {
+                btn.innerText = 'Auto-Sync: OFF';
+                btn.className = 'px-2 md:px-3 py-1.5 text-[10px] md:text-xs font-bold rounded-lg bg-slate-100 text-slate-500 transition-colors border border-slate-200';
+            }
+        }
+
+        function toggleAutoSync() {
+            isAutoSyncOn = !isAutoSyncOn;
+            localStorage.setItem('kiper_autosync', isAutoSyncOn);
+            updateAutoSyncUI();
+            if(isAutoSyncOn && navigator.onLine) syncToGoogleSheets(true);
+        }
+
+        async function syncToGoogleSheets(isAuto = false) {
+            const url = localStorage.getItem('kiper_gs_url');
+            if(!url) {
+                if(!isAuto) alert("Tautan Google Sheets belum diatur. Silakan atur di Menu Samping.");
+                return;
+            }
+            if(!navigator.onLine) {
+                if(!isAuto) alert("Tidak ada koneksi internet!");
+                return;
+            }
+            
+            if(!isAuto) toggleDrawer();
+
+            const mLoading = document.getElementById('modal-ai-loading');
+            document.getElementById('loading-message-text').innerText = isAuto ? "Auto-Sync Berjalan..." : "Sinkronisasi Data...";
+            mLoading.classList.remove('hidden'); mLoading.classList.add('flex');
+            
+            try {
+                let payload = {
+                    "Kedatangan_Ayam": formatDataKedatangan(),
+                    "By_Product": formatDataBp(),
+                    "Karkas": formatDataKarkas(),
+                    "Keluar_Karkas": formatDataKeluar('karkas'),
+                    "Keluar_By_Product": formatDataKeluar('bp'),
+                    "Retur_Karkas": formatDataRetur('karkas'),
+                    "Retur_By_Product": formatDataRetur('bp'),
+                    "Dokumentasi_Foto": formatDataFoto()
+                };
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                if(result.status === 'success') {
+                    if(!isAuto) alert("Sinkronisasi Data Berhasil!");
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch(e) {
+                if(!isAuto) alert("Gagal Sinkronisasi: " + e.message);
+            } finally {
+                mLoading.classList.add('hidden'); mLoading.classList.remove('flex');
+            }
+        }
+
+        // --- Data Formatters for Sync ---
+        function formatDataKedatangan() {
+            let db = JSON.parse(localStorage.getItem('kiper_kedatangan_db')||'{}');
+            let arr = [["Tanggal", "Mobil Ke", "Supplier", "No. Kendaraan", "Surat Jalan", "Total Ekor", "Total Berat (Kg)"]];
+            for(let t in db) {
+                for(let m in db[t]) {
+                    let d = db[t][m];
+                    let tEk = d.tabel.reduce((s,i)=>s+(parseInt(i.ekor)||0),0);
+                    let tBr = d.tabel.reduce((s,i)=>s+(parseFloat(i.berat)||0),0);
+                    arr.push([t, m, d.info.supplier, d.info.nopol, d.info.sj, tEk, tBr]);
+                }
+            }
+            return arr;
+        }
+        function formatDataBp() {
+            let db = JSON.parse(localStorage.getItem('kiper_bp_db')||'{}');
+            let arr = [["Tanggal", "Mobil Ke", "Jenis Item", "Berat (Kg)"]];
+            for(let t in db) {
+                for(let m in db[t]) {
+                    db[t][m].forEach(i => arr.push([t, m, i.jenis, i.berat]));
+                }
+            }
+            return arr;
+        }
+        function formatDataKarkas() {
+            let db = JSON.parse(localStorage.getItem('kiper_karkas_db')||'{}');
+            let arr = [["Tanggal", "Mobil Ke", "Grade", "Rata-rata", "Ekor", "Netto (Kg)", "Kotor (Kg)", "Jml Keranjang"]];
+            for(let t in db) {
+                for(let m in db[t]) {
+                    db[t][m].forEach(i => arr.push([t, m, i.grade, i.rata, i.ekor, i.netto, i.kotor||0, i.jmlKeranjang||0]));
+                }
+            }
+            return arr;
+        }
+        function formatDataKeluar(type) {
+            let db = JSON.parse(localStorage.getItem(`kiper_keluar_${type}_db`)||'{}');
+            let arr = [["Tanggal", "Mobil Asal", "Item", "Ekor", "Netto (Kg)"]];
+            for(let t in db) {
+                for(let m in db[t]) {
+                    db[t][m].forEach(i => arr.push([t, m, i.item, i.ekor||0, i.netto]));
+                }
+            }
+            return arr;
+        }
+        function formatDataRetur(type) {
+            let db = JSON.parse(localStorage.getItem(`kiper_retur_${type}_db`)||'{}');
+            let arr = [["Tanggal", "Mobil Asal", "Item", "Ekor", "Netto (Kg)"]];
+            for(let t in db) {
+                for(let m in db[t]) {
+                    db[t][m].forEach(i => arr.push([t, m, i.item, i.ekor||0, i.netto]));
+                }
+            }
+            return arr;
+        }
+        function formatDataFoto() {
+            let db = JSON.parse(localStorage.getItem('kiper_images')||'{}');
+            let arr = [["Modul", "Tanggal", "Mobil Ke", "Label", "Base64"]];
+            for(let key in db.kedatangan) { let [tgl, mob] = key.split('_'); for(let lbl in db.kedatangan[key]) { arr.push(["Kedatangan", tgl, mob, lbl, db.kedatangan[key][lbl]]); } }
+            for(let key in db.bp) { let [tgl, mob] = key.split('_'); db.bp[key].forEach(p => arr.push(["By Product", tgl, mob, p.label, p.base64])); }
+            for(let key in db.karkas) { let [tgl, mob] = key.split('_'); db.karkas[key].forEach(p => arr.push(["Karkas", tgl, mob, p.label, p.base64])); }
+            for(let key in db.transaksi) { let parts = key.split('_'); let type = parts[0]; let tgl = parts[1]; let mob = parts.slice(2).join('_'); db.transaksi[key].forEach(p => arr.push(["Transaksi " + type, tgl, mob, p.label, p.base64])); }
+            return arr;
+        }
+
 
         // ----------------------------------------------------------------------
         // FUNGSI NAVBAR, DRAWER & NAVIGASI
@@ -568,21 +703,19 @@
             'view-masterdata': 'Master Data Stok'
         };
 
-        function navigateTo(viewId) { 
+        function navigateTo(viewId, isPop = false) { 
             document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active')); 
             document.getElementById(viewId).classList.add('active'); 
             window.scrollTo(0, 0); 
             
-            // Konfigurasi Navbar
             const titleEl = document.getElementById('nav-title');
             const backBtn = document.getElementById('nav-back-btn');
-            const logoImg = document.getElementById('nav-logo');
             titleEl.innerText = viewTitles[viewId] || 'KIPER';
             
             if(viewId === 'view-menu') {
-                backBtn.classList.add('hidden'); logoImg.classList.remove('hidden');
+                backBtn.classList.add('hidden');
             } else {
-                backBtn.classList.remove('hidden'); logoImg.classList.add('hidden');
+                backBtn.classList.remove('hidden');
             }
             
             if(viewId === 'view-masterdata') renderMasterData(); 
@@ -591,14 +724,18 @@
             if(viewId === 'view-kedatangan') { refreshPhotoUI('kedatangan'); } 
             if(viewId === 'view-keluar') { refreshDropdownTransaksi(); } 
             
-            history.pushState({ view: viewId }, '', '#' + viewId.replace('view-', '')); 
+            if (!isPop) {
+                history.pushState({ view: viewId }, '', '#' + viewId.replace('view-', '')); 
+            }
         }
 
-        function goBack() { history.back(); }
+        function goBack() { 
+            history.back(); 
+        }
         
         window.addEventListener('popstate', (event) => { 
-            if (event.state && event.state.view) { navigateTo(event.state.view); } 
-            else { navigateTo('view-menu'); } 
+            if (event.state && event.state.view) { navigateTo(event.state.view, true); } 
+            else { navigateTo('view-menu', true); } 
         });
 
         function toggleDrawer() {
@@ -606,13 +743,11 @@
             const overlay = document.getElementById('drawer-overlay');
             
             if(drawer.classList.contains('translate-x-full')) {
-                // Buka Drawer
                 drawer.classList.remove('translate-x-full');
                 overlay.classList.remove('hidden');
                 updateDrawerStatus();
                 setTimeout(() => overlay.classList.remove('opacity-0'), 10);
             } else {
-                // Tutup Drawer
                 drawer.classList.add('translate-x-full');
                 overlay.classList.add('opacity-0');
                 setTimeout(() => overlay.classList.add('hidden'), 300);
@@ -620,29 +755,29 @@
         }
 
         function updateDrawerStatus() {
-            const gas = localStorage.getItem('kiper_gas_url'); 
             const ai = localStorage.getItem('kiper_gemini_api_key');
-            
-            const elGas = document.getElementById('drawer-gas-status');
-            if(gas) { elGas.innerText = "Terhubung"; elGas.className = "text-[10px] font-bold px-2 py-1 rounded bg-emerald-100 text-emerald-700 uppercase tracking-wide"; }
-            else { elGas.innerText = "Belum Ada"; elGas.className = "text-[10px] font-bold px-2 py-1 rounded bg-rose-100 text-rose-600 uppercase tracking-wide"; }
-            
+            const gs = localStorage.getItem('kiper_gs_url');
             const elAi = document.getElementById('drawer-ai-status');
-            if(ai) { elAi.innerText = "Terhubung"; elAi.className = "text-[10px] font-bold px-2 py-1 rounded bg-emerald-100 text-emerald-700 uppercase tracking-wide"; }
-            else { elAi.innerText = "Belum Ada"; elAi.className = "text-[10px] font-bold px-2 py-1 rounded bg-rose-100 text-rose-600 uppercase tracking-wide"; }
+            const elGs = document.getElementById('drawer-gs-status');
+            
+            if(ai) { elAi.innerText = "Terhubung"; elAi.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 uppercase tracking-wide"; }
+            else { elAi.innerText = "Kosong"; elAi.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-600 uppercase tracking-wide"; }
+            
+            if(gs) { elGs.innerText = "Terhubung"; elGs.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 uppercase tracking-wide"; }
+            else { elGs.innerText = "Kosong"; elGs.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-600 uppercase tracking-wide"; }
         }
 
-        function promptGasUrl() {
-           let url = prompt("☁️ SETUP GOOGLE SHEETS\n\nMasukkan 'URL Aplikasi Web' yang Anda dapatkan dari Google Apps Script:");
-           if(url && url.startsWith("https://script.google.com")) { 
-               localStorage.setItem('kiper_gas_url', url.trim()); 
-               updateDrawerStatus(); 
-               alert("URL Sheets berhasil disimpan!");
-           } else if(url) { alert("URL tidak valid!"); }
+        function setupGoogleSheets() {
+            let key = prompt("Tautan Web App Google Sheets:\nMasukkan URL dari Google Apps Script di sini:");
+            if(key) {
+                localStorage.setItem('kiper_gs_url', key.trim());
+                updateDrawerStatus();
+                alert("Tautan Google Sheets berhasil disimpan!");
+            }
         }
 
         function promptAiKey() {
-           let key = prompt("🤖 KUNCI GEMINI AI\n\nMasukkan API Key Gemini Anda di sini:");
+           let key = prompt("KUNCI GEMINI AI\n\nMasukkan API Key Gemini Anda di sini:");
            if(key) { 
                localStorage.setItem('kiper_gemini_api_key', key.trim()); 
                updateDrawerStatus(); 
@@ -651,10 +786,14 @@
         }
 
         function generateTeamLink() {
-            const gas = localStorage.getItem('kiper_gas_url') || ''; const ai = localStorage.getItem('kiper_gemini_api_key') || '';
-            if(!gas && !ai) { alert("Peringatan: HP Anda belum disetel sama sekali.\n\nSilakan isi dulu Sheets API atau Kunci AI di atas sebelum membuat link undangan."); return; }
-            const payload = btoa(JSON.stringify({ g: gas, a: ai })); const link = window.location.origin + window.location.pathname + "?token=" + payload;
-            const msg = "*UNDANGAN AKSES APLIKASI KIPER*\n\nSilakan klik link di bawah ini dari HP Anda untuk masuk ke sistem KIPER. Konfigurasi akan diatur otomatis tanpa perlu memasukkan kode apapun:\n\n" + link + "\n\n*(Peringatan: Jangan bagikan link ini ke orang luar)*";
+            const ai = localStorage.getItem('kiper_gemini_api_key') || '';
+            const gs = localStorage.getItem('kiper_gs_url') || '';
+            if(!ai || !gs) { alert("Peringatan: Kunci AI atau Tautan Google Sheets belum diatur.\n\nHarap lengkapi keduanya sebelum membuat link tim."); return; }
+            
+            const payload = btoa(JSON.stringify({ a: ai, s: gs })); 
+            const link = window.location.origin + window.location.pathname + "?token=" + payload;
+            
+            const msg = "*UNDANGAN AKSES APLIKASI KIPER*\n\nSilakan klik link di bawah ini dari HP Anda untuk masuk ke sistem KIPER. Konfigurasi AI dan Google Sheets akan diatur otomatis tanpa perlu memasukkan kode apapun:\n\n" + link + "\n\n*(Peringatan: Jangan bagikan link ini ke orang luar)*";
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
@@ -771,7 +910,7 @@
                     if(photos[item.k]) {
                         html += `<div class="relative aspect-square rounded-xl overflow-hidden border border-slate-200 shadow-sm"><img src="${photos[item.k]}" class="photo-thumbnail cursor-pointer" onclick="viewImage('${photos[item.k]}', '${item.l}')"><button onclick="deletePhoto('${module}', '${sessionKey}', '${item.k}')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md">✕</button><div class="absolute bottom-0 inset-x-0 bg-black/50 text-white text-[9px] font-bold text-center py-1 truncate px-1">${item.l}</div></div>`;
                     } else {
-                        html += `<button onclick="triggerCamera('${module}', '${item.k}', '${item.l}')" class="aspect-square bg-slate-50 hover:bg-slate-100 border border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center text-slate-400 active:scale-95 transition"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-1"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span class="text-[10px] font-bold">+ ${item.l}</span></button>`;
+                        html += `<button onclick="triggerCamera('${module}', '${item.k}', '${item.l}')" class="aspect-square bg-slate-50 hover:bg-slate-100 border border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center text-slate-400 active:scale-95 transition"><span class="text-[20px] font-bold mb-1">+</span><span class="text-[10px] font-bold">${item.l}</span></button>`;
                     }
                 });
                 document.getElementById('kedatangan-photos').innerHTML = html;
@@ -819,7 +958,8 @@
 
         let cropper = null;
         function triggerHeaderUpload() { 
-            toggleDrawer(); // Tutup drawer dulu
+            const drawer = document.getElementById('app-drawer');
+            if(!drawer.classList.contains('translate-x-full')) toggleDrawer();
             setTimeout(() => document.getElementById('header-upload').click(), 300); 
         }
         function handleHeaderUpload(event) { 
@@ -889,7 +1029,7 @@
         function prevKarkasStep() { if(currentKarkasStep > 1) { currentKarkasStep--; showKarkasStep(currentKarkasStep); } }
         function generateLabelPreview() { let brtKeranjang = parseFloat(document.getElementById('karkas-berat-keranjang').value) || 0; tempKarkas.beratKeranjang = brtKeranjang; let potonganKeranjang = tempKarkas.jmlKeranjang * brtKeranjang; let netto = tempKarkas.kotor - potonganKeranjang; if(netto < 0) netto = 0; tempKarkas.netto = parseFloat(netto.toFixed(2)); let area = document.getElementById('print-label-area'); let tgl = document.getElementById('filter-tanggal-karkas').value; let mob = document.getElementById('filter-mobil-karkas').value || "1"; let html = ''; let jmlLabel = Math.max(1, tempKarkas.jmlKeranjang || 1); for(let i=1; i<=jmlLabel; i++) { html += `<div class="thermal-label bg-white border border-slate-300 p-3 rounded text-[11px] font-mono text-slate-800 shadow-sm"><div class="text-center border-b border-dashed pb-1 mb-1 font-bold">Tgl: ${tgl} | Mobil: ${mob}</div><div class="text-center font-bold">Grade & Rata-rata:<br><span class="text-lg font-black">${tempKarkas.grade} - ${tempKarkas.rata}</span></div><div class="text-center border-t border-dashed pt-1 mt-1 font-bold">Jumlah Netto (Kg):<br><span class="text-2xl font-black">${tempKarkas.netto.toFixed(2)}</span></div><div class="text-center border-t border-dashed pt-1 mt-1 font-bold">Ekor:<br><span class="text-2xl font-black">${tempKarkas.ekor}</span></div><div class="text-center text-[10px] text-slate-500 mt-1">Keranjang ${i} dari ${jmlLabel}</div></div>`; } area.innerHTML = html; currentPrintLabelIndex = 0; document.getElementById('btn-cetak-step').innerText = `Cetak (1/${jmlLabel})`; showKarkasStep(7); }
         function submitKarkasOnly() { karkasArr.push({ id: Date.now(), ...tempKarkas }); saveKarkasDataStorage(); closeKarkasModal(); loadDataKarkas(); }
-        async function hubungkanPrinterBT() { try { bluetoothDevice = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] }); const server = await bluetoothDevice.gatt.connect(); const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb'); bluetoothCharacteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb'); document.getElementById('bt-status-label').innerText = "🟢 Terhubung: " + bluetoothDevice.name; if(document.getElementById('bt-status-sj')) document.getElementById('bt-status-sj').innerText = "🟢 Terhubung: " + bluetoothDevice.name; } catch(e) { alert("Gagal menyambungkan Bluetooth: " + e.message); } }
+        async function hubungkanPrinterBT() { try { bluetoothDevice = await navigator.bluetooth.requestDevice({ acceptAllDevices: true, optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] }); const server = await bluetoothDevice.gatt.connect(); const service = await server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb'); bluetoothCharacteristic = await service.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb'); document.getElementById('bt-status-label').innerText = "Terhubung: " + bluetoothDevice.name; if(document.getElementById('bt-status-sj')) document.getElementById('bt-status-sj').innerText = "Terhubung: " + bluetoothDevice.name; } catch(e) { alert("Gagal menyambungkan Bluetooth: " + e.message); } }
         async function cetakBluetoothBertahap() { if(!bluetoothCharacteristic) { await hubungkanPrinterBT(); if(!bluetoothCharacteristic) return; } let jmlLabel = Math.max(1, tempKarkas.jmlKeranjang || 1); if(currentPrintLabelIndex >= jmlLabel) { alert("Semua label sudah dicetak!"); return; } let tgl = document.getElementById('filter-tanggal-karkas').value; let mob = document.getElementById('filter-mobil-karkas').value || "1"; let i = currentPrintLabelIndex + 1; let text = `\x1B\x40\x1B\x61\x01Tgl: ${tgl} | Mobil: ${mob}\n--------------------------------\nGrade & Rata-rata:\n\x1B\x21\x20${tempKarkas.grade} - ${tempKarkas.rata}\x1B\x21\x00\n--------------------------------\nJumlah Netto (Kg):\n\x1B\x21\x30${tempKarkas.netto.toFixed(2)}\x1B\x21\x00\n--------------------------------\nEkor:\n\x1B\x21\x30${tempKarkas.ekor}\x1B\x21\x00\nKeranjang ${i} dari ${jmlLabel}\n\x1B\x64\x03`; try { let encoder = new TextEncoder(); let bytes = encoder.encode(text); for(let idx=0; idx<bytes.length; idx+=64) { let chunk = bytes.slice(idx, idx+64); await bluetoothCharacteristic.writeValue(chunk); await new Promise(r => setTimeout(r, 50)); } currentPrintLabelIndex++; if(currentPrintLabelIndex < jmlLabel) { document.getElementById('btn-cetak-step').innerText = `Cetak (${currentPrintLabelIndex + 1}/${jmlLabel})`; } else { document.getElementById('btn-cetak-step').innerText = `Selesai Cetak ✓`; karkasArr.push({ id: Date.now(), ...tempKarkas }); saveKarkasDataStorage(); loadDataKarkas(); } } catch(e) { alert("Gagal mencetak: " + e.message); } }
         function deleteKarkas(id) { karkasArr = karkasArr.filter(x => x.id !== id); saveKarkasDataStorage(); loadDataKarkas(); }
         function updateKarkasCell(id, field, val) { let item = karkasArr.find(x => x.id === id); if(item) { item[field] = field === 'ekor' ? (parseInt(val) || 0) : (parseFloat(val) || 0); saveKarkasDataStorage(); renderKarkasCards(); } }
@@ -899,14 +1039,13 @@
         function reportExcelKarkas(e) { if(e) e.preventDefault(); toggleExportMenu('export-menu-karkas'); if(karkasArr.length===0) return alert("Kosong!"); let tgl = document.getElementById('filter-tanggal-karkas').value; let mob = document.getElementById('filter-mobil-karkas').value || "1"; let csv = 'Tanggal,Mobil Ke,Grade,Berat Rata-Rata (Kg),Jumlah Ekor,Berat Bersih / Netto (Kg),Jumlah Keranjang\n'; karkasArr.forEach(i => { csv += `"${tgl}","${mob}","${i.grade}","${i.rata}","${i.ekor}","${i.netto}","${i.jmlKeranjang || 0}"\n`; }); const b = new Blob([csv], {type:'text/csv;charset=utf-8;'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `Karkas_${tgl}_M${mob}.csv`; l.click(); }
         function reportWaKarkas(mode) { closeWaExportModal(); let tgl = document.getElementById('filter-tanggal-karkas').value; let targetData = []; if(mode === 'current') { targetData = karkasArr; } else { let db = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}'); if(db[tgl]) { for(let m in db[tgl]) targetData = targetData.concat(db[tgl][m]); } } if(targetData.length === 0) return alert("Tidak ada data untuk dilaporkan!"); let grouped = {}; targetData.forEach(item => { let key = `${item.grade} - ${item.rata} Kg`; if(!grouped[key]) grouped[key] = { ekor: 0, netto: 0 }; grouped[key].ekor += parseInt(item.ekor) || 0; grouped[key].netto += parseFloat(item.netto) || 0; }); let text = `*LAPORAN REKAP KARKAS* (Tgl: ${tgl})\n\n`; let totE = 0, totN = 0; for(let k in grouped) { text += `- ${k} : *${grouped[k].ekor} Ekor* (${grouped[k].netto.toFixed(2)} Kg)\n`; totE += grouped[k].ekor; totN += grouped[k].netto; } text += `\n*TOTAL KESELURUHAN*:\n- Ekor: ${totE} Pcs\n- Netto: ${totN.toFixed(2)} Kg`; window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank'); }
 
-        function checkApiKeyAndScan() { let apiKey = localStorage.getItem('kiper_gemini_api_key'); if (!apiKey) { alert("Silakan masukkan API Key Gemini di Menu Samping (Hamburger Menu) terlebih dahulu."); return; } document.getElementById('ai-scan-karkas').click(); }
+        function checkApiKeyAndScan() { let apiKey = localStorage.getItem('kiper_gemini_api_key'); if (!apiKey) { alert("Silakan masukkan API Key Gemini di Menu Samping terlebih dahulu."); return; } document.getElementById('ai-scan-karkas').click(); }
         async function processAiScan(event) { const file = event.target.files[0]; if(!file) return; const apiKey = localStorage.getItem('kiper_gemini_api_key'); if (!apiKey) return; event.target.value = ''; const mLoading = document.getElementById('modal-ai-loading'); document.getElementById('loading-message-text').innerText = "AI Membaca Tulisan Tangan..."; mLoading.classList.remove('hidden'); mLoading.classList.add('flex'); try { const base64Data = await new Promise((resolve, reject) => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); let w = img.width; let h = img.height; const maxDim = 1500; if (w > h && w > maxDim) { h *= maxDim / w; w = maxDim; } else if (h > maxDim) { w *= maxDim / h; h = maxDim; } canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h); resolve(canvas.toDataURL('image/jpeg', 0.7).split(',')[1]); }; img.onerror = () => reject(new Error("Gagal membaca file gambar")); img.src = URL.createObjectURL(file); }); const promptText = `Ekstrak data tabel laporan packing karkas dari gambar tulisan tangan ini. Tabel disusun berdasarkan Grade (misal GRADE A, GRADE B) dan Berat Rata-Rata (misal 1.2, 1.3, 1.4). Di bawah setiap rata-rata ada kolom Ekor dan Kg. Kembalikan HANYA array JSON dengan format: [{"grade": "Grade A", "rata": "1.2", "ekor": 12, "netto": 14.5}]. Abaikan baris Total.`; const payload = { contents: [{ role: "user", parts: [ { text: promptText }, { inlineData: { mimeType: "image/jpeg", data: base64Data } } ] }] }; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`; const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { const err = await response.json(); if(response.status === 400 || response.status === 403) { localStorage.removeItem('kiper_gemini_api_key'); throw new Error("API Key salah, dihapus, atau diblokir Google. Silakan periksa di menu samping."); } throw new Error(err.error?.message || "Server Error " + response.status); } const result = await response.json(); if (result.candidates && result.candidates.length > 0) { let jsonText = result.candidates[0].content.parts[0].text; const match = jsonText.match(/\[[\s\S]*\]/); if (match) jsonText = match[0]; else jsonText = jsonText.replace(/```json/gi, '').replace(/```/g, '').trim(); const parsedData = JSON.parse(jsonText); if (Array.isArray(parsedData) && parsedData.length > 0) { parsedData.forEach(item => { karkasArr.push({ id: Date.now() + Math.random(), grade: item.grade || 'Grade A', rata: String(item.rata || '1.0'), ekor: parseInt(item.ekor) || 0, netto: parseFloat(item.netto) || 0, kotor: parseFloat(item.netto) || 0, jmlKeranjang: 0, beratKeranjang: 0 }); }); saveKarkasDataStorage(); renderKarkasCards(); alert(`AI Selesai! Berhasil merekap ${parsedData.length} baris data dari kertas.`); } else { alert("AI tidak menemukan format tabel data yang valid di gambar ini."); } } else { alert("Gagal membaca gambar dari server. Silakan coba lagi."); } } catch(e) { console.error(e); alert("Gagal memproses AI:\n" + e.message); } finally { mLoading.classList.add('hidden'); mLoading.classList.remove('flex'); } }
 
         /* TRANSAKSI (KELUAR BARANG & RETUR) */
         function openKeluarForm(type) { 
             currentTransaksiType = type; 
             let titles = { 'keluar-karkas': 'Keluar Karkas', 'keluar-bp': 'Keluar By Product', 'retur-karkas': 'Retur Karkas', 'retur-bp': 'Retur By Product' }; 
-            // Update the title dynamic setting for navigation
             viewTitles['view-form-transaksi'] = titles[type]; 
             
             if(type.includes('bp')) { 
@@ -996,84 +1135,6 @@
         function calculateMasterStock(tgl, mob) { let kM = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}'); let kO = JSON.parse(localStorage.getItem('kiper_keluar_karkas_db') || '{}'); let kR = JSON.parse(localStorage.getItem('kiper_retur_karkas_db') || '{}'); let bM = JSON.parse(localStorage.getItem('kiper_bp_db') || '{}'); let bO = JSON.parse(localStorage.getItem('kiper_keluar_bp_db') || '{}'); let bR = JSON.parse(localStorage.getItem('kiper_retur_bp_db') || '{}'); let stockKarkas = {}, stockBp = {}; (kM[tgl]?.[mob] || []).forEach(k => { let key = `${k.grade} - ${k.rata}`; if(!stockKarkas[key]) stockKarkas[key] = { ekor: 0, netto: 0, ms_e:0, ms_n:0, kl_e:0, kl_n:0, rt_e:0, rt_n:0 }; stockKarkas[key].ekor += k.ekor; stockKarkas[key].netto += k.netto; stockKarkas[key].ms_e += k.ekor; stockKarkas[key].ms_n += k.netto; }); (kO[tgl]?.[mob] || []).forEach(k => { if(stockKarkas[k.item]) { stockKarkas[k.item].ekor -= k.ekor; stockKarkas[k.item].netto -= k.netto; stockKarkas[k.item].kl_e += k.ekor; stockKarkas[k.item].kl_n += k.netto; } }); (kR[tgl]?.[mob] || []).forEach(k => { if(!stockKarkas[k.item]) stockKarkas[k.item] = { ekor: 0, netto: 0, ms_e:0, ms_n:0, kl_e:0, kl_n:0, rt_e:0, rt_n:0 }; stockKarkas[k.item].ekor += k.ekor; stockKarkas[k.item].netto += k.netto; stockKarkas[k.item].rt_e += k.ekor; stockKarkas[k.item].rt_n += k.netto; }); (bM[tgl]?.[mob] || []).forEach(b => { if(!stockBp[b.jenis]) stockBp[b.jenis] = { berat: 0, ms: 0, kl: 0, rt: 0 }; stockBp[b.jenis].berat += b.berat; stockBp[b.jenis].ms += b.berat; }); (bO[tgl]?.[mob] || []).forEach(b => { if(stockBp[b.item]) { stockBp[b.item].berat -= b.netto; stockBp[b.item].kl += b.netto; } }); (bR[tgl]?.[mob] || []).forEach(b => { if(!stockBp[b.item]) stockBp[b.item] = { berat: 0, ms: 0, kl: 0, rt: 0 }; stockBp[b.item].berat += b.netto; stockBp[b.item].rt += b.netto; }); return { stockKarkas, stockBp }; }
         function renderMasterData() { let tgl = document.getElementById('md-tanggal').value; let mob = document.getElementById('md-mobil').value || "1"; let lK = document.getElementById('md-karkas-list'); let lB = document.getElementById('md-bp-list'); let mst = calculateMasterStock(tgl, mob); let htmlK = ''; for(let k in mst.stockKarkas) { let d = mst.stockKarkas[k]; htmlK += `<div class="p-3 border-b border-slate-100 bg-white hover:bg-slate-50 transition"><h4 class="font-bold text-sm">${k}</h4><div class="grid grid-cols-4 mt-2 gap-1 text-[10px] text-center font-semibold"><div class="bg-blue-50 text-blue-700 py-1 rounded">IN<br>${d.ms_e}p</div><div class="bg-red-50 text-red-700 py-1 rounded">OUT<br>${d.kl_e}p</div><div class="bg-purple-50 text-purple-700 py-1 rounded">RTR<br>${d.rt_e}p</div><div class="bg-emerald-100 text-emerald-800 py-1 rounded shadow-sm">SISA<br>${d.ekor}p</div></div></div>`; } lK.innerHTML = htmlK || `<div class="p-6 text-center text-slate-400 text-sm">Tidak ada stok karkas.</div>`; let htmlB = ''; for(let k in mst.stockBp) { let d = mst.stockBp[k]; htmlB += `<div class="p-3 border-b border-slate-100 bg-white hover:bg-slate-50 transition flex justify-between items-center"><h4 class="font-bold text-sm">${k}</h4><div class="flex gap-1 text-[10px] font-semibold text-center w-2/3 justify-end"><div class="w-10 text-blue-600">IN<br>${d.ms.toFixed(1)}</div><div class="w-10 text-red-600">OUT<br>${d.kl.toFixed(1)}</div><div class="w-10 text-purple-600">RTR<br>${d.rt.toFixed(1)}</div><div class="w-12 bg-amber-100 text-amber-800 py-1 rounded shadow-sm">SISA<br>${d.berat.toFixed(1)}</div></div></div>`; } lB.innerHTML = htmlB || `<div class="p-6 text-center text-slate-400 text-sm">Tidak ada stok by product.</div>`; }
 
-        // ----------------------------------------------------------------------
-        // FUNGSI SINKRONISASI CLOUD
-        // ----------------------------------------------------------------------
-        async function syncToCloud() {
-            toggleDrawer(); // Tutup laci
-            
-            if (!navigator.onLine) { alert("⚠️ Sinyal Internet Tidak Ada!\n\nSilakan cari sinyal/WiFi terlebih dahulu untuk mensinkronisasi data ke Cloud."); return; }
-            let gasUrl = localStorage.getItem('kiper_gas_url');
-            if (!gasUrl) { alert("Tautan Sheets API belum diatur! Silakan atur di menu samping."); return; }
-
-            const m = document.getElementById('modal-cloud-sync'); m.classList.remove('hidden'); m.classList.add('flex');
-            const lastSync = localStorage.getItem('kiper_last_sync');
-            document.getElementById('sync-title').innerText = "Menyiapkan Data..."; document.getElementById('sync-message').innerText = lastSync ? "Terakhir sukses: " + lastSync : "Merekap seluruh data offline ke Cloud..."; document.getElementById('sync-progress').style.width = "10%"; document.getElementById('sync-close-btn').classList.add('hidden');
-            setTimeout(() => m.classList.remove('opacity-0'), 10);
-
-            try {
-                let payload = {
-                    "Karkas": [ ["Tanggal", "Mobil Ke", "Grade", "Rata-rata", "Ekor", "Netto (Kg)", "Keranjang"] ],
-                    "Kedatangan": [ ["Tanggal", "Mobil Ke", "Supplier", "No Polisi", "No Surat Jalan", "Ekor Timbangan", "Berat Timbangan (Kg)"] ],
-                    "ByProduct": [ ["Tanggal", "Mobil Ke", "Jenis Item", "Berat (Kg)"] ],
-                    "Distribusi": [ ["Tipe", "Tanggal", "Mobil", "Item", "Ekor", "Netto (Kg)"] ],
-                    "Dokumentasi_Foto": [ ["Modul", "Tanggal", "Mobil Ke", "Nama Bukti", "File Gambar Base64"] ]
-                };
-
-                let dbKarkas = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}');
-                for (let tgl in dbKarkas) { for (let mob in dbKarkas[tgl]) { dbKarkas[tgl][mob].forEach(i => { payload["Karkas"].push([tgl, mob, i.grade, i.rata, i.ekor, i.netto, i.jmlKeranjang || 0]); });}}
-
-                let dbTiba = JSON.parse(localStorage.getItem('kiper_kedatangan_db') || '{}');
-                for (let tgl in dbTiba) { for (let mob in dbTiba[tgl]) { let info = dbTiba[tgl][mob].info || {}; (dbTiba[tgl][mob].tabel || []).forEach(i => { payload["Kedatangan"].push([tgl, mob, info.supplier || '', info.nopol || '', info.sj || '', i.ekor, i.berat]); }); }}
-
-                let dbBp = JSON.parse(localStorage.getItem('kiper_bp_db') || '{}');
-                for (let tgl in dbBp) { for (let mob in dbBp[tgl]) { dbBp[tgl][mob].forEach(i => { payload["ByProduct"].push([tgl, mob, i.jenis, i.berat]); });}}
-
-                const distKeys = ['keluar_karkas', 'keluar_bp', 'retur_karkas', 'retur_bp'];
-                distKeys.forEach(type => { let db = JSON.parse(localStorage.getItem(`kiper_${type}_db`) || '{}'); for (let tgl in db) { for (let mob in db[tgl]) { db[tgl][mob].forEach(i => { payload["Distribusi"].push([type.toUpperCase(), tgl, mob, i.item, i.ekor || 0, i.netto]); });}}});
-
-                let dbImg = JSON.parse(localStorage.getItem('kiper_images') || '{}');
-                for(let mod in dbImg) {
-                    for(let session in dbImg[mod]) {
-                        let parts = session.split('_'); let tgl="", mob="", modName = mod;
-                        if(parts.length >= 2 && !isNaN(parts[parts.length-1])) {
-                            mob = parts.pop(); tgl = parts.pop();
-                            if(parts.length > 0) modName = parts.join('_');
-                        }
-                        let items = dbImg[mod][session];
-                        if(Array.isArray(items)) {
-                            items.forEach(p => { payload["Dokumentasi_Foto"].push([modName, tgl, mob, p.label, p.base64]); });
-                        } else {
-                            let labelMap = { mobil: 'Mobil', supir: 'Supir', keranjang: 'Keranjang', mati: 'Ayam Mati' };
-                            for(let k in items) { payload["Dokumentasi_Foto"].push([modName, tgl, mob, labelMap[k], items[k]]); }
-                        }
-                    }
-                }
-
-                document.getElementById('sync-progress').style.width = "40%";
-                document.getElementById('sync-title').innerText = "Mengirim ke Google Sheets...";
-
-                const response = await fetch(gasUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
-                const result = await response.json();
-                document.getElementById('sync-progress').style.width = "100%";
-
-                if (result.status === "success") {
-                    document.getElementById('sync-title').innerText = "Sinkronisasi Berhasil!"; document.getElementById('sync-message').innerText = "Semua data & foto aman tersimpan di Server.";
-                    const now = new Date(); const timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-                    localStorage.setItem('kiper_last_sync', timeStr); document.getElementById('sync-close-btn').innerText = "Tutup";
-                } else { throw new Error(result.message); }
-
-            } catch (err) {
-                document.getElementById('sync-title').innerText = "Gagal Sinkronisasi"; document.getElementById('sync-message').innerText = "Pesan Error: " + err.message; document.getElementById('sync-progress').classList.replace('bg-emerald-500', 'bg-rose-500');
-                document.getElementById('sync-close-btn').innerText = "Tutup";
-            } finally {
-                document.getElementById('sync-close-btn').classList.remove('hidden');
-            }
-        }
-        function closeSyncModal() {
-            const m = document.getElementById('modal-cloud-sync'); m.classList.add('opacity-0');
-            setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); document.getElementById('sync-progress').style.width = "0%"; document.getElementById('sync-progress').classList.replace('bg-rose-500', 'bg-emerald-500'); }, 300);
-        }
     </script>
 </body>
 </html>
