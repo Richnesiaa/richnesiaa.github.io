@@ -71,7 +71,7 @@
             <button id="nav-back-btn" onclick="goBack()" class="hidden p-2 -ml-2 rounded-full hover:bg-slate-100 text-slate-700 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
             </button>
-            <!-- Logo & Title (Bisa diklik untuk pulang ke Beranda) -->
+            <!-- Logo & Title -->
             <div onclick="navigateTo('view-menu')" class="flex items-center gap-3 cursor-pointer group">
                 <img id="nav-logo" src="icon.png" class="w-8 h-8 rounded-lg shadow-sm object-cover bg-slate-800 group-hover:scale-105 transition-transform" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Circle-icons-box.svg/512px-Circle-icons-box.svg.png'">
                 <h1 id="nav-title" class="font-black text-xl text-slate-800 tracking-tight truncate max-w-[170px] md:max-w-md group-hover:text-teal-700 transition-colors">KIPER</h1>
@@ -80,6 +80,11 @@
         </div>
         
         <div class="flex items-center gap-2">
+            <!-- Tombol Kalkulator Ayam -->
+            <button onclick="openCalculator()" class="p-2 md:px-3 md:py-1.5 bg-teal-50 hover:bg-teal-100 rounded-lg border border-teal-200 text-teal-600 transition-colors active:scale-95 shadow-sm flex items-center gap-2" title="Penghitung Ayam Gantung">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="14.01"/><line x1="16" y1="18" x2="16" y2="18.01"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="8" y1="18" x2="8" y2="18.01"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+                <span class="hidden md:inline text-xs font-bold">Ayam</span>
+            </button>
             <!-- Tombol Auto Sync Teks -->
             <button id="nav-autosync-btn" onclick="toggleAutoSync()" class="px-2 md:px-3 py-1.5 text-[10px] md:text-xs font-bold rounded-lg border transition-colors active:scale-95 shadow-sm"></button>
             <!-- Hamburger Button -->
@@ -100,13 +105,11 @@
         <div class="p-5 flex-1 overflow-y-auto space-y-6">
             <div class="space-y-3">
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Pengaturan Aplikasi</h3>
-                
                 <!-- Background Config -->
                 <button onclick="triggerHeaderUpload()" class="w-full text-left p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex justify-between items-center transition active:scale-95 shadow-sm">
                     <span class="font-semibold text-sm text-slate-700 flex items-center gap-2">Ubah Cover Depan</span>
                     <span class="text-slate-400">&rarr;</span>
                 </button>
-
                 <!-- API URLs & Sinkronisasi -->
                 <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-4 shadow-sm">
                     <div class="flex justify-between items-center cursor-pointer active:scale-95 transition" onclick="setupGoogleSheets()">
@@ -117,7 +120,6 @@
                         <span class="text-xs font-bold text-slate-600">Kunci Gemini AI</span>
                         <span id="drawer-ai-status" class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-600">Kosong</span>
                     </div>
-                    <!-- Sync Manual Button Text Only -->
                     <div class="pt-3 mt-1 border-t border-slate-200">
                         <button onclick="syncToGoogleSheets(false)" class="w-full py-2 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg font-bold text-sm shadow-sm active:scale-95 transition-transform">
                             Sinkronisasi Data Sekarang
@@ -125,7 +127,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- WhatsApp Link -->
             <div class="pt-4 border-t border-slate-100 mt-auto">
                 <button onclick="generateTeamLink()" class="w-full py-3.5 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl font-bold text-sm shadow flex justify-center items-center gap-2 active:scale-95 transition-transform">
@@ -139,14 +140,11 @@
     <!-- ==================== 1. MENU UTAMA (BENTO GRID DESKTOP) ==================== -->
     <div id="view-menu" class="view-container active bg-transparent">
         <main class="flex-1 w-full max-w-7xl mx-auto px-4 md:px-8 pb-12 pt-2 page-enter-fade">
-            
-            <!-- Hero Banner (Lebar Penuh) -->
+            <!-- Hero Banner -->
             <div class="relative w-full rounded-3xl overflow-hidden shadow-[0_12px_40px_rgb(0,0,0,0.1)] border border-slate-200 mb-8 h-48 md:h-64 flex items-end p-6 md:p-10 transition-all group">
                 <div id="hero-bg" class="absolute inset-0 bg-slate-800 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"></div>
-                <!-- Default Placeholder Pattern if no image -->
                 <div id="hero-bg-default" class="absolute inset-0 bg-gradient-to-br from-slate-800 via-teal-900 to-slate-900 z-0"></div>
                 <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-0"></div>
-                
                 <div class="relative z-10 text-white w-full">
                     <p class="text-sm md:text-base text-teal-300 font-bold mb-1 tracking-wider uppercase">Portal Aplikasi</p>
                     <h2 class="text-3xl md:text-5xl font-black tracking-tight drop-shadow-md">Dashboard Admin</h2>
@@ -155,124 +153,58 @@
 
             <!-- Grid Menu Bento -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                <!-- Kedatangan -->
                 <button onclick="navigateTo('view-kedatangan')" class="bg-white rounded-3xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-200 group flex flex-row lg:flex-col items-center lg:items-start text-left active:scale-95">
-                    <div class="w-20 h-20 md:w-28 md:h-28 lg:w-full lg:h-44 rounded-2xl overflow-hidden mb-0 lg:mb-4 mr-4 lg:mr-0 shrink-0 border border-slate-100 bg-slate-50">
-                        <img src="icon datang.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Kedatangan">
-                    </div>
-                    <div class="flex-1 lg:px-2">
-                        <h3 class="font-bold text-lg md:text-xl text-slate-800">Kedatangan</h3>
-                        <p class="text-xs md:text-sm text-slate-500 mt-1 font-medium">Input penerimaan Live Bird</p>
-                    </div>
+                    <div class="w-20 h-20 md:w-28 md:h-28 lg:w-full lg:h-44 rounded-2xl overflow-hidden mb-0 lg:mb-4 mr-4 lg:mr-0 shrink-0 border border-slate-100 bg-slate-50"><img src="icon datang.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Kedatangan"></div>
+                    <div class="flex-1 lg:px-2"><h3 class="font-bold text-lg md:text-xl text-slate-800">Kedatangan</h3><p class="text-xs md:text-sm text-slate-500 mt-1 font-medium">Input penerimaan Live Bird</p></div>
                 </button>
-
-                <!-- By Product -->
                 <button onclick="navigateTo('view-byproduct')" class="bg-white rounded-3xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-200 group flex flex-row lg:flex-col items-center lg:items-start text-left active:scale-95">
-                    <div class="w-20 h-20 md:w-28 md:h-28 lg:w-full lg:h-44 rounded-2xl overflow-hidden mb-0 lg:mb-4 mr-4 lg:mr-0 shrink-0 border border-slate-100 bg-slate-50">
-                        <img src="icon by product.png" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="By Product">
-                    </div>
-                    <div class="flex-1 lg:px-2">
-                        <h3 class="font-bold text-lg md:text-xl text-slate-800">By Product</h3>
-                        <p class="text-xs md:text-sm text-slate-500 mt-1 font-medium">Kelola hasil sampingan</p>
-                    </div>
+                    <div class="w-20 h-20 md:w-28 md:h-28 lg:w-full lg:h-44 rounded-2xl overflow-hidden mb-0 lg:mb-4 mr-4 lg:mr-0 shrink-0 border border-slate-100 bg-slate-50"><img src="icon by product.png" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="By Product"></div>
+                    <div class="flex-1 lg:px-2"><h3 class="font-bold text-lg md:text-xl text-slate-800">By Product</h3><p class="text-xs md:text-sm text-slate-500 mt-1 font-medium">Kelola hasil sampingan</p></div>
                 </button>
-
-                <!-- Karkas -->
                 <button onclick="navigateTo('view-karkas')" class="bg-white rounded-3xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-200 group flex flex-row lg:flex-col items-center lg:items-start text-left active:scale-95">
-                    <div class="w-20 h-20 md:w-28 md:h-28 lg:w-full lg:h-44 rounded-2xl overflow-hidden mb-0 lg:mb-4 mr-4 lg:mr-0 shrink-0 border border-slate-100 bg-slate-50">
-                        <img src="icon karkas.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Karkas">
-                    </div>
-                    <div class="flex-1 lg:px-2">
-                        <h3 class="font-bold text-lg md:text-xl text-slate-800">Karkas</h3>
-                        <p class="text-xs md:text-sm text-slate-500 mt-1 font-medium">Laporan produksi gudang</p>
-                    </div>
+                    <div class="w-20 h-20 md:w-28 md:h-28 lg:w-full lg:h-44 rounded-2xl overflow-hidden mb-0 lg:mb-4 mr-4 lg:mr-0 shrink-0 border border-slate-100 bg-slate-50"><img src="icon karkas.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Karkas"></div>
+                    <div class="flex-1 lg:px-2"><h3 class="font-bold text-lg md:text-xl text-slate-800">Karkas</h3><p class="text-xs md:text-sm text-slate-500 mt-1 font-medium">Laporan produksi gudang</p></div>
                 </button>
-
-                <!-- Barang Keluar -->
                 <button onclick="navigateTo('view-keluar')" class="bg-white rounded-3xl p-4 shadow-sm hover:shadow-xl transition-all border border-slate-200 group flex flex-row lg:flex-col items-center lg:items-start text-left active:scale-95">
-                    <div class="w-20 h-20 md:w-28 md:h-28 lg:w-full lg:h-44 rounded-2xl overflow-hidden mb-0 lg:mb-4 mr-4 lg:mr-0 shrink-0 border border-slate-100 bg-slate-50">
-                        <img src="icon kirim.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Barang Keluar">
-                    </div>
-                    <div class="flex-1 lg:px-2">
-                        <h3 class="font-bold text-lg md:text-xl text-slate-800">Kirim / Retur</h3>
-                        <p class="text-xs md:text-sm text-slate-500 mt-1 font-medium">Distribusi & Surat Jalan</p>
-                    </div>
+                    <div class="w-20 h-20 md:w-28 md:h-28 lg:w-full lg:h-44 rounded-2xl overflow-hidden mb-0 lg:mb-4 mr-4 lg:mr-0 shrink-0 border border-slate-100 bg-slate-50"><img src="icon kirim.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Barang Keluar"></div>
+                    <div class="flex-1 lg:px-2"><h3 class="font-bold text-lg md:text-xl text-slate-800">Kirim / Retur</h3><p class="text-xs md:text-sm text-slate-500 mt-1 font-medium">Distribusi & Surat Jalan</p></div>
                 </button>
-                
-                <!-- Master Data (Span lebar di desktop) -->
                 <button onclick="navigateTo('view-masterdata')" class="bg-slate-800 rounded-3xl p-4 md:p-6 shadow-md hover:shadow-xl transition-all border border-slate-700 hover:bg-slate-700 group flex flex-row lg:items-center text-left active:scale-95 md:col-span-2 lg:col-span-4 mt-2">
-                    <div class="w-16 h-16 md:w-24 md:h-24 rounded-2xl overflow-hidden mr-5 shrink-0 border border-slate-600 bg-slate-200">
-                        <img src="icon master data.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Master Data">
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-xl md:text-2xl text-white">Master Data Stok</h3>
-                        <p class="text-sm md:text-base text-slate-300 mt-1 font-medium">Cek & pantau ketersediaan stok Karkas & By Product secara real-time</p>
-                    </div>
+                    <div class="w-16 h-16 md:w-24 md:h-24 rounded-2xl overflow-hidden mr-5 shrink-0 border border-slate-600 bg-slate-200"><img src="icon master data.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="Master Data"></div>
+                    <div><h3 class="font-bold text-xl md:text-2xl text-white">Master Data</h3><p class="text-sm md:text-base text-slate-300 mt-1 font-medium">Pantau ketersediaan stok barang</p></div>
                 </button>
             </div>
         </main>
     </div>
 
-    <!-- ==================== FAB (FLOATING CALCULATOR BUTTON) ==================== -->
-    <button onclick="openCalculator()" class="fixed bottom-6 left-6 z-30 bg-teal-500 hover:bg-teal-600 text-white rounded-full p-4 shadow-xl shadow-teal-200/50 hover:scale-110 transition-transform active:scale-95 flex items-center justify-center">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="14.01"/><line x1="16" y1="18" x2="16" y2="18.01"/><line x1="8" y1="14" x2="8" y2="14.01"/><line x1="12" y1="14" x2="12" y2="14.01"/><line x1="8" y1="18" x2="8" y2="18.01"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
-    </button>
-
 
     <!-- ==================== 2. KEDATANGAN AYAM VIEW ==================== -->
     <div id="view-kedatangan" class="view-container bg-slate-50">
         <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto page-enter-fade pb-12">
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 mb-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 mb-6 mt-2">
                 <!-- FORM KEDATANGAN -->
                 <div class="space-y-4">
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal</label>
-                            <input type="date" id="filter-tanggal" onchange="loadDataTimbangan()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Mobil Ke-</label>
-                            <input type="number" id="filter-mobil" onchange="loadDataTimbangan()" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-center font-bold text-teal-700">
-                        </div>
+                        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal</label><input type="date" id="filter-tanggal" onchange="loadDataTimbangan()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm"></div>
+                        <div><label class="block text-xs font-semibold text-slate-600 mb-1">Mobil Ke-</label><input type="number" id="filter-mobil" onchange="loadDataTimbangan()" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-center font-bold text-teal-700"></div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Supplier <span class="text-slate-400 font-normal">(Opsional)</span></label>
-                        <input type="text" id="form-supplier" onchange="autoSaveData()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm" placeholder="Nama PT / Peternak">
-                    </div>
+                    <div><label class="block text-xs font-semibold text-slate-600 mb-1">Supplier <span class="text-slate-400 font-normal">(Opsional)</span></label><input type="text" id="form-supplier" onchange="autoSaveData()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm" placeholder="Nama PT / Peternak"></div>
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">No. Kendaraan</label>
-                            <input type="text" id="form-nopol" onchange="autoSaveData()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm uppercase" placeholder="Z 1234 AB">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">No. Surat Jalan</label>
-                            <input type="text" id="form-sj" onchange="autoSaveData()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm" placeholder="SJ-...">
-                        </div>
+                        <div><label class="block text-xs font-semibold text-slate-600 mb-1">No. Kendaraan</label><input type="text" id="form-nopol" onchange="autoSaveData()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm uppercase" placeholder="Z 1234 AB"></div>
+                        <div><label class="block text-xs font-semibold text-slate-600 mb-1">No. Surat Jalan</label><input type="text" id="form-sj" onchange="autoSaveData()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm" placeholder="SJ-..."></div>
                     </div>
-
-                    <!-- FOTO BUKTI KEDATANGAN -->
                     <div class="mt-4 border-t border-slate-200 pt-4">
                         <h4 class="font-bold text-slate-700 mb-3 text-sm flex items-center gap-2">Foto Dokumentasi Bukti</h4>
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3" id="kedatangan-photos">
-                            <!-- Injected by JS -->
-                        </div>
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3" id="kedatangan-photos"></div>
                     </div>
-
                     <div class="bg-teal-50/50 p-4 rounded-xl border border-teal-100 mt-2">
                         <h4 class="text-xs font-bold text-teal-800 mb-3">Input Data Timbangan</h4>
                         <div class="grid grid-cols-2 gap-4 mb-3">
-                            <div>
-                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Ekor</label>
-                                <input type="number" id="form-ekor" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="Jml Ekor" onkeypress="if(event.key==='Enter') document.getElementById('form-berat').focus()">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Berat (Kg)</label>
-                                <input type="number" step="0.01" id="form-berat" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="0.00" onkeypress="if(event.key==='Enter') tambahDataTimbangan()">
-                            </div>
+                            <div><label class="block text-[11px] font-semibold text-slate-600 mb-1">Ekor</label><input type="number" id="form-ekor" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="Jml Ekor" onkeypress="if(event.key==='Enter') document.getElementById('form-berat').focus()"></div>
+                            <div><label class="block text-[11px] font-semibold text-slate-600 mb-1">Berat (Kg)</label><input type="number" step="0.01" id="form-berat" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm" placeholder="0.00" onkeypress="if(event.key==='Enter') tambahDataTimbangan()"></div>
                         </div>
                         <button onclick="tambahDataTimbangan()" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-semibold py-2.5 rounded-lg text-sm active:scale-95 flex justify-center items-center">Tambah ke Tabel</button>
                     </div>
-
                     <div class="mt-4 border-t border-slate-200 pt-4">
                         <div class="flex justify-between items-center mb-4">
                             <h4 class="font-bold text-slate-700">Data Timbangan <span id="count-badge" class="ml-1 bg-slate-200 text-slate-600 text-[10px] px-2 py-0.5 rounded-full">0</span></h4>
@@ -282,10 +214,7 @@
                             <div id="timbangan-rows" class="w-full"></div>
                             <div class="flex items-center mt-3 pt-3 border-t-2 border-slate-800 font-bold text-slate-800">
                                 <div class="whitespace-nowrap text-[11px] text-slate-500 text-right pr-3">Total:</div>
-                                <div class="flex-1 flex gap-2">
-                                    <div class="flex-1 bg-slate-100 py-2 rounded-lg text-slate-800 border text-center text-sm" id="tot-ekor">0</div>
-                                    <div class="flex-1 bg-slate-100 py-2 rounded-lg text-slate-800 border text-center text-sm" id="tot-berat">0.00</div>
-                                </div>
+                                <div class="flex-1 flex gap-2"><div class="flex-1 bg-slate-100 py-2 rounded-lg text-slate-800 border text-center text-sm" id="tot-ekor">0</div><div class="flex-1 bg-slate-100 py-2 rounded-lg text-slate-800 border text-center text-sm" id="tot-berat">0.00</div></div>
                                 <div class="w-7"></div>
                             </div>
                         </div>
@@ -298,8 +227,8 @@
 
     <!-- ==================== 3. BY PRODUCT VIEW ==================== -->
     <div id="view-byproduct" class="view-container bg-slate-50 relative">
-        <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto page-enter-fade pb-24 mt-2">
-            <div class="bg-white px-4 py-3 border border-slate-200 rounded-xl shadow-sm grid grid-cols-2 gap-4 mb-4">
+        <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto page-enter-fade pb-24">
+            <div class="bg-white px-4 py-3 border border-slate-200 rounded-xl shadow-sm grid grid-cols-2 gap-4 mb-4 mt-2">
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal</label><input type="date" id="bp-tanggal" onchange="loadBpData()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm"></div>
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Mobil Ke-</label><input type="number" id="bp-mobil" onchange="loadBpData()" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-center font-bold text-amber-700"></div>
             </div>
@@ -318,7 +247,6 @@
                 </div>
             </div>
             
-            <!-- FOTO BUKTI BY PRODUCT -->
             <div class="mb-5 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <div class="flex justify-between items-center mb-3">
                     <h4 class="font-bold text-slate-700 text-sm flex items-center gap-1">Galeri Foto Sampel</h4>
@@ -343,21 +271,20 @@
 
     <!-- ==================== 4. KARKAS VIEW ==================== -->
     <div id="view-karkas" class="view-container bg-slate-50 relative">
-        <div class="bg-white border-b border-slate-200 shadow-sm sticky top-16 z-20 w-full">
-            <div class="w-full max-w-5xl mx-auto px-4 py-3 grid grid-cols-2 gap-4 md:gap-6">
+        <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto pb-24 page-enter-fade">
+            <!-- Desain Card Tanggal yang Konsisten -->
+            <div class="bg-white px-4 py-3 border border-slate-200 rounded-xl shadow-sm grid grid-cols-2 gap-4 mb-4 mt-2">
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Produksi</label><input type="date" id="filter-tanggal-karkas" onchange="loadDataKarkas()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm"></div>
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Mobil Ke-</label><input type="number" id="filter-mobil-karkas" onchange="loadDataKarkas()" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-center font-bold text-red-700"></div>
             </div>
-        </div>
-        <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto pb-24 page-enter-fade">
-            <div class="w-full flex gap-3 md:gap-6 mb-5 mt-2">
+
+            <div class="w-full flex gap-3 md:gap-6 mb-5">
                 <button onclick="startKarkasInput()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center justify-center space-x-2"><span class="text-sm tracking-wide">Input Manual</span></button>
                 <button onclick="checkApiKeyAndScan()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow-sm active:scale-95 transition-all flex items-center justify-center space-x-2"><span class="text-sm tracking-wide">Scan AI</span></button>
                 <input type="file" id="ai-scan-karkas" accept="image/*" capture="environment" class="hidden" onchange="processAiScan(event)">
             </div>
             
-            <!-- FOTO BUKTI KARKAS -->
-            <div class="mb-6 bg-white p-4 rounded-xl border shadow-sm">
+            <div class="mb-6 bg-white p-4 rounded-xl border shadow-sm border-slate-200">
                 <div class="flex justify-between items-center mb-3">
                     <h4 class="font-bold text-slate-700 text-sm flex items-center gap-1">Galeri Foto Karkas</h4>
                     <button onclick="promptPhoto('karkas')" class="text-[10px] bg-red-100 text-red-700 px-3 py-1.5 rounded font-bold uppercase active:scale-90 transition">+ Tambah Foto</button>
@@ -390,7 +317,6 @@
         </div>
     </div>
     
-    <!-- Form Transaksi Dinamis -->
     <div id="view-form-transaksi" class="view-container bg-slate-50">
         <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto page-enter-fade">
             <div class="bg-white px-4 py-3 border border-slate-200 rounded-xl shadow-sm grid grid-cols-2 gap-4 mb-4 mt-2">
@@ -398,7 +324,6 @@
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Mobil Asal</label><input type="number" id="transaksi-mobil" onchange="refreshDropdownTransaksi()" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-center font-bold text-blue-700"></div>
             </div>
             
-            <!-- FOTO BUKTI TRANSAKSI -->
             <div class="mb-5 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <div class="flex justify-between items-center mb-3">
                     <h4 class="font-bold text-slate-700 text-sm flex items-center gap-1">Foto Transaksi</h4>
@@ -429,15 +354,16 @@
 
     <!-- ==================== 6. MASTER DATA STOK ==================== -->
     <div id="view-masterdata" class="view-container bg-slate-100">
-        <div class="bg-white shadow-sm border-b border-slate-200 sticky top-16 z-20 w-full">
-            <div class="w-full max-w-5xl mx-auto px-4 py-4 grid grid-cols-2 gap-4 md:gap-6">
+        <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto page-enter-fade pb-12 space-y-6">
+            <!-- Desain Card Tanggal yang Konsisten -->
+            <div class="bg-white px-4 py-3 border border-slate-200 rounded-xl shadow-sm grid grid-cols-2 gap-4 mb-4 mt-2">
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Tanggal</label><input type="date" id="md-tanggal" onchange="renderMasterData()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm"></div>
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Mobil Ke-</label><input type="number" id="md-mobil" onchange="renderMasterData()" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-center font-bold text-slate-800"></div>
             </div>
-        </div>
-        <div class="flex-1 w-full max-w-5xl mx-auto p-4 md:p-6 overflow-y-auto page-enter-fade pb-12 space-y-6 md:grid md:grid-cols-2 md:gap-6 md:space-y-0">
-            <div><h3 class="font-black text-red-700 mb-2 text-sm uppercase tracking-wide">Stok Karkas</h3><div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><div id="md-karkas-list" class="flex flex-col"></div></div></div>
-            <div><h3 class="font-black text-amber-700 mb-2 text-sm uppercase tracking-wide">Stok By Product</h3><div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><div id="md-bp-list" class="flex flex-col"></div></div></div>
+            <div class="md:grid md:grid-cols-2 md:gap-6 md:space-y-0 space-y-6">
+                <div><h3 class="font-black text-red-700 mb-2 text-sm uppercase tracking-wide">Stok Karkas</h3><div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><div id="md-karkas-list" class="flex flex-col"></div></div></div>
+                <div><h3 class="font-black text-amber-700 mb-2 text-sm uppercase tracking-wide">Stok By Product</h3><div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><div id="md-bp-list" class="flex flex-col"></div></div></div>
+            </div>
         </div>
     </div>
 
@@ -453,11 +379,8 @@
     <div id="modal-calculator" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] justify-center items-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-sm p-8 transform scale-95 transition-transform duration-300 flex flex-col items-center relative">
             <button onclick="closeCalculator()" class="absolute top-4 right-4 text-slate-400 bg-slate-100 hover:bg-slate-200 rounded-full p-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-            <div class="flex items-center gap-2 mb-2 text-teal-600 font-bold mt-2">
-                <h3>Penghitung Ayam Gantung</h3>
-            </div>
+            <div class="flex items-center gap-2 mb-2 text-teal-600 font-bold mt-2"><h3>Penghitung Ayam Gantung</h3></div>
             <p class="text-xs text-slate-500 mb-8 text-center">Hitung manual ekoran yang masuk (Otomatis tersimpan)</p>
-            
             <div class="flex items-center justify-center gap-6 w-full mb-6">
                 <button onclick="updateAyamCounter(-1)" class="w-16 h-16 bg-rose-100 hover:bg-rose-200 text-rose-600 rounded-full text-4xl font-black active:scale-90 transition-transform shadow-inner flex items-center justify-center pb-1">-</button>
                 <div id="ayam-counter-display" class="text-[4rem] font-black text-slate-800 w-32 text-center tabular-nums tracking-tighter leading-none">0</div>
@@ -470,11 +393,8 @@
     <!-- Modals lainnya -->
     <div id="modal-wa-choice" class="hidden fixed inset-0 bg-slate-900/60 z-[100] justify-center items-center p-4 opacity-0 transition-opacity duration-300"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 flex flex-col"><h3 class="font-bold text-slate-800 text-lg mb-2">Pilih Laporan WhatsApp</h3><p class="text-xs text-slate-500 mb-4">Pilih cakupan data karkas yang ingin dikirim.</p><div class="space-y-3"><button onclick="reportWaKarkas('current')" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-sm shadow-sm">Hanya Mobil Saat Ini</button><button onclick="reportWaKarkas('all')" class="w-full py-3 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl font-bold text-sm shadow-sm">Semua Mobil Disatukan</button><button onclick="closeWaExportModal()" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl font-semibold text-xs mt-2">Batal</button></div></div></div>
     <div id="modal-crop" class="hidden fixed inset-0 bg-slate-900/90 z-[100] flex-col justify-center items-center p-4 opacity-0 transition-opacity duration-300"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm flex flex-col overflow-hidden"><div class="px-5 py-4 border-b bg-slate-50 flex justify-between items-center"><h3 class="font-bold text-slate-700">Sesuaikan Background</h3><button onclick="closeCropModal()" class="text-slate-400">✕</button></div><div class="p-4 bg-slate-100"><div class="w-full h-[250px] bg-slate-200 rounded-xl overflow-hidden relative"><img id="crop-image-target" class="max-w-full block" src="" alt=""></div></div><div class="p-4 flex gap-3"><button onclick="closeCropModal()" class="flex-1 py-3 bg-slate-200 rounded-xl font-bold">Batal</button><button onclick="applyCrop()" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold">Simpan</button></div></div></div>
-    
-    <!-- Modal Loading Global (AI & Sync) -->
     <div id="modal-ai-loading" class="hidden fixed inset-0 bg-slate-900/90 z-[200] flex-col justify-center items-center p-4"><div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-teal-500 mb-6"></div><p class="text-white font-bold text-lg animate-pulse text-center" id="loading-message-text">Memproses AI...</p></div>
 
-    <!-- MODAL MULTI-STEP KARKAS -->
     <div id="modal-karkas" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 items-start pt-12 justify-center p-4 opacity-0 transition-opacity duration-300 overflow-y-auto">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
             <div class="px-5 py-4 border-b border-slate-100 flex flex-col items-center bg-slate-50 rounded-t-2xl shrink-0"><div class="w-full flex justify-between items-center"><h3 class="font-bold text-slate-700 text-base" id="karkas-step-title">Input Karkas</h3><button onclick="closeKarkasModal()" class="text-slate-400 bg-slate-200 hover:bg-slate-300 rounded-full p-1 transition">✕</button></div></div>
@@ -493,37 +413,22 @@
     <!-- MODAL CETAK SURAT JALAN -->
     <div id="modal-surat-jalan" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] items-start pt-12 justify-center p-4 opacity-0 transition-opacity duration-300 overflow-y-auto">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
-            <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl shrink-0">
-                <h3 class="font-bold text-slate-700 text-base">Preview Surat Jalan</h3>
-                <button onclick="closeSuratJalanModal()" class="text-slate-400 bg-slate-200 hover:bg-slate-300 rounded-full p-1 w-8 h-8 flex items-center justify-center transition">✕</button>
-            </div>
+            <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl shrink-0"><h3 class="font-bold text-slate-700 text-base">Preview Surat Jalan</h3><button onclick="closeSuratJalanModal()" class="text-slate-400 bg-slate-200 hover:bg-slate-300 rounded-full p-1 w-8 h-8 flex items-center justify-center transition">✕</button></div>
             <div class="p-5 flex flex-col justify-center relative overflow-y-auto">
-                <div id="preview-surat-jalan" class="w-full max-w-[220px] mx-auto min-h-[200px] bg-white border border-slate-300 p-3 rounded text-[11px] font-mono text-slate-800 shadow-sm mb-5">
-                    <!-- Preview HTML disuntik dari JS -->
-                </div>
-                <div class="flex flex-col gap-2 mt-auto">
-                    <button onclick="cetakSuratJalanBT()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md flex justify-center items-center gap-2">Cetak ke Printer BT</button>
-                    <button onclick="hubungkanPrinterBT()" id="bt-status-sj" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border rounded-xl font-semibold text-xs mt-2 transition">Cek Sambungan Printer</button>
-                </div>
+                <div id="preview-surat-jalan" class="w-full max-w-[220px] mx-auto min-h-[200px] bg-white border border-slate-300 p-3 rounded text-[11px] font-mono text-slate-800 shadow-sm mb-5"></div>
+                <div class="flex flex-col gap-2 mt-auto"><button onclick="cetakSuratJalanBT()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow-md flex justify-center items-center gap-2">Cetak ke Printer BT</button><button onclick="hubungkanPrinterBT()" id="bt-status-sj" class="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border rounded-xl font-semibold text-xs mt-2 transition">Cek Sambungan Printer</button></div>
             </div>
         </div>
     </div>
 
     <!-- SEMUA SCRIPT APP -->
     <script>
-        // DAFTARKAN SERVICE WORKER (OFFLINE)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); });
-        }
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
         
-        // EVENT LISTENER KONEKSI PWA & AUTO SYNC
         let isAutoSyncOn = localStorage.getItem('kiper_autosync') === 'true';
 
         window.addEventListener('offline', () => document.getElementById('offline-indicator').classList.remove('hidden'));
-        window.addEventListener('online', () => {
-            document.getElementById('offline-indicator').classList.add('hidden');
-            if (isAutoSyncOn) syncToGoogleSheets(true);
-        });
+        window.addEventListener('online', () => { document.getElementById('offline-indicator').classList.add('hidden'); if (isAutoSyncOn) syncToGoogleSheets(true); });
 
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -537,7 +442,6 @@
                     window.history.replaceState({}, document.title, window.location.pathname);
                 } catch(e) {}
             }
-            
             if (!navigator.onLine) document.getElementById('offline-indicator').classList.remove('hidden');
 
             const today = new Date().toISOString().split('T')[0];
@@ -546,458 +450,133 @@
             if (selRata) { for(let i = 1; i <= 25; i++){ let val = (i / 10).toFixed(1); let selected = val === "1.0" ? "selected" : ""; selRata.innerHTML += `<option value="${val}" ${selected}>${val} Kg</option>`; } }
             
             const savedHeaderBg = localStorage.getItem('kiper_header_bg'); if (savedHeaderBg) applyHeaderBg(savedHeaderBg);
-            
             ayamCounter = parseInt(localStorage.getItem('kiper_ayam_counter')) || 0; 
             document.getElementById('ayam-counter-display').innerText = ayamCounter;
             
             const savedDb = localStorage.getItem('kiper_kedatangan_db'); if (savedDb) { try { appDatabase = JSON.parse(savedDb); } catch(e) {} }
             loadDataTimbangan(); loadDataKarkas(); loadBpData(); refreshDropdownTransaksi();
-            updateAutoSyncUI();
-            updateDrawerStatus();
+            updateAutoSyncUI(); updateDrawerStatus();
         });
 
-        // ----------------------------------------------------------------------
-        // FUNGSI AUTO SYNC & MANUAL SYNC
-        // ----------------------------------------------------------------------
+
         function updateAutoSyncUI() {
             const btn = document.getElementById('nav-autosync-btn');
-            if(isAutoSyncOn) {
-                btn.innerText = 'Auto-Sync: ON';
-                btn.className = 'px-2 md:px-3 py-1.5 text-[10px] md:text-xs font-bold rounded-lg bg-emerald-100 text-emerald-700 transition-colors border border-emerald-200';
-            } else {
-                btn.innerText = 'Auto-Sync: OFF';
-                btn.className = 'px-2 md:px-3 py-1.5 text-[10px] md:text-xs font-bold rounded-lg bg-slate-100 text-slate-500 transition-colors border border-slate-200';
-            }
+            if(isAutoSyncOn) { btn.innerText = 'Auto-Sync: ON'; btn.className = 'px-2 md:px-3 py-1.5 text-[10px] md:text-xs font-bold rounded-lg bg-emerald-100 text-emerald-700 transition-colors border border-emerald-200'; } 
+            else { btn.innerText = 'Auto-Sync: OFF'; btn.className = 'px-2 md:px-3 py-1.5 text-[10px] md:text-xs font-bold rounded-lg bg-slate-100 text-slate-500 transition-colors border border-slate-200'; }
         }
-
-        function toggleAutoSync() {
-            isAutoSyncOn = !isAutoSyncOn;
-            localStorage.setItem('kiper_autosync', isAutoSyncOn);
-            updateAutoSyncUI();
-            if(isAutoSyncOn && navigator.onLine) syncToGoogleSheets(true);
-        }
+        function toggleAutoSync() { isAutoSyncOn = !isAutoSyncOn; localStorage.setItem('kiper_autosync', isAutoSyncOn); updateAutoSyncUI(); if(isAutoSyncOn && navigator.onLine) syncToGoogleSheets(true); }
 
         async function syncToGoogleSheets(isAuto = false) {
             const url = localStorage.getItem('kiper_gs_url');
-            if(!url) {
-                if(!isAuto) alert("Tautan Google Sheets belum diatur. Silakan atur di Menu Samping.");
-                return;
-            }
-            if(!navigator.onLine) {
-                if(!isAuto) alert("Tidak ada koneksi internet!");
-                return;
-            }
-            
+            if(!url) { if(!isAuto) alert("Tautan Google Sheets belum diatur. Silakan atur di Menu Samping."); return; }
+            if(!navigator.onLine) { if(!isAuto) alert("Tidak ada koneksi internet!"); return; }
             if(!isAuto) toggleDrawer();
-
-            const mLoading = document.getElementById('modal-ai-loading');
-            document.getElementById('loading-message-text').innerText = isAuto ? "Auto-Sync Berjalan..." : "Sinkronisasi Data...";
+            const mLoading = document.getElementById('modal-ai-loading'); document.getElementById('loading-message-text').innerText = isAuto ? "Auto-Sync Berjalan..." : "Sinkronisasi Data...";
             mLoading.classList.remove('hidden'); mLoading.classList.add('flex');
-            
             try {
-                let payload = {
-                    "Kedatangan_Ayam": formatDataKedatangan(),
-                    "By_Product": formatDataBp(),
-                    "Karkas": formatDataKarkas(),
-                    "Keluar_Karkas": formatDataKeluar('karkas'),
-                    "Keluar_By_Product": formatDataKeluar('bp'),
-                    "Retur_Karkas": formatDataRetur('karkas'),
-                    "Retur_By_Product": formatDataRetur('bp'),
-                    "Dokumentasi_Foto": formatDataFoto()
-                };
-                
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'text/plain;charset=utf-8'},
-                    body: JSON.stringify(payload)
-                });
-                
+                let payload = { "Kedatangan_Ayam": formatDataKedatangan(), "By_Product": formatDataBp(), "Karkas": formatDataKarkas(), "Keluar_Karkas": formatDataKeluar('karkas'), "Keluar_By_Product": formatDataKeluar('bp'), "Retur_Karkas": formatDataRetur('karkas'), "Retur_By_Product": formatDataRetur('bp'), "Dokumentasi_Foto": formatDataFoto() };
+                const response = await fetch(url, { method: 'POST', headers: {'Content-Type': 'text/plain;charset=utf-8'}, body: JSON.stringify(payload) });
                 const result = await response.json();
-                if(result.status === 'success') {
-                    if(!isAuto) alert("Sinkronisasi Data Berhasil!");
-                } else {
-                    throw new Error(result.message);
-                }
-            } catch(e) {
-                if(!isAuto) alert("Gagal Sinkronisasi: " + e.message);
-            } finally {
-                mLoading.classList.add('hidden'); mLoading.classList.remove('flex');
-            }
+                if(result.status === 'success') { if(!isAuto) alert("Sinkronisasi Data Berhasil!"); } else { throw new Error(result.message); }
+            } catch(e) { if(!isAuto) alert("Gagal Sinkronisasi: " + e.message); } finally { mLoading.classList.add('hidden'); mLoading.classList.remove('flex'); }
         }
 
-        // --- Data Formatters for Sync ---
-        function formatDataKedatangan() {
-            let db = JSON.parse(localStorage.getItem('kiper_kedatangan_db')||'{}');
-            let arr = [["Tanggal", "Mobil Ke", "Supplier", "No. Kendaraan", "Surat Jalan", "Total Ekor", "Total Berat (Kg)"]];
-            for(let t in db) {
-                for(let m in db[t]) {
-                    let d = db[t][m];
-                    let tEk = d.tabel.reduce((s,i)=>s+(parseInt(i.ekor)||0),0);
-                    let tBr = d.tabel.reduce((s,i)=>s+(parseFloat(i.berat)||0),0);
-                    arr.push([t, m, d.info.supplier, d.info.nopol, d.info.sj, tEk, tBr]);
-                }
-            }
-            return arr;
-        }
-        function formatDataBp() {
-            let db = JSON.parse(localStorage.getItem('kiper_bp_db')||'{}');
-            let arr = [["Tanggal", "Mobil Ke", "Jenis Item", "Berat (Kg)"]];
-            for(let t in db) {
-                for(let m in db[t]) {
-                    db[t][m].forEach(i => arr.push([t, m, i.jenis, i.berat]));
-                }
-            }
-            return arr;
-        }
-        function formatDataKarkas() {
-            let db = JSON.parse(localStorage.getItem('kiper_karkas_db')||'{}');
-            let arr = [["Tanggal", "Mobil Ke", "Grade", "Rata-rata", "Ekor", "Netto (Kg)", "Kotor (Kg)", "Jml Keranjang"]];
-            for(let t in db) {
-                for(let m in db[t]) {
-                    db[t][m].forEach(i => arr.push([t, m, i.grade, i.rata, i.ekor, i.netto, i.kotor||0, i.jmlKeranjang||0]));
-                }
-            }
-            return arr;
-        }
-        function formatDataKeluar(type) {
-            let db = JSON.parse(localStorage.getItem(`kiper_keluar_${type}_db`)||'{}');
-            let arr = [["Tanggal", "Mobil Asal", "Item", "Ekor", "Netto (Kg)"]];
-            for(let t in db) {
-                for(let m in db[t]) {
-                    db[t][m].forEach(i => arr.push([t, m, i.item, i.ekor||0, i.netto]));
-                }
-            }
-            return arr;
-        }
-        function formatDataRetur(type) {
-            let db = JSON.parse(localStorage.getItem(`kiper_retur_${type}_db`)||'{}');
-            let arr = [["Tanggal", "Mobil Asal", "Item", "Ekor", "Netto (Kg)"]];
-            for(let t in db) {
-                for(let m in db[t]) {
-                    db[t][m].forEach(i => arr.push([t, m, i.item, i.ekor||0, i.netto]));
-                }
-            }
-            return arr;
-        }
-        function formatDataFoto() {
-            let db = JSON.parse(localStorage.getItem('kiper_images')||'{}');
-            let arr = [["Modul", "Tanggal", "Mobil Ke", "Label", "Base64"]];
-            for(let key in db.kedatangan) { let [tgl, mob] = key.split('_'); for(let lbl in db.kedatangan[key]) { arr.push(["Kedatangan", tgl, mob, lbl, db.kedatangan[key][lbl]]); } }
-            for(let key in db.bp) { let [tgl, mob] = key.split('_'); db.bp[key].forEach(p => arr.push(["By Product", tgl, mob, p.label, p.base64])); }
-            for(let key in db.karkas) { let [tgl, mob] = key.split('_'); db.karkas[key].forEach(p => arr.push(["Karkas", tgl, mob, p.label, p.base64])); }
-            for(let key in db.transaksi) { let parts = key.split('_'); let type = parts[0]; let tgl = parts[1]; let mob = parts.slice(2).join('_'); db.transaksi[key].forEach(p => arr.push(["Transaksi " + type, tgl, mob, p.label, p.base64])); }
-            return arr;
-        }
+        function formatDataKedatangan() { let db = JSON.parse(localStorage.getItem('kiper_kedatangan_db')||'{}'); let arr = [["Tanggal", "Mobil Ke", "Supplier", "No. Kendaraan", "Surat Jalan", "Total Ekor", "Total Berat (Kg)"]]; for(let t in db) { for(let m in db[t]) { let d = db[t][m]; let tEk = d.tabel.reduce((s,i)=>s+(parseInt(i.ekor)||0),0); let tBr = d.tabel.reduce((s,i)=>s+(parseFloat(i.berat)||0),0); arr.push([t, m, d.info.supplier, d.info.nopol, d.info.sj, tEk, tBr]); } } return arr; }
+        function formatDataBp() { let db = JSON.parse(localStorage.getItem('kiper_bp_db')||'{}'); let arr = [["Tanggal", "Mobil Ke", "Jenis Item", "Berat (Kg)"]]; for(let t in db) { for(let m in db[t]) { db[t][m].forEach(i => arr.push([t, m, i.jenis, i.berat])); } } return arr; }
+        function formatDataKarkas() { let db = JSON.parse(localStorage.getItem('kiper_karkas_db')||'{}'); let arr = [["Tanggal", "Mobil Ke", "Grade", "Rata-rata", "Ekor", "Netto (Kg)", "Kotor (Kg)", "Jml Keranjang"]]; for(let t in db) { for(let m in db[t]) { db[t][m].forEach(i => arr.push([t, m, i.grade, i.rata, i.ekor, i.netto, i.kotor||0, i.jmlKeranjang||0])); } } return arr; }
+        function formatDataKeluar(type) { let db = JSON.parse(localStorage.getItem(`kiper_keluar_${type}_db`)||'{}'); let arr = [["Tanggal", "Mobil Asal", "Item", "Ekor", "Netto (Kg)"]]; for(let t in db) { for(let m in db[t]) { db[t][m].forEach(i => arr.push([t, m, i.item, i.ekor||0, i.netto])); } } return arr; }
+        function formatDataRetur(type) { let db = JSON.parse(localStorage.getItem(`kiper_retur_${type}_db`)||'{}'); let arr = [["Tanggal", "Mobil Asal", "Item", "Ekor", "Netto (Kg)"]]; for(let t in db) { for(let m in db[t]) { db[t][m].forEach(i => arr.push([t, m, i.item, i.ekor||0, i.netto])); } } return arr; }
+        function formatDataFoto() { let db = JSON.parse(localStorage.getItem('kiper_images')||'{}'); let arr = [["Modul", "Tanggal", "Mobil Ke", "Label", "Base64"]]; for(let key in db.kedatangan) { let [tgl, mob] = key.split('_'); for(let lbl in db.kedatangan[key]) { arr.push(["Kedatangan", tgl, mob, lbl, db.kedatangan[key][lbl]]); } } for(let key in db.bp) { let [tgl, mob] = key.split('_'); db.bp[key].forEach(p => arr.push(["By Product", tgl, mob, p.label, p.base64])); } for(let key in db.karkas) { let [tgl, mob] = key.split('_'); db.karkas[key].forEach(p => arr.push(["Karkas", tgl, mob, p.label, p.base64])); } for(let key in db.transaksi) { let parts = key.split('_'); let type = parts[0]; let tgl = parts[1]; let mob = parts.slice(2).join('_'); db.transaksi[key].forEach(p => arr.push(["Transaksi " + type, tgl, mob, p.label, p.base64])); } return arr; }
 
-
-        // ----------------------------------------------------------------------
-        // FUNGSI NAVBAR, DRAWER & NAVIGASI
-        // ----------------------------------------------------------------------
-        const viewTitles = {
-            'view-menu': 'KIPER',
-            'view-kedatangan': 'Kedatangan Ayam',
-            'view-byproduct': 'By Product',
-            'view-karkas': 'Laporan Karkas',
-            'view-keluar': 'Distribusi & Retur',
-            'view-form-transaksi': 'Form Transaksi',
-            'view-masterdata': 'Master Data Stok'
-        };
+        const viewTitles = { 'view-menu': 'KIPER', 'view-kedatangan': 'Kedatangan Ayam', 'view-byproduct': 'By Product', 'view-karkas': 'Laporan Karkas', 'view-keluar': 'Distribusi & Retur', 'view-form-transaksi': 'Form Transaksi', 'view-masterdata': 'Master Data' };
 
         function navigateTo(viewId, isPop = false) { 
             document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active')); 
-            document.getElementById(viewId).classList.add('active'); 
-            window.scrollTo(0, 0); 
-            
-            const titleEl = document.getElementById('nav-title');
-            const backBtn = document.getElementById('nav-back-btn');
+            document.getElementById(viewId).classList.add('active'); window.scrollTo(0, 0); 
+            const titleEl = document.getElementById('nav-title'); const backBtn = document.getElementById('nav-back-btn');
             titleEl.innerText = viewTitles[viewId] || 'KIPER';
-            
-            if(viewId === 'view-menu') {
-                backBtn.classList.add('hidden');
-            } else {
-                backBtn.classList.remove('hidden');
-            }
-            
+            if(viewId === 'view-menu') { backBtn.classList.add('hidden'); } else { backBtn.classList.remove('hidden'); }
             if(viewId === 'view-masterdata') renderMasterData(); 
             if(viewId === 'view-byproduct') { loadBpData(); refreshPhotoUI('bp'); } 
             if(viewId === 'view-karkas') { loadDataKarkas(); refreshPhotoUI('karkas'); } 
             if(viewId === 'view-kedatangan') { refreshPhotoUI('kedatangan'); } 
             if(viewId === 'view-keluar') { refreshDropdownTransaksi(); } 
-            
-            if (!isPop) {
-                history.pushState({ view: viewId }, '', '#' + viewId.replace('view-', '')); 
-            }
+            if (!isPop) { history.pushState({ view: viewId }, '', '#' + viewId.replace('view-', '')); }
         }
 
-        function goBack() { 
-            history.back(); 
-        }
-        
-        window.addEventListener('popstate', (event) => { 
-            if (event.state && event.state.view) { navigateTo(event.state.view, true); } 
-            else { navigateTo('view-menu', true); } 
-        });
+        function goBack() { history.back(); }
+        window.addEventListener('popstate', (event) => { if (event.state && event.state.view) { navigateTo(event.state.view, true); } else { navigateTo('view-menu', true); } });
 
         function toggleDrawer() {
-            const drawer = document.getElementById('app-drawer');
-            const overlay = document.getElementById('drawer-overlay');
-            
-            if(drawer.classList.contains('translate-x-full')) {
-                drawer.classList.remove('translate-x-full');
-                overlay.classList.remove('hidden');
-                updateDrawerStatus();
-                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
-            } else {
-                drawer.classList.add('translate-x-full');
-                overlay.classList.add('opacity-0');
-                setTimeout(() => overlay.classList.add('hidden'), 300);
-            }
+            const drawer = document.getElementById('app-drawer'); const overlay = document.getElementById('drawer-overlay');
+            if(drawer.classList.contains('translate-x-full')) { drawer.classList.remove('translate-x-full'); overlay.classList.remove('hidden'); updateDrawerStatus(); setTimeout(() => overlay.classList.remove('opacity-0'), 10); } 
+            else { drawer.classList.add('translate-x-full'); overlay.classList.add('opacity-0'); setTimeout(() => overlay.classList.add('hidden'), 300); }
         }
-
         function updateDrawerStatus() {
-            const ai = localStorage.getItem('kiper_gemini_api_key');
-            const gs = localStorage.getItem('kiper_gs_url');
-            const elAi = document.getElementById('drawer-ai-status');
-            const elGs = document.getElementById('drawer-gs-status');
-            
-            if(ai) { elAi.innerText = "Terhubung"; elAi.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 uppercase tracking-wide"; }
-            else { elAi.innerText = "Kosong"; elAi.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-600 uppercase tracking-wide"; }
-            
-            if(gs) { elGs.innerText = "Terhubung"; elGs.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 uppercase tracking-wide"; }
-            else { elGs.innerText = "Kosong"; elGs.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-600 uppercase tracking-wide"; }
+            const ai = localStorage.getItem('kiper_gemini_api_key'); const gs = localStorage.getItem('kiper_gs_url');
+            const elAi = document.getElementById('drawer-ai-status'); const elGs = document.getElementById('drawer-gs-status');
+            if(ai) { elAi.innerText = "Terhubung"; elAi.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 uppercase tracking-wide"; } else { elAi.innerText = "Kosong"; elAi.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-600 uppercase tracking-wide"; }
+            if(gs) { elGs.innerText = "Terhubung"; elGs.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 uppercase tracking-wide"; } else { elGs.innerText = "Kosong"; elGs.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-600 uppercase tracking-wide"; }
         }
+        function setupGoogleSheets() { let key = prompt("Tautan Web App Google Sheets:\nMasukkan URL dari Google Apps Script di sini:"); if(key) { localStorage.setItem('kiper_gs_url', key.trim()); updateDrawerStatus(); alert("Tautan Google Sheets berhasil disimpan!"); } }
+        function promptAiKey() { let key = prompt("KUNCI GEMINI AI\n\nMasukkan API Key Gemini Anda di sini:"); if(key) { localStorage.setItem('kiper_gemini_api_key', key.trim()); updateDrawerStatus(); alert("Kunci AI berhasil disimpan!"); } }
+        function generateTeamLink() { const ai = localStorage.getItem('kiper_gemini_api_key') || ''; const gs = localStorage.getItem('kiper_gs_url') || ''; if(!ai || !gs) { alert("Peringatan: Kunci AI atau Tautan Google Sheets belum diatur.\n\nHarap lengkapi keduanya sebelum membuat link tim."); return; } const payload = btoa(JSON.stringify({ a: ai, s: gs })); const link = window.location.origin + window.location.pathname + "?token=" + payload; const msg = "*UNDANGAN AKSES APLIKASI KIPER*\n\nSilakan klik link di bawah ini dari HP Anda untuk masuk ke sistem KIPER. Konfigurasi AI dan Google Sheets akan diatur otomatis tanpa perlu memasukkan kode apapun:\n\n" + link + "\n\n*(Peringatan: Jangan bagikan link ini ke orang luar)*"; window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank'); }
 
-        function setupGoogleSheets() {
-            let key = prompt("Tautan Web App Google Sheets:\nMasukkan URL dari Google Apps Script di sini:");
-            if(key) {
-                localStorage.setItem('kiper_gs_url', key.trim());
-                updateDrawerStatus();
-                alert("Tautan Google Sheets berhasil disimpan!");
-            }
-        }
-
-        function promptAiKey() {
-           let key = prompt("KUNCI GEMINI AI\n\nMasukkan API Key Gemini Anda di sini:");
-           if(key) { 
-               localStorage.setItem('kiper_gemini_api_key', key.trim()); 
-               updateDrawerStatus(); 
-               alert("Kunci AI berhasil disimpan!");
-           }
-        }
-
-        function generateTeamLink() {
-            const ai = localStorage.getItem('kiper_gemini_api_key') || '';
-            const gs = localStorage.getItem('kiper_gs_url') || '';
-            if(!ai || !gs) { alert("Peringatan: Kunci AI atau Tautan Google Sheets belum diatur.\n\nHarap lengkapi keduanya sebelum membuat link tim."); return; }
-            
-            const payload = btoa(JSON.stringify({ a: ai, s: gs })); 
-            const link = window.location.origin + window.location.pathname + "?token=" + payload;
-            
-            const msg = "*UNDANGAN AKSES APLIKASI KIPER*\n\nSilakan klik link di bawah ini dari HP Anda untuk masuk ke sistem KIPER. Konfigurasi AI dan Google Sheets akan diatur otomatis tanpa perlu memasukkan kode apapun:\n\n" + link + "\n\n*(Peringatan: Jangan bagikan link ini ke orang luar)*";
-            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-
-        // ----------------------------------------------------------------------
-        // FUNGSI AYAM GANTUNG (KALKULATOR)
-        // ----------------------------------------------------------------------
         function openCalculator() { showModalWindow('modal-calculator'); }
         function closeCalculator() { hideModalWindow('modal-calculator'); }
-        function updateAyamCounter(c) { 
-            ayamCounter += c; if(ayamCounter < 0) ayamCounter = 0; 
-            document.getElementById('ayam-counter-display').innerText = ayamCounter; 
-            localStorage.setItem('kiper_ayam_counter', ayamCounter); 
-        }
-        function confirmResetAyamCounter() { 
-            if(confirm("Yakin ingin mengatur ulang hitungan menjadi 0?")) {
-                ayamCounter = 0; document.getElementById('ayam-counter-display').innerText = 0; localStorage.setItem('kiper_ayam_counter', 0); 
-            }
-        }
+        function updateAyamCounter(c) { ayamCounter += c; if(ayamCounter < 0) ayamCounter = 0; document.getElementById('ayam-counter-display').innerText = ayamCounter; localStorage.setItem('kiper_ayam_counter', ayamCounter); }
+        function confirmResetAyamCounter() { if(confirm("Yakin ingin mengatur ulang hitungan menjadi 0?")) { ayamCounter = 0; document.getElementById('ayam-counter-display').innerText = 0; localStorage.setItem('kiper_ayam_counter', 0); } }
 
-        // ----------------------------------------------------------------------
-        // FUNGSI SISTEM FOTO BUKTI (GLOBAL CAMERA)
-        // ----------------------------------------------------------------------
         let currentPhotoTarget = null;
-
         function triggerCamera(module, key, label) {
             let tgl, mob;
             if (module === 'kedatangan') { tgl = document.getElementById('filter-tanggal').value; mob = document.getElementById('filter-mobil').value || "1"; }
             else if (module === 'bp') { tgl = document.getElementById('bp-tanggal').value; mob = document.getElementById('bp-mobil').value || "1"; }
             else if (module === 'karkas') { tgl = document.getElementById('filter-tanggal-karkas').value; mob = document.getElementById('filter-mobil-karkas').value || "1"; }
             else if (module === 'transaksi') { tgl = document.getElementById('transaksi-tanggal').value; mob = document.getElementById('transaksi-mobil').value || "1"; }
-            
             if(!tgl || !mob) return alert("Pilih Tanggal dan Mobil terlebih dahulu!");
-            
-            currentPhotoTarget = { module, tgl, mob, key, label };
-            document.getElementById('global-camera-input').click();
+            currentPhotoTarget = { module, tgl, mob, key, label }; document.getElementById('global-camera-input').click();
         }
-
-        function promptPhoto(module) {
-            let label = prompt("Masukkan Label/Keterangan Foto ini:\n(Contoh: Kepala Utuh / Grade A / DO Retur)");
-            if (!label || label.trim() === "") return;
-            triggerCamera(module, 'dynamic', label.trim());
-        }
-
+        function promptPhoto(module) { let label = prompt("Masukkan Label/Keterangan Foto ini:\n(Contoh: Kepala Utuh / Grade A / DO Retur)"); if (!label || label.trim() === "") return; triggerCamera(module, 'dynamic', label.trim()); }
         async function handleGlobalCamera(event) {
-            const file = event.target.files[0];
-            if(!file || !currentPhotoTarget) return;
-            event.target.value = '';
-
-            const mLoading = document.getElementById('modal-ai-loading');
-            document.getElementById('loading-message-text').innerText = "Memproses & Mengompres Foto...";
-            mLoading.classList.remove('hidden'); mLoading.classList.add('flex');
-
+            const file = event.target.files[0]; if(!file || !currentPhotoTarget) return; event.target.value = '';
+            const mLoading = document.getElementById('modal-ai-loading'); document.getElementById('loading-message-text').innerText = "Memproses & Mengompres Foto..."; mLoading.classList.remove('hidden'); mLoading.classList.add('flex');
             try {
-                const base64 = await compressImageFile(file, 800, 0.6);
-                let db = JSON.parse(localStorage.getItem('kiper_images') || '{}');
-                if(!db[currentPhotoTarget.module]) db[currentPhotoTarget.module] = {};
-                
-                let sessionKey = `${currentPhotoTarget.tgl}_${currentPhotoTarget.mob}`;
-                if(currentPhotoTarget.module === 'transaksi') sessionKey = `${currentTransaksiType}_${sessionKey}`;
-
-                if(!db[currentPhotoTarget.module][sessionKey]) {
-                    db[currentPhotoTarget.module][sessionKey] = (currentPhotoTarget.module === 'kedatangan') ? {} : [];
-                }
-
-                if(currentPhotoTarget.module === 'kedatangan') {
-                    db[currentPhotoTarget.module][sessionKey][currentPhotoTarget.key] = base64;
-                } else {
-                    db[currentPhotoTarget.module][sessionKey].push({ id: Date.now(), label: currentPhotoTarget.label, base64: base64 });
-                }
-                
-                localStorage.setItem('kiper_images', JSON.stringify(db));
-                refreshPhotoUI(currentPhotoTarget.module);
-            } catch(e) {
-                alert("Gagal memproses foto: " + e.message);
-            } finally {
-                mLoading.classList.add('hidden'); mLoading.classList.remove('flex');
-                currentPhotoTarget = null;
-            }
+                const base64 = await compressImageFile(file, 800, 0.6); let db = JSON.parse(localStorage.getItem('kiper_images') || '{}'); if(!db[currentPhotoTarget.module]) db[currentPhotoTarget.module] = {};
+                let sessionKey = `${currentPhotoTarget.tgl}_${currentPhotoTarget.mob}`; if(currentPhotoTarget.module === 'transaksi') sessionKey = `${currentTransaksiType}_${sessionKey}`;
+                if(!db[currentPhotoTarget.module][sessionKey]) { db[currentPhotoTarget.module][sessionKey] = (currentPhotoTarget.module === 'kedatangan') ? {} : []; }
+                if(currentPhotoTarget.module === 'kedatangan') { db[currentPhotoTarget.module][sessionKey][currentPhotoTarget.key] = base64; } else { db[currentPhotoTarget.module][sessionKey].push({ id: Date.now(), label: currentPhotoTarget.label, base64: base64 }); }
+                localStorage.setItem('kiper_images', JSON.stringify(db)); refreshPhotoUI(currentPhotoTarget.module);
+            } catch(e) { alert("Gagal memproses foto: " + e.message); } finally { mLoading.classList.add('hidden'); mLoading.classList.remove('flex'); currentPhotoTarget = null; }
         }
-
-        function compressImageFile(file, maxWidth, quality) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let w = img.width; let h = img.height;
-                        if(w > maxWidth) { h = Math.round((maxWidth / w) * h); w = maxWidth; }
-                        canvas.width = w; canvas.height = h;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, w, h);
-                        resolve(canvas.toDataURL('image/jpeg', quality));
-                    };
-                    img.onerror = () => reject(new Error("File bukan gambar valid."));
-                };
-            });
-        }
-
+        function compressImageFile(file, maxWidth, quality) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = (e) => { const img = new Image(); img.src = e.target.result; img.onload = () => { const canvas = document.createElement('canvas'); let w = img.width; let h = img.height; if(w > maxWidth) { h = Math.round((maxWidth / w) * h); w = maxWidth; } canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h); resolve(canvas.toDataURL('image/jpeg', quality)); }; img.onerror = () => reject(new Error("File bukan gambar valid.")); }; }); }
         function refreshPhotoUI(module) {
-            let tgl, mob, sessionKey, containerId;
-            let db = JSON.parse(localStorage.getItem('kiper_images') || '{}');
-            let mDb = db[module] || {};
-
+            let tgl, mob, sessionKey, containerId; let db = JSON.parse(localStorage.getItem('kiper_images') || '{}'); let mDb = db[module] || {};
             if(module === 'kedatangan') {
-                tgl = document.getElementById('filter-tanggal').value; mob = document.getElementById('filter-mobil').value || "1";
-                sessionKey = `${tgl}_${mob}`;
-                let photos = mDb[sessionKey] || {};
-                const keys = [{k:'mobil', l:'Mobil'}, {k:'supir', l:'Supir'}, {k:'keranjang', l:'Keranjang'}, {k:'mati', l:'Ayam Mati'}];
-                let html = '';
-                keys.forEach(item => {
-                    if(photos[item.k]) {
-                        html += `<div class="relative aspect-square rounded-xl overflow-hidden border border-slate-200 shadow-sm"><img src="${photos[item.k]}" class="photo-thumbnail cursor-pointer" onclick="viewImage('${photos[item.k]}', '${item.l}')"><button onclick="deletePhoto('${module}', '${sessionKey}', '${item.k}')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md">✕</button><div class="absolute bottom-0 inset-x-0 bg-black/50 text-white text-[9px] font-bold text-center py-1 truncate px-1">${item.l}</div></div>`;
-                    } else {
-                        html += `<button onclick="triggerCamera('${module}', '${item.k}', '${item.l}')" class="aspect-square bg-slate-50 hover:bg-slate-100 border border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center text-slate-400 active:scale-95 transition"><span class="text-[20px] font-bold mb-1">+</span><span class="text-[10px] font-bold">${item.l}</span></button>`;
-                    }
-                });
-                document.getElementById('kedatangan-photos').innerHTML = html;
+                tgl = document.getElementById('filter-tanggal').value; mob = document.getElementById('filter-mobil').value || "1"; sessionKey = `${tgl}_${mob}`; let photos = mDb[sessionKey] || {}; const keys = [{k:'mobil', l:'Mobil'}, {k:'supir', l:'Supir'}, {k:'keranjang', l:'Keranjang'}, {k:'mati', l:'Ayam Mati'}]; let html = '';
+                keys.forEach(item => { if(photos[item.k]) { html += `<div class="relative aspect-square rounded-xl overflow-hidden border border-slate-200 shadow-sm"><img src="${photos[item.k]}" class="photo-thumbnail cursor-pointer" onclick="viewImage('${photos[item.k]}', '${item.l}')"><button onclick="deletePhoto('${module}', '${sessionKey}', '${item.k}')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md">✕</button><div class="absolute bottom-0 inset-x-0 bg-black/50 text-white text-[9px] font-bold text-center py-1 truncate px-1">${item.l}</div></div>`; } else { html += `<button onclick="triggerCamera('${module}', '${item.k}', '${item.l}')" class="aspect-square bg-slate-50 hover:bg-slate-100 border border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center text-slate-400 active:scale-95 transition"><span class="text-[20px] font-bold mb-1">+</span><span class="text-[10px] font-bold">${item.l}</span></button>`; } }); document.getElementById('kedatangan-photos').innerHTML = html;
             } else {
-                if (module === 'bp') { tgl = document.getElementById('bp-tanggal').value; mob = document.getElementById('bp-mobil').value || "1"; containerId = 'bp-photos'; sessionKey = `${tgl}_${mob}`; }
-                else if (module === 'karkas') { tgl = document.getElementById('filter-tanggal-karkas').value; mob = document.getElementById('filter-mobil-karkas').value || "1"; containerId = 'karkas-photos'; sessionKey = `${tgl}_${mob}`; }
-                else if (module === 'transaksi') { tgl = document.getElementById('transaksi-tanggal').value; mob = document.getElementById('transaksi-mobil').value || "1"; containerId = 'transaksi-photos'; sessionKey = `${currentTransaksiType}_${tgl}_${mob}`; }
-                
-                let arr = mDb[sessionKey] || [];
-                let html = '';
-                if(arr.length === 0) {
-                    html = `<div class="w-full text-center text-xs text-slate-400 italic py-4">Belum ada foto bukti.</div>`;
-                } else {
-                    arr.forEach((p, index) => {
-                        html += `<div class="relative min-w-[90px] h-[90px] rounded-xl overflow-hidden border border-slate-200 shadow-sm flex-shrink-0"><img src="${p.base64}" class="photo-thumbnail cursor-pointer" onclick="viewImage('${p.base64}', '${p.label}')"><button onclick="deletePhoto('${module}', '${sessionKey}', ${index})" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md">✕</button><div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[9px] font-bold text-center py-1 truncate px-1">${p.label}</div></div>`;
-                    });
-                }
-                document.getElementById(containerId).innerHTML = html;
+                if (module === 'bp') { tgl = document.getElementById('bp-tanggal').value; mob = document.getElementById('bp-mobil').value || "1"; containerId = 'bp-photos'; sessionKey = `${tgl}_${mob}`; } else if (module === 'karkas') { tgl = document.getElementById('filter-tanggal-karkas').value; mob = document.getElementById('filter-mobil-karkas').value || "1"; containerId = 'karkas-photos'; sessionKey = `${tgl}_${mob}`; } else if (module === 'transaksi') { tgl = document.getElementById('transaksi-tanggal').value; mob = document.getElementById('transaksi-mobil').value || "1"; containerId = 'transaksi-photos'; sessionKey = `${currentTransaksiType}_${tgl}_${mob}`; }
+                let arr = mDb[sessionKey] || []; let html = '';
+                if(arr.length === 0) { html = `<div class="w-full text-center text-xs text-slate-400 italic py-4">Belum ada foto bukti.</div>`; } else { arr.forEach((p, index) => { html += `<div class="relative min-w-[90px] h-[90px] rounded-xl overflow-hidden border border-slate-200 shadow-sm flex-shrink-0"><img src="${p.base64}" class="photo-thumbnail cursor-pointer" onclick="viewImage('${p.base64}', '${p.label}')"><button onclick="deletePhoto('${module}', '${sessionKey}', ${index})" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md">✕</button><div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[9px] font-bold text-center py-1 truncate px-1">${p.label}</div></div>`; }); } document.getElementById(containerId).innerHTML = html;
             }
         }
+        function deletePhoto(module, sessionKey, keyOrIndex) { if(!confirm("Hapus foto ini?")) return; let db = JSON.parse(localStorage.getItem('kiper_images') || '{}'); if(module === 'kedatangan') { delete db[module][sessionKey][keyOrIndex]; } else { db[module][sessionKey].splice(keyOrIndex, 1); } localStorage.setItem('kiper_images', JSON.stringify(db)); refreshPhotoUI(module); }
+        function viewImage(base64, title) { document.getElementById('image-viewer-img').src = base64; document.getElementById('image-viewer-title').innerText = title; const m = document.getElementById('modal-image-viewer'); m.classList.remove('hidden'); m.classList.add('flex'); setTimeout(() => m.classList.remove('opacity-0'), 10); }
+        function closeImageViewer() { const m = document.getElementById('modal-image-viewer'); m.classList.add('opacity-0'); setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); document.getElementById('image-viewer-img').src=''; }, 300); }
 
-        function deletePhoto(module, sessionKey, keyOrIndex) {
-            if(!confirm("Hapus foto ini?")) return;
-            let db = JSON.parse(localStorage.getItem('kiper_images') || '{}');
-            if(module === 'kedatangan') { delete db[module][sessionKey][keyOrIndex]; }
-            else { db[module][sessionKey].splice(keyOrIndex, 1); }
-            localStorage.setItem('kiper_images', JSON.stringify(db));
-            refreshPhotoUI(module);
-        }
-
-        function viewImage(base64, title) {
-            document.getElementById('image-viewer-img').src = base64;
-            document.getElementById('image-viewer-title').innerText = title;
-            const m = document.getElementById('modal-image-viewer');
-            m.classList.remove('hidden'); m.classList.add('flex'); setTimeout(() => m.classList.remove('opacity-0'), 10);
-        }
-        function closeImageViewer() {
-            const m = document.getElementById('modal-image-viewer');
-            m.classList.add('opacity-0'); setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); document.getElementById('image-viewer-img').src=''; }, 300);
-        }
-
-        // ================= KUMPULAN FUNGSI JS INTERNAL =================
         function showModalWindow(id) { const m = document.getElementById(id); m.classList.remove('hidden'); m.classList.add('flex'); setTimeout(() => m.classList.remove('opacity-0'), 10); }
         function hideModalWindow(id) { const m = document.getElementById(id); m.classList.add('opacity-0'); setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); }, 300); }
 
         let cropper = null;
-        function triggerHeaderUpload() { 
-            const drawer = document.getElementById('app-drawer');
-            if(!drawer.classList.contains('translate-x-full')) toggleDrawer();
-            setTimeout(() => document.getElementById('header-upload').click(), 300); 
-        }
-        function handleHeaderUpload(event) { 
-            const file = event.target.files[0]; 
-            if(file) { 
-                const reader = new FileReader(); 
-                reader.onload = function(e) { 
-                    const img = document.getElementById('crop-image-target'); 
-                    img.src = e.target.result; 
-                    showModalWindow('modal-crop'); 
-                    if(cropper) cropper.destroy(); 
-                    cropper = new Cropper(img, { aspectRatio: 16/9, viewMode: 1 }); 
-                }; 
-                reader.readAsDataURL(file); 
-                event.target.value = ''; 
-            } 
-        }
+        function triggerHeaderUpload() { const drawer = document.getElementById('app-drawer'); if(!drawer.classList.contains('translate-x-full')) toggleDrawer(); setTimeout(() => document.getElementById('header-upload').click(), 300); }
+        function handleHeaderUpload(event) { const file = event.target.files[0]; if(file) { const reader = new FileReader(); reader.onload = function(e) { const img = document.getElementById('crop-image-target'); img.src = e.target.result; showModalWindow('modal-crop'); if(cropper) cropper.destroy(); cropper = new Cropper(img, { aspectRatio: 16/9, viewMode: 1 }); }; reader.readAsDataURL(file); event.target.value = ''; } }
         function closeCropModal() { hideModalWindow('modal-crop'); if(cropper) cropper.destroy(); }
-        function applyCrop() { 
-            if(!cropper) return; 
-            const canvas = cropper.getCroppedCanvas({ width: 1200, height: 675 }); 
-            const base64 = canvas.toDataURL('image/jpeg', 0.8); 
-            localStorage.setItem('kiper_header_bg', base64); 
-            applyHeaderBg(base64); 
-            closeCropModal(); 
-        }
-        function applyHeaderBg(base64) { 
-            const bgDiv = document.getElementById('hero-bg'); 
-            const defBg = document.getElementById('hero-bg-default');
-            if(base64 && bgDiv) { 
-                bgDiv.style.backgroundImage = `url(${base64})`; 
-                if(defBg) defBg.classList.add('hidden');
-            } 
-        }
+        function applyCrop() { if(!cropper) return; const canvas = cropper.getCroppedCanvas({ width: 1200, height: 675 }); const base64 = canvas.toDataURL('image/jpeg', 0.8); localStorage.setItem('kiper_header_bg', base64); applyHeaderBg(base64); closeCropModal(); }
+        function applyHeaderBg(base64) { const bgDiv = document.getElementById('hero-bg'); const defBg = document.getElementById('hero-bg-default'); if(base64 && bgDiv) { bgDiv.style.backgroundImage = `url(${base64})`; if(defBg) defBg.classList.add('hidden'); } }
         
         let appDatabase = {}; let dataTimbanganArr = []; let karkasArr = []; let currentKarkasStep = 1; let tempKarkas = {}; let currentPrintLabelIndex = 0; let bluetoothDevice = null; let bluetoothCharacteristic = null; let trxArr = []; let currentTransaksiType = '';
 
-        /* KEDATANGAN */
         function loadDataTimbangan() { const tgl = document.getElementById('filter-tanggal').value || new Date().toISOString().split('T')[0]; const mob = document.getElementById('filter-mobil').value || "1"; let rec = appDatabase[tgl]?.[mob] || { info: { supplier:'', nopol:'', sj:'' }, tabel: [] }; document.getElementById('form-supplier').value = rec.info.supplier; document.getElementById('form-nopol').value = rec.info.nopol; document.getElementById('form-sj').value = rec.info.sj; dataTimbanganArr = [...rec.tabel]; renderTimbanganRows(); refreshPhotoUI('kedatangan'); }
         function autoSaveData() { const tgl = document.getElementById('filter-tanggal').value; const mob = document.getElementById('filter-mobil').value; if(!tgl || !mob) return; if(!appDatabase[tgl]) appDatabase[tgl] = {}; appDatabase[tgl][mob] = { info: { supplier: document.getElementById('form-supplier').value, nopol: document.getElementById('form-nopol').value, sj: document.getElementById('form-sj').value }, tabel: dataTimbanganArr }; localStorage.setItem('kiper_kedatangan_db', JSON.stringify(appDatabase)); }
         function tambahDataTimbangan() { const ek = document.getElementById('form-ekor').value; const br = document.getElementById('form-berat').value; if(!br || parseFloat(br)<=0) { document.getElementById('form-berat').focus(); return; } dataTimbanganArr.push({ ekor: ek, berat: br }); document.getElementById('form-ekor').value = ''; document.getElementById('form-berat').value = ''; document.getElementById('form-ekor').focus(); renderTimbanganRows(); autoSaveData(); }
@@ -1007,7 +586,6 @@
         function renderTimbanganRows() { const container = document.getElementById('timbangan-rows'); if(!container) return; document.getElementById('count-badge').innerText = dataTimbanganArr.length; let numTables = Math.ceil(dataTimbanganArr.length / 10) || 1; let html = '<div class="flex flex-nowrap overflow-x-auto gap-4 pb-2">'; for(let t=0; t<numTables; t++) { html += `<div class="min-w-[260px] flex-1 border rounded-lg bg-white overflow-hidden flex flex-col"><div class="flex bg-slate-100 px-1 py-2 text-[11px] font-bold text-slate-600 border-b"><div class="w-8 text-center">No</div><div class="flex-1 text-center border-l">Ekor</div><div class="flex-1 text-center border-l">Berat</div><div class="w-7"></div></div><div class="flex-1 flex flex-col">`; for(let i=0; i<10; i++) { let idx = t*10 + i, item = dataTimbanganArr[idx], borderB = (i===9)?'':'border-b'; if(item) { html += `<div class="flex items-center px-1 py-1 ${borderB} bg-amber-50/30"><div class="w-8 text-center text-[11px] font-bold text-slate-500">${idx+1}.</div><div class="flex-1 px-1"><input type="number" class="w-full bg-white border rounded px-1 py-1 text-xs text-center" value="${item.ekor}" oninput="updateTimbanganCell(${idx},'ekor',this.value)"></div><div class="flex-1 px-1"><input type="number" step="0.01" class="w-full bg-white border rounded px-1 py-1 text-xs text-center" value="${item.berat}" oninput="updateTimbanganCell(${idx},'berat',this.value)"></div><div class="w-7 flex justify-center"><button onclick="hapusTimbanganCell(${idx})" class="text-red-400 p-1 hover:bg-red-50 rounded">✕</button></div></div>`; } else { html += `<div class="flex items-center px-1 py-1.5 ${borderB} opacity-40"><div class="w-8 text-center text-[11px] font-bold">${idx+1}.</div><div class="flex-1 text-center text-xs">-</div><div class="flex-1 text-center text-xs">-</div><div class="w-7"></div></div>`; } } html += `</div><div class="flex items-center px-1 py-1.5 bg-teal-50 border-t"><div class="w-8 text-center text-[9px] font-bold text-teal-800">Tot:</div><div class="flex-1 text-center text-xs font-bold text-teal-700" id="subtot-ekor-${t}">0</div><div class="flex-1 text-center text-xs font-bold text-teal-700" id="subtot-berat-${t}">0.00</div><div class="w-7"></div></div></div>`; } container.innerHTML = html + '</div>'; hitungTotalTimbangan(); }
         function hitungTotalTimbangan() { let gE=0, gB=0, numT = Math.ceil(dataTimbanganArr.length / 10) || 1; for(let t=0; t<numT; t++) { let bE=0, bB=0; for(let i=0; i<10; i++) { let it = dataTimbanganArr[t*10 + i]; if(it) { bE += parseInt(it.ekor)||0; bB += parseFloat(it.berat)||0; } } gE += bE; gB += bB; if(document.getElementById(`subtot-ekor-${t}`)) document.getElementById(`subtot-ekor-${t}`).innerText = bE; if(document.getElementById(`subtot-berat-${t}`)) document.getElementById(`subtot-berat-${t}`).innerText = bB.toFixed(2); } document.getElementById('tot-ekor').innerText = gE; document.getElementById('tot-berat').innerText = gB.toFixed(2); }
 
-        /* BY PRODUCT */
         let bpArr = [];
         function loadBpData() { let tgl = document.getElementById('bp-tanggal').value; let mob = document.getElementById('bp-mobil').value || "1"; let db = JSON.parse(localStorage.getItem('kiper_bp_db') || '{}'); bpArr = db[tgl]?.[mob] || []; renderBpList(); refreshPhotoUI('bp'); }
         function saveBpData() { let tgl = document.getElementById('bp-tanggal').value; let mob = document.getElementById('bp-mobil').value || "1"; let db = JSON.parse(localStorage.getItem('kiper_bp_db') || '{}'); if(!db[tgl]) db[tgl] = {}; db[tgl][mob] = bpArr; localStorage.setItem('kiper_bp_db', JSON.stringify(db)); }
@@ -1018,7 +596,6 @@
         function reportExcelBp(e) { if(e) e.preventDefault(); toggleExportMenu('export-menu-bp'); if(bpArr.length===0) return alert("Kosong!"); let tgl = document.getElementById('bp-tanggal').value; let csv = 'Jenis Item,Berat (Kg)\n'; bpArr.forEach(i => csv += `"${i.jenis}","${i.berat}"\n`); const b = new Blob([csv], {type:'text/csv'}); const l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `ByProduct_${tgl}.csv`; l.click(); }
         function reportWaBp(e) { if(e) e.preventDefault(); toggleExportMenu('export-menu-bp'); if(bpArr.length===0) return alert("Kosong!"); let tgl = document.getElementById('bp-tanggal').value; let mob = document.getElementById('bp-mobil').value || "1"; let text = `*LAPORAN BY PRODUCT* (Tgl: ${tgl} | Mobil: ${mob})\n\n`; let tot = 0; bpArr.forEach(i => { text += `- ${i.jenis}: ${i.berat.toFixed(2)} Kg\n`; tot += i.berat; }); text += `\n*TOTAL*: ${tot.toFixed(2)} Kg`; window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank'); }
 
-        /* KARKAS */
         function loadDataKarkas() { let tgl = document.getElementById('filter-tanggal-karkas').value; let mob = document.getElementById('filter-mobil-karkas').value || "1"; let db = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}'); karkasArr = db[tgl]?.[mob] || []; renderKarkasCards(); refreshPhotoUI('karkas'); }
         function saveKarkasDataStorage() { let tgl = document.getElementById('filter-tanggal-karkas').value; let mob = document.getElementById('filter-mobil-karkas').value || "1"; let db = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}'); if(!db[tgl]) db[tgl] = {}; db[tgl][mob] = karkasArr; localStorage.setItem('kiper_karkas_db', JSON.stringify(db)); }
         function startKarkasInput() { currentKarkasStep = 1; tempKarkas = { grade: 'Grade A', rata: '1.0', ekor: '', kotor: '', jmlKeranjang: '', beratKeranjang: '2.00' }; showKarkasStep(1); showModalWindow('modal-karkas'); }
@@ -1042,20 +619,7 @@
         function checkApiKeyAndScan() { let apiKey = localStorage.getItem('kiper_gemini_api_key'); if (!apiKey) { alert("Silakan masukkan API Key Gemini di Menu Samping terlebih dahulu."); return; } document.getElementById('ai-scan-karkas').click(); }
         async function processAiScan(event) { const file = event.target.files[0]; if(!file) return; const apiKey = localStorage.getItem('kiper_gemini_api_key'); if (!apiKey) return; event.target.value = ''; const mLoading = document.getElementById('modal-ai-loading'); document.getElementById('loading-message-text').innerText = "AI Membaca Tulisan Tangan..."; mLoading.classList.remove('hidden'); mLoading.classList.add('flex'); try { const base64Data = await new Promise((resolve, reject) => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); let w = img.width; let h = img.height; const maxDim = 1500; if (w > h && w > maxDim) { h *= maxDim / w; w = maxDim; } else if (h > maxDim) { w *= maxDim / h; h = maxDim; } canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h); resolve(canvas.toDataURL('image/jpeg', 0.7).split(',')[1]); }; img.onerror = () => reject(new Error("Gagal membaca file gambar")); img.src = URL.createObjectURL(file); }); const promptText = `Ekstrak data tabel laporan packing karkas dari gambar tulisan tangan ini. Tabel disusun berdasarkan Grade (misal GRADE A, GRADE B) dan Berat Rata-Rata (misal 1.2, 1.3, 1.4). Di bawah setiap rata-rata ada kolom Ekor dan Kg. Kembalikan HANYA array JSON dengan format: [{"grade": "Grade A", "rata": "1.2", "ekor": 12, "netto": 14.5}]. Abaikan baris Total.`; const payload = { contents: [{ role: "user", parts: [ { text: promptText }, { inlineData: { mimeType: "image/jpeg", data: base64Data } } ] }] }; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`; const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { const err = await response.json(); if(response.status === 400 || response.status === 403) { localStorage.removeItem('kiper_gemini_api_key'); throw new Error("API Key salah, dihapus, atau diblokir Google. Silakan periksa di menu samping."); } throw new Error(err.error?.message || "Server Error " + response.status); } const result = await response.json(); if (result.candidates && result.candidates.length > 0) { let jsonText = result.candidates[0].content.parts[0].text; const match = jsonText.match(/\[[\s\S]*\]/); if (match) jsonText = match[0]; else jsonText = jsonText.replace(/```json/gi, '').replace(/```/g, '').trim(); const parsedData = JSON.parse(jsonText); if (Array.isArray(parsedData) && parsedData.length > 0) { parsedData.forEach(item => { karkasArr.push({ id: Date.now() + Math.random(), grade: item.grade || 'Grade A', rata: String(item.rata || '1.0'), ekor: parseInt(item.ekor) || 0, netto: parseFloat(item.netto) || 0, kotor: parseFloat(item.netto) || 0, jmlKeranjang: 0, beratKeranjang: 0 }); }); saveKarkasDataStorage(); renderKarkasCards(); alert(`AI Selesai! Berhasil merekap ${parsedData.length} baris data dari kertas.`); } else { alert("AI tidak menemukan format tabel data yang valid di gambar ini."); } } else { alert("Gagal membaca gambar dari server. Silakan coba lagi."); } } catch(e) { console.error(e); alert("Gagal memproses AI:\n" + e.message); } finally { mLoading.classList.add('hidden'); mLoading.classList.remove('flex'); } }
 
-        /* TRANSAKSI (KELUAR BARANG & RETUR) */
-        function openKeluarForm(type) { 
-            currentTransaksiType = type; 
-            let titles = { 'keluar-karkas': 'Keluar Karkas', 'keluar-bp': 'Keluar By Product', 'retur-karkas': 'Retur Karkas', 'retur-bp': 'Retur By Product' }; 
-            viewTitles['view-form-transaksi'] = titles[type]; 
-            
-            if(type.includes('bp')) { 
-                document.getElementById('transaksi-ekor').parentElement.classList.add('hidden'); 
-            } else { 
-                document.getElementById('transaksi-ekor').parentElement.classList.remove('hidden'); 
-            } 
-            navigateTo('view-form-transaksi'); 
-            refreshDropdownTransaksi(); 
-        }
+        function openKeluarForm(type) { currentTransaksiType = type; let titles = { 'keluar-karkas': 'Keluar Karkas', 'keluar-bp': 'Keluar By Product', 'retur-karkas': 'Retur Karkas', 'retur-bp': 'Retur By Product' }; viewTitles['view-form-transaksi'] = titles[type]; if(type.includes('bp')) { document.getElementById('transaksi-ekor').parentElement.classList.add('hidden'); } else { document.getElementById('transaksi-ekor').parentElement.classList.remove('hidden'); } navigateTo('view-form-transaksi'); refreshDropdownTransaksi(); }
         function refreshDropdownTransaksi() { let tgl = document.getElementById('transaksi-tanggal').value; let mob = document.getElementById('transaksi-mobil').value || "1"; let sel = document.getElementById('transaksi-item'); sel.innerHTML = '<option value="">Pilih Item dari Stok...</option>'; let mst = calculateMasterStock(tgl, mob); if(currentTransaksiType.includes('karkas')) { for(let k in mst.stockKarkas) sel.innerHTML += `<option value="${k}">${k} (Sisa: ${mst.stockKarkas[k].ekor} pcs | ${mst.stockKarkas[k].netto.toFixed(1)} kg)</option>`; } else { for(let k in mst.stockBp) sel.innerHTML += `<option value="${k}">${k} (Sisa: ${mst.stockBp[k].berat.toFixed(1)} kg)</option>`; if(currentTransaksiType === 'retur-bp') { ['Kepala Utuh','Kepala Saja','Ceker','Usus','Hati Ampela','Kerongkongan','Sayap','Sisa Jantung'].forEach(k => sel.innerHTML += `<option value="${k}">${k}</option>`); } } loadTransaksiData(); refreshPhotoUI('transaksi'); }
         function loadTransaksiData() { let tgl = document.getElementById('transaksi-tanggal').value; let mob = document.getElementById('transaksi-mobil').value || "1"; let db = JSON.parse(localStorage.getItem(`kiper_${currentTransaksiType.replace('-','_')}_db`) || '{}'); trxArr = db[tgl]?.[mob] || []; renderTransaksiList(); }
         function saveTransaksiData() { let tgl = document.getElementById('transaksi-tanggal').value; let mob = document.getElementById('transaksi-mobil').value || "1"; let dbName = `kiper_${currentTransaksiType.replace('-','_')}_db`; let db = JSON.parse(localStorage.getItem(dbName) || '{}'); if(!db[tgl]) db[tgl] = {}; db[tgl][mob] = trxArr; localStorage.setItem(dbName, JSON.stringify(db)); }
@@ -1063,78 +627,13 @@
         function delTransaksi(id) { trxArr = trxArr.filter(x => x.id !== id); saveTransaksiData(); refreshDropdownTransaksi(); }
         function renderTransaksiList() { let lst = document.getElementById('transaksi-list'); if(trxArr.length === 0) { lst.innerHTML = `<p class="text-sm text-slate-400 text-center py-4 bg-white border rounded-xl">Belum ada transaksi</p>`; return; } let html = ''; trxArr.forEach(i => { html += `<div class="flex justify-between items-center bg-white p-3 rounded-xl border shadow-sm mb-2"><div><h5 class="font-bold text-sm">${i.item}</h5><p class="text-xs text-blue-600 font-semibold">${i.ekor ? i.ekor+' Pcs | ' : ''}${i.netto.toFixed(2)} Kg</p></div><button onclick="delTransaksi(${i.id})" class="text-red-400 hover:bg-red-50 rounded p-2 transition">✕</button></div>`; }); lst.innerHTML = html; }
 
-        function openSuratJalanModal() {
-            if(trxArr.length === 0) return alert("Belum ada transaksi untuk dicetak!");
-            let tgl = document.getElementById('transaksi-tanggal').value;
-            let mob = document.getElementById('transaksi-mobil').value || "1";
-            let typeLabel = viewTitles['view-form-transaksi'].toUpperCase();
-            
-            let html = `<div class="text-center font-bold border-b border-dashed pb-2 mb-2 text-[13px]">SURAT JALAN<br>${typeLabel}</div>`;
-            html += `<div>Tgl   : ${tgl}</div><div>Mobil : ${mob}</div>`;
-            html += `<div class="border-b border-dashed pb-1 mb-2 mt-2 font-bold">Daftar Barang:</div>`;
-            
-            let totEkor = 0; let totNetto = 0;
-            trxArr.forEach(i => {
-                html += `<div class="flex justify-between mt-1"><span class="font-bold">${i.item}</span></div>`;
-                html += `<div class="flex justify-between text-[10px] text-slate-600 border-b border-dotted pb-1 mb-1"><span>${i.ekor ? i.ekor+' pcs' : '-'}</span><span>${i.netto.toFixed(2)} kg</span></div>`;
-                totEkor += i.ekor || 0; totNetto += i.netto || 0;
-            });
-            
-            html += `<div class="border-t border-slate-400 pt-1 mt-2 flex justify-between font-bold text-[12px]"><span>TOTAL BERAT:</span><span>${totNetto.toFixed(2)} kg</span></div>`;
-            if(totEkor > 0) html += `<div class="flex justify-between font-bold text-[12px]"><span>TOTAL EKOR:</span><span>${totEkor} pcs</span></div>`;
-            
-            html += `<div class="mt-5 flex justify-between text-center"><div class="w-1/2">Pengirim<br><br><br>(_______)</div><div class="w-1/2">Penerima<br><br><br>(_______)</div></div>`;
-            
-            document.getElementById('preview-surat-jalan').innerHTML = html;
-            showModalWindow('modal-surat-jalan');
-        }
+        function openSuratJalanModal() { if(trxArr.length === 0) return alert("Belum ada transaksi untuk dicetak!"); let tgl = document.getElementById('transaksi-tanggal').value; let mob = document.getElementById('transaksi-mobil').value || "1"; let typeLabel = viewTitles['view-form-transaksi'].toUpperCase(); let html = `<div class="text-center font-bold border-b border-dashed pb-2 mb-2 text-[13px]">SURAT JALAN<br>${typeLabel}</div><div>Tgl   : ${tgl}</div><div>Mobil : ${mob}</div><div class="border-b border-dashed pb-1 mb-2 mt-2 font-bold">Daftar Barang:</div>`; let totEkor = 0; let totNetto = 0; trxArr.forEach(i => { html += `<div class="flex justify-between mt-1"><span class="font-bold">${i.item}</span></div><div class="flex justify-between text-[10px] text-slate-600 border-b border-dotted pb-1 mb-1"><span>${i.ekor ? i.ekor+' pcs' : '-'}</span><span>${i.netto.toFixed(2)} kg</span></div>`; totEkor += i.ekor || 0; totNetto += i.netto || 0; }); html += `<div class="border-t border-slate-400 pt-1 mt-2 flex justify-between font-bold text-[12px]"><span>TOTAL BERAT:</span><span>${totNetto.toFixed(2)} kg</span></div>`; if(totEkor > 0) html += `<div class="flex justify-between font-bold text-[12px]"><span>TOTAL EKOR:</span><span>${totEkor} pcs</span></div>`; html += `<div class="mt-5 flex justify-between text-center"><div class="w-1/2">Pengirim<br><br><br>(_______)</div><div class="w-1/2">Penerima<br><br><br>(_______)</div></div>`; document.getElementById('preview-surat-jalan').innerHTML = html; showModalWindow('modal-surat-jalan'); }
         function closeSuratJalanModal() { hideModalWindow('modal-surat-jalan'); }
         
-        async function cetakSuratJalanBT() {
-            if(!bluetoothCharacteristic) { await hubungkanPrinterBT(); if(!bluetoothCharacteristic) return; }
-            if(trxArr.length === 0) return alert("Kosong!");
-            
-            let tgl = document.getElementById('transaksi-tanggal').value;
-            let mob = document.getElementById('transaksi-mobil').value || "1";
-            let typeLabel = viewTitles['view-form-transaksi'].toUpperCase();
-            
-            let text = `\x1B\x40\x1B\x61\x01SURAT JALAN\n${typeLabel}\n--------------------------------\n\x1B\x61\x00`;
-            text += `Tgl   : ${tgl}\nMobil : ${mob}\n--------------------------------\n`;
-            
-            let totEkor = 0; let totNetto = 0;
-            trxArr.forEach(i => {
-                text += `\x1B\x45\x01${i.item}\x1B\x45\x00\n`;
-                let txtEkor = i.ekor ? i.ekor+' pcs' : '';
-                text += `${txtEkor.padEnd(12)} ${i.netto.toFixed(2)} kg\n\n`;
-                totEkor += i.ekor || 0; totNetto += i.netto || 0;
-            });
-            
-            text += `--------------------------------\n`;
-            text += `TOTAL BERAT : ${totNetto.toFixed(2)} kg\n`;
-            if(totEkor > 0) text += `TOTAL EKOR  : ${totEkor} pcs\n`;
-            text += `\n`;
-            text += `  Pengirim          Penerima\n\n\n\n (________)        (________)\n`;
-            text += `\x1B\x64\x03`;
-            
-            try {
-                let encoder = new TextEncoder();
-                let bytes = encoder.encode(text);
-                for(let idx=0; idx<bytes.length; idx+=64) {
-                    let chunk = bytes.slice(idx, idx+64);
-                    await bluetoothCharacteristic.writeValue(chunk);
-                    await new Promise(r => setTimeout(r, 50));
-                }
-                alert("Surat Jalan berhasil dicetak!");
-                closeSuratJalanModal();
-            } catch(e) {
-                alert("Gagal mencetak: " + e.message);
-            }
-        }
+        async function cetakSuratJalanBT() { if(!bluetoothCharacteristic) { await hubungkanPrinterBT(); if(!bluetoothCharacteristic) return; } if(trxArr.length === 0) return alert("Kosong!"); let tgl = document.getElementById('transaksi-tanggal').value; let mob = document.getElementById('transaksi-mobil').value || "1"; let typeLabel = viewTitles['view-form-transaksi'].toUpperCase(); let text = `\x1B\x40\x1B\x61\x01SURAT JALAN\n${typeLabel}\n--------------------------------\n\x1B\x61\x00Tgl   : ${tgl}\nMobil : ${mob}\n--------------------------------\n`; let totEkor = 0; let totNetto = 0; trxArr.forEach(i => { text += `\x1B\x45\x01${i.item}\x1B\x45\x00\n`; let txtEkor = i.ekor ? i.ekor+' pcs' : ''; text += `${txtEkor.padEnd(12)} ${i.netto.toFixed(2)} kg\n\n`; totEkor += i.ekor || 0; totNetto += i.netto || 0; }); text += `--------------------------------\nTOTAL BERAT : ${totNetto.toFixed(2)} kg\n`; if(totEkor > 0) text += `TOTAL EKOR  : ${totEkor} pcs\n`; text += `\n  Pengirim          Penerima\n\n\n\n (________)        (________)\n\x1B\x64\x03`; try { let encoder = new TextEncoder(); let bytes = encoder.encode(text); for(let idx=0; idx<bytes.length; idx+=64) { let chunk = bytes.slice(idx, idx+64); await bluetoothCharacteristic.writeValue(chunk); await new Promise(r => setTimeout(r, 50)); } alert("Surat Jalan berhasil dicetak!"); closeSuratJalanModal(); } catch(e) { alert("Gagal mencetak: " + e.message); } }
 
-        /* MASTER DATA */
         function calculateMasterStock(tgl, mob) { let kM = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}'); let kO = JSON.parse(localStorage.getItem('kiper_keluar_karkas_db') || '{}'); let kR = JSON.parse(localStorage.getItem('kiper_retur_karkas_db') || '{}'); let bM = JSON.parse(localStorage.getItem('kiper_bp_db') || '{}'); let bO = JSON.parse(localStorage.getItem('kiper_keluar_bp_db') || '{}'); let bR = JSON.parse(localStorage.getItem('kiper_retur_bp_db') || '{}'); let stockKarkas = {}, stockBp = {}; (kM[tgl]?.[mob] || []).forEach(k => { let key = `${k.grade} - ${k.rata}`; if(!stockKarkas[key]) stockKarkas[key] = { ekor: 0, netto: 0, ms_e:0, ms_n:0, kl_e:0, kl_n:0, rt_e:0, rt_n:0 }; stockKarkas[key].ekor += k.ekor; stockKarkas[key].netto += k.netto; stockKarkas[key].ms_e += k.ekor; stockKarkas[key].ms_n += k.netto; }); (kO[tgl]?.[mob] || []).forEach(k => { if(stockKarkas[k.item]) { stockKarkas[k.item].ekor -= k.ekor; stockKarkas[k.item].netto -= k.netto; stockKarkas[k.item].kl_e += k.ekor; stockKarkas[k.item].kl_n += k.netto; } }); (kR[tgl]?.[mob] || []).forEach(k => { if(!stockKarkas[k.item]) stockKarkas[k.item] = { ekor: 0, netto: 0, ms_e:0, ms_n:0, kl_e:0, kl_n:0, rt_e:0, rt_n:0 }; stockKarkas[k.item].ekor += k.ekor; stockKarkas[k.item].netto += k.netto; stockKarkas[k.item].rt_e += k.ekor; stockKarkas[k.item].rt_n += k.netto; }); (bM[tgl]?.[mob] || []).forEach(b => { if(!stockBp[b.jenis]) stockBp[b.jenis] = { berat: 0, ms: 0, kl: 0, rt: 0 }; stockBp[b.jenis].berat += b.berat; stockBp[b.jenis].ms += b.berat; }); (bO[tgl]?.[mob] || []).forEach(b => { if(stockBp[b.item]) { stockBp[b.item].berat -= b.netto; stockBp[b.item].kl += b.netto; } }); (bR[tgl]?.[mob] || []).forEach(b => { if(!stockBp[b.item]) stockBp[b.item] = { berat: 0, ms: 0, kl: 0, rt: 0 }; stockBp[b.item].berat += b.netto; stockBp[b.item].rt += b.netto; }); return { stockKarkas, stockBp }; }
         function renderMasterData() { let tgl = document.getElementById('md-tanggal').value; let mob = document.getElementById('md-mobil').value || "1"; let lK = document.getElementById('md-karkas-list'); let lB = document.getElementById('md-bp-list'); let mst = calculateMasterStock(tgl, mob); let htmlK = ''; for(let k in mst.stockKarkas) { let d = mst.stockKarkas[k]; htmlK += `<div class="p-3 border-b border-slate-100 bg-white hover:bg-slate-50 transition"><h4 class="font-bold text-sm">${k}</h4><div class="grid grid-cols-4 mt-2 gap-1 text-[10px] text-center font-semibold"><div class="bg-blue-50 text-blue-700 py-1 rounded">IN<br>${d.ms_e}p</div><div class="bg-red-50 text-red-700 py-1 rounded">OUT<br>${d.kl_e}p</div><div class="bg-purple-50 text-purple-700 py-1 rounded">RTR<br>${d.rt_e}p</div><div class="bg-emerald-100 text-emerald-800 py-1 rounded shadow-sm">SISA<br>${d.ekor}p</div></div></div>`; } lK.innerHTML = htmlK || `<div class="p-6 text-center text-slate-400 text-sm">Tidak ada stok karkas.</div>`; let htmlB = ''; for(let k in mst.stockBp) { let d = mst.stockBp[k]; htmlB += `<div class="p-3 border-b border-slate-100 bg-white hover:bg-slate-50 transition flex justify-between items-center"><h4 class="font-bold text-sm">${k}</h4><div class="flex gap-1 text-[10px] font-semibold text-center w-2/3 justify-end"><div class="w-10 text-blue-600">IN<br>${d.ms.toFixed(1)}</div><div class="w-10 text-red-600">OUT<br>${d.kl.toFixed(1)}</div><div class="w-10 text-purple-600">RTR<br>${d.rt.toFixed(1)}</div><div class="w-12 bg-amber-100 text-amber-800 py-1 rounded shadow-sm">SISA<br>${d.berat.toFixed(1)}</div></div></div>`; } lB.innerHTML = htmlB || `<div class="p-6 text-center text-slate-400 text-sm">Tidak ada stok by product.</div>`; }
-
     </script>
 </body>
 </html>
