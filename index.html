@@ -94,27 +94,37 @@
             <!-- Grid Menu Utama -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <button onclick="navigateTo('view-kedatangan')" class="group relative bg-white/60 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_8px_20px_rgb(0,0,0,0.03)] border border-white/80 hover:bg-white/80 hover:border-teal-200 transition-all duration-300 text-left flex items-center space-x-4 active:scale-95">
-                    <div class="w-14 h-14 rounded-2xl bg-teal-500 flex items-center justify-center text-white shadow-md shadow-teal-200 group-hover:bg-teal-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 18H3c-.6 0-1-.4-1-1V7c0-.6.4-1 1-1h10c.6 0 1 .4 1 1v11"/><path d="M14 9h4l4 4v5c0 .6-.4 1-1 1h-2"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/></svg></div>
+                    <div class="w-14 h-14 rounded-2xl flex-shrink-0 overflow-hidden shadow-md border border-slate-200 bg-slate-100">
+                        <img src="icon datang.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Kedatangan Ayam">
+                    </div>
                     <div><h4 class="font-bold text-slate-800 text-lg">Kedatangan Ayam</h4><p class="text-xs text-slate-500 mt-1 font-medium">Input penerimaan Live Bird</p></div>
                 </button>
 
                 <button onclick="navigateTo('view-byproduct')" class="group relative bg-white/60 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_8px_20px_rgb(0,0,0,0.03)] border border-white/80 hover:bg-white/80 hover:border-amber-200 transition-all duration-300 text-left flex items-center space-x-4 active:scale-95">
-                    <div class="w-14 h-14 rounded-2xl bg-amber-500 flex items-center justify-center text-white shadow-md shadow-amber-200 group-hover:bg-amber-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+                    <div class="w-14 h-14 rounded-2xl flex-shrink-0 overflow-hidden shadow-md border border-slate-200 bg-slate-100">
+                        <img src="icon by product.png" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="By Product">
+                    </div>
                     <div><h4 class="font-bold text-slate-800 text-lg">By Product</h4><p class="text-xs text-slate-500 mt-1 font-medium">Kelola hasil sampingan</p></div>
                 </button>
 
                 <button onclick="navigateTo('view-karkas')" class="group relative bg-white/60 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_8px_20px_rgb(0,0,0,0.03)] border border-white/80 hover:bg-white/80 hover:border-red-200 transition-all duration-300 text-left flex items-center space-x-4 active:scale-95">
-                    <div class="w-14 h-14 rounded-2xl bg-red-500 flex-shrink-0 flex items-center justify-center text-white shadow-md shadow-red-200 group-hover:bg-red-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15.4 15.4c-2.3 2.3-6.2 2.5-8.8.2L2.4 11.4a2 2 0 0 1 0-2.8l2.3-2.3a2 2 0 0 1 2.8 0l4.2 4.2c2.3 2.6 2.1 6.5-.2 8.8Z"/><path d="m21.6 8.4-4.2-4.2"/><path d="M18 10 14 6"/><path d="M19.9 2.1a2 2 0 0 0-2.8 0l-2.8 2.8a2 2 0 0 0 0 2.8l2.8 2.8a2 2 0 0 0 2.8 0l2.8-2.8a2 2 0 0 0 0-2.8Z"/></svg></div>
+                    <div class="w-14 h-14 rounded-2xl flex-shrink-0 overflow-hidden shadow-md border border-slate-200 bg-slate-100">
+                        <img src="icon karkas.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Karkas">
+                    </div>
                     <div><h4 class="font-bold text-slate-800 text-lg">Karkas</h4><p class="text-xs text-slate-500 mt-1 font-medium">Laporan produksi karkas</p></div>
                 </button>
 
                 <button onclick="navigateTo('view-keluar')" class="group relative bg-white/60 backdrop-blur-xl p-5 rounded-[1.5rem] shadow-[0_8px_20px_rgb(0,0,0,0.03)] border border-white/80 hover:bg-white/80 hover:border-blue-200 transition-all duration-300 text-left flex items-center space-x-4 active:scale-95">
-                    <div class="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-200 group-hover:bg-blue-700 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="7.5 4.21 12 6.81 16.5 4.21"/><polyline points="7.5 19.79 7.5 14.6 3 12"/><polyline points="21 12 16.5 14.6 16.5 19.79"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
-                    <div><h4 class="font-bold text-slate-800 text-lg">Keluar Barang</h4><p class="text-xs text-slate-500 mt-1 font-medium">Distribusi, Ekspedisi & Retur</p></div>
+                    <div class="w-14 h-14 rounded-2xl flex-shrink-0 overflow-hidden shadow-md border border-slate-200 bg-slate-100">
+                        <img src="icon kirim.jpeg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Barang Keluar">
+                    </div>
+                    <div><h4 class="font-bold text-slate-800 text-lg">Barang Keluar / Retur</h4><p class="text-xs text-slate-500 mt-1 font-medium">Distribusi, Ekspedisi & Retur</p></div>
                 </button>
                 
                 <button onclick="navigateTo('view-masterdata')" class="group relative bg-slate-800 p-5 rounded-[1.5rem] shadow-[0_8px_20px_rgb(0,0,0,0.03)] border border-slate-700 hover:bg-slate-700 transition-all duration-300 text-left flex items-center space-x-4 active:scale-95 md:col-span-2">
-                    <div class="w-14 h-14 rounded-2xl bg-slate-700 flex items-center justify-center text-white shadow-md shadow-slate-900 group-hover:bg-slate-600 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/><path d="M12 12v.01"/><path d="M16 14.5v.01"/><path d="M8 14.5v.01"/></svg></div>
+                    <div class="w-14 h-14 rounded-2xl flex-shrink-0 overflow-hidden shadow-md border border-slate-600 bg-slate-100">
+                        <img src="icon master data.jpg" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="Master Data">
+                    </div>
                     <div><h4 class="font-bold text-white text-lg">Master Data</h4><p class="text-xs text-slate-300 mt-1 font-medium">Cek ketersediaan stok Karkas & By Product</p></div>
                 </button>
             </div>
@@ -363,7 +373,11 @@
                     <button onclick="submitTransaksi()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg text-sm active:scale-95 transition-transform mt-2">Proses Data</button>
                 </div>
             </div>
-            <h4 class="font-bold text-slate-700 mb-3 text-sm">Histori Transaksi</h4>
+            
+            <div class="flex justify-between items-center mb-3">
+                <h4 class="font-bold text-slate-700 text-sm">Histori Transaksi</h4>
+                <button onclick="openSuratJalanModal()" class="text-[10px] bg-slate-800 text-white px-3 py-1.5 rounded font-bold uppercase active:scale-90 transition shadow-sm flex items-center gap-1">🖨️ Surat Jalan</button>
+            </div>
             <div id="transaksi-list" class="space-y-2"></div>
         </div>
     </div>
@@ -429,6 +443,25 @@
             </div>
             <div class="border-t border-slate-200 pt-5">
                 <button onclick="generateTeamLink()" class="w-full py-3.5 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl font-bold text-sm shadow-md active:scale-95 transition-transform flex justify-center items-center gap-2">Buat Link Akses Tim (WhatsApp)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CETAK SURAT JALAN -->
+    <div id="modal-surat-jalan" class="hidden fixed inset-0 bg-slate-900/60 z-[150] items-start pt-12 justify-center p-4 opacity-0 transition-opacity duration-300 overflow-y-auto">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
+            <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl shrink-0">
+                <h3 class="font-bold text-slate-700 text-base">Preview Surat Jalan</h3>
+                <button onclick="closeSuratJalanModal()" class="text-slate-400 bg-slate-200 rounded-full p-1 w-8 h-8 flex items-center justify-center">✕</button>
+            </div>
+            <div class="p-5 flex flex-col justify-center relative overflow-y-auto">
+                <div id="preview-surat-jalan" class="w-full max-w-[220px] mx-auto min-h-[200px] bg-white border border-slate-300 p-3 rounded text-[11px] font-mono text-slate-800 shadow-sm mb-5">
+                    <!-- Preview HTML disuntik dari JS -->
+                </div>
+                <div class="flex flex-col gap-2 mt-auto">
+                    <button onclick="cetakSuratJalanBT()" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold shadow-md flex justify-center items-center gap-2">🖨️ Cetak ke Printer BT</button>
+                    <button onclick="hubungkanPrinterBT()" id="bt-status-sj" class="w-full py-2 bg-slate-100 text-slate-700 border rounded-xl font-semibold text-xs mt-2">🔍 Cek Sambungan Printer</button>
+                </div>
             </div>
         </div>
     </div>
@@ -681,6 +714,74 @@
         function submitTransaksi() { let it = document.getElementById('transaksi-item').value; let nt = parseFloat(document.getElementById('transaksi-netto').value) || 0; let ek = parseInt(document.getElementById('transaksi-ekor').value) || 0; if(!it || nt <= 0) return alert("Lengkapi data!"); trxArr.push({ id: Date.now(), item: it, ekor: ek, netto: nt }); saveTransaksiData(); document.getElementById('transaksi-netto').value = ''; document.getElementById('transaksi-ekor').value = ''; refreshDropdownTransaksi(); }
         function delTransaksi(id) { trxArr = trxArr.filter(x => x.id !== id); saveTransaksiData(); refreshDropdownTransaksi(); }
         function renderTransaksiList() { let lst = document.getElementById('transaksi-list'); if(trxArr.length === 0) { lst.innerHTML = `<p class="text-sm text-slate-400 text-center py-4 bg-white border rounded-xl">Belum ada transaksi</p>`; return; } let html = ''; trxArr.forEach(i => { html += `<div class="flex justify-between items-center bg-white p-3 rounded-xl border shadow-sm mb-2"><div><h5 class="font-bold text-sm">${i.item}</h5><p class="text-xs text-blue-600 font-semibold">${i.ekor ? i.ekor+' Pcs | ' : ''}${i.netto.toFixed(2)} Kg</p></div><button onclick="delTransaksi(${i.id})" class="text-red-400 p-2">✕</button></div>`; }); lst.innerHTML = html; }
+
+        function openSuratJalanModal() {
+            if(trxArr.length === 0) return alert("Belum ada transaksi untuk dicetak!");
+            let tgl = document.getElementById('transaksi-tanggal').value;
+            let mob = document.getElementById('transaksi-mobil').value || "1";
+            let typeLabel = document.getElementById('transaksi-title').innerText.toUpperCase();
+            
+            let html = `<div class="text-center font-bold border-b border-dashed pb-2 mb-2 text-[13px]">SURAT JALAN<br>${typeLabel}</div>`;
+            html += `<div>Tgl   : ${tgl}</div><div>Mobil : ${mob}</div>`;
+            html += `<div class="border-b border-dashed pb-1 mb-2 mt-2 font-bold">Daftar Barang:</div>`;
+            
+            let totEkor = 0; let totNetto = 0;
+            trxArr.forEach(i => {
+                html += `<div class="flex justify-between mt-1"><span class="font-bold">${i.item}</span></div>`;
+                html += `<div class="flex justify-between text-[10px] text-slate-600 border-b border-dotted pb-1 mb-1"><span>${i.ekor ? i.ekor+' pcs' : '-'}</span><span>${i.netto.toFixed(2)} kg</span></div>`;
+                totEkor += i.ekor || 0; totNetto += i.netto || 0;
+            });
+            
+            html += `<div class="border-t border-slate-400 pt-1 mt-2 flex justify-between font-bold text-[12px]"><span>TOTAL BERAT:</span><span>${totNetto.toFixed(2)} kg</span></div>`;
+            if(totEkor > 0) html += `<div class="flex justify-between font-bold text-[12px]"><span>TOTAL EKOR:</span><span>${totEkor} pcs</span></div>`;
+            
+            html += `<div class="mt-5 flex justify-between text-center"><div class="w-1/2">Pengirim<br><br><br>(_______)</div><div class="w-1/2">Penerima<br><br><br>(_______)</div></div>`;
+            
+            document.getElementById('preview-surat-jalan').innerHTML = html;
+            showModalWindow('modal-surat-jalan');
+        }
+        function closeSuratJalanModal() { hideModalWindow('modal-surat-jalan'); }
+        
+        async function cetakSuratJalanBT() {
+            if(!bluetoothCharacteristic) { await hubungkanPrinterBT(); if(!bluetoothCharacteristic) return; }
+            if(trxArr.length === 0) return alert("Kosong!");
+            
+            let tgl = document.getElementById('transaksi-tanggal').value;
+            let mob = document.getElementById('transaksi-mobil').value || "1";
+            let typeLabel = document.getElementById('transaksi-title').innerText.toUpperCase();
+            
+            let text = `\x1B\x40\x1B\x61\x01SURAT JALAN\n${typeLabel}\n--------------------------------\n\x1B\x61\x00`;
+            text += `Tgl   : ${tgl}\nMobil : ${mob}\n--------------------------------\n`;
+            
+            let totEkor = 0; let totNetto = 0;
+            trxArr.forEach(i => {
+                text += `\x1B\x45\x01${i.item}\x1B\x45\x00\n`; // Cetak tebal untuk nama item
+                let txtEkor = i.ekor ? i.ekor+' pcs' : '';
+                text += `${txtEkor.padEnd(12)} ${i.netto.toFixed(2)} kg\n\n`;
+                totEkor += i.ekor || 0; totNetto += i.netto || 0;
+            });
+            
+            text += `--------------------------------\n`;
+            text += `TOTAL BERAT : ${totNetto.toFixed(2)} kg\n`;
+            if(totEkor > 0) text += `TOTAL EKOR  : ${totEkor} pcs\n`;
+            text += `\n`;
+            text += `  Pengirim          Penerima\n\n\n\n (________)        (________)\n`;
+            text += `\x1B\x64\x03`; // Feed 3 lines and cut
+            
+            try {
+                let encoder = new TextEncoder();
+                let bytes = encoder.encode(text);
+                for(let idx=0; idx<bytes.length; idx+=64) {
+                    let chunk = bytes.slice(idx, idx+64);
+                    await bluetoothCharacteristic.writeValue(chunk);
+                    await new Promise(r => setTimeout(r, 50));
+                }
+                alert("Surat Jalan berhasil dicetak!");
+                closeSuratJalanModal();
+            } catch(e) {
+                alert("Gagal mencetak: " + e.message);
+            }
+        }
 
         /* MASTER DATA */
         function calculateMasterStock(tgl, mob) { let kM = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}'); let kO = JSON.parse(localStorage.getItem('kiper_keluar_karkas_db') || '{}'); let kR = JSON.parse(localStorage.getItem('kiper_retur_karkas_db') || '{}'); let bM = JSON.parse(localStorage.getItem('kiper_bp_db') || '{}'); let bO = JSON.parse(localStorage.getItem('kiper_keluar_bp_db') || '{}'); let bR = JSON.parse(localStorage.getItem('kiper_retur_bp_db') || '{}'); let stockKarkas = {}, stockBp = {}; (kM[tgl]?.[mob] || []).forEach(k => { let key = `${k.grade} - ${k.rata}`; if(!stockKarkas[key]) stockKarkas[key] = { ekor: 0, netto: 0, ms_e:0, ms_n:0, kl_e:0, kl_n:0, rt_e:0, rt_n:0 }; stockKarkas[key].ekor += k.ekor; stockKarkas[key].netto += k.netto; stockKarkas[key].ms_e += k.ekor; stockKarkas[key].ms_n += k.netto; }); (kO[tgl]?.[mob] || []).forEach(k => { if(stockKarkas[k.item]) { stockKarkas[k.item].ekor -= k.ekor; stockKarkas[k.item].netto -= k.netto; stockKarkas[k.item].kl_e += k.ekor; stockKarkas[k.item].kl_n += k.netto; } }); (kR[tgl]?.[mob] || []).forEach(k => { if(!stockKarkas[k.item]) stockKarkas[k.item] = { ekor: 0, netto: 0, ms_e:0, ms_n:0, kl_e:0, kl_n:0, rt_e:0, rt_n:0 }; stockKarkas[k.item].ekor += k.ekor; stockKarkas[k.item].netto += k.netto; stockKarkas[k.item].rt_e += k.ekor; stockKarkas[k.item].rt_n += k.netto; }); (bM[tgl]?.[mob] || []).forEach(b => { if(!stockBp[b.jenis]) stockBp[b.jenis] = { berat: 0, ms: 0, kl: 0, rt: 0 }; stockBp[b.jenis].berat += b.berat; stockBp[b.jenis].ms += b.berat; }); (bO[tgl]?.[mob] || []).forEach(b => { if(stockBp[b.item]) { stockBp[b.item].berat -= b.netto; stockBp[b.item].kl += b.netto; } }); (bR[tgl]?.[mob] || []).forEach(b => { if(!stockBp[b.item]) stockBp[b.item] = { berat: 0, ms: 0, kl: 0, rt: 0 }; stockBp[b.item].berat += b.netto; stockBp[b.item].rt += b.netto; }); return { stockKarkas, stockBp }; }
