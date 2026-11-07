@@ -55,9 +55,14 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .photo-thumbnail { object-fit: cover; width: 100%; height: 100%; border-radius: 0.5rem; }
     </style>
 </head>
 <body class="text-slate-800">
+
+    <!-- INPUT FILE GLOBAL UNTUK KAMERA -->
+    <input type="file" id="global-camera-input" accept="image/*" capture="environment" class="hidden" onchange="handleGlobalCamera(event)">
 
     <!-- ==================== 1. MENU UTAMA ==================== -->
     <div id="view-menu" class="view-container active bg-transparent">
@@ -74,15 +79,12 @@
                 </div>
                 
                 <div class="flex items-center gap-2">
-                    <!-- Tombol Sync -->
                     <button id="header-btn-sync" onclick="syncToCloud()" class="w-11 h-11 flex items-center justify-center bg-emerald-50 hover:bg-emerald-100 backdrop-blur-md rounded-full shadow-sm border border-emerald-200 transition-all duration-300 active:scale-90 text-emerald-600" title="Sync ke Google Sheets">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/><path d="M12 12v7"/><path d="m9 16 3-3 3 3"/></svg>
                     </button>
-                    <!-- Tombol Pengaturan -->
                     <button id="header-btn-settings" onclick="openSettingsModal()" class="w-11 h-11 flex items-center justify-center bg-slate-100 hover:bg-slate-200 backdrop-blur-md rounded-full shadow-sm border border-slate-200 transition-all duration-300 active:scale-90 text-slate-600" title="Pengaturan Sistem">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
-                    <!-- File input sembunyi untuk ganti background -->
                     <input type="file" id="header-upload" class="hidden" accept="image/*" onchange="handleHeaderUpload(event)">
                 </div>
             </div>
@@ -169,6 +171,14 @@
                         </div>
                     </div>
 
+                    <!-- FOTO BUKTI KEDATANGAN -->
+                    <div class="mt-4 border-t border-slate-200 pt-4">
+                        <h4 class="font-bold text-slate-700 mb-3 text-sm flex items-center gap-2">📸 Foto Dokumentasi (Bukti)</h4>
+                        <div class="grid grid-cols-2 gap-3" id="kedatangan-photos">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
                     <div class="bg-teal-50/50 p-4 rounded-xl border border-teal-100 mt-2">
                         <h4 class="text-xs font-bold text-teal-800 mb-3">Input Data Timbangan</h4>
                         <div class="grid grid-cols-2 gap-4 mb-3">
@@ -232,9 +242,20 @@
                     <button onclick="addByProduct()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg text-sm active:scale-95 transition-transform mt-2">Simpan Data</button>
                 </div>
             </div>
+            
+            <!-- FOTO BUKTI BY PRODUCT -->
+            <div class="mb-5 bg-white p-4 rounded-xl border shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-bold text-slate-700 text-sm flex items-center gap-1">📸 Galeri Foto Sampel</h4>
+                    <button onclick="promptPhoto('bp')" class="text-[10px] bg-amber-100 text-amber-700 px-3 py-1.5 rounded font-bold uppercase active:scale-90 transition">+ Tambah Foto</button>
+                </div>
+                <div class="flex overflow-x-auto gap-3 pb-2 custom-scrollbar" id="bp-photos"></div>
+            </div>
+
             <h4 class="font-bold text-slate-700 mb-3 text-sm">Data Tersimpan</h4>
             <div id="bp-list" class="space-y-2"></div>
         </div>
+        
         <div class="fixed bottom-6 right-6 z-30 flex flex-col items-end">
             <div id="export-menu-bp" class="hidden flex-col items-end transform origin-bottom scale-95 opacity-0 transition-all duration-200">
                 <button onclick="reportExcelBp(event)" class="bg-emerald-600 text-white px-5 py-3 rounded-full shadow-lg font-bold text-sm flex items-center justify-center gap-2 mb-4 active:scale-95">📊 Excel</button>
@@ -257,12 +278,22 @@
         </div>
         <div class="px-4 pt-5 pb-1 flex gap-3">
             <button onclick="startKarkasInput()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl shadow-md active:scale-95 transition-all flex items-center justify-center space-x-2"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14"/><path d="M5 12h14"/></svg><span class="text-sm tracking-wide">Input Manual</span></button>
-            <button onclick="checkApiKeyAndScan()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow-md active:scale-95 transition-all flex items-center justify-center space-x-2"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span class="text-sm tracking-wide">Scan Kertas AI</span></button>
+            <button onclick="checkApiKeyAndScan()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow-md active:scale-95 transition-all flex items-center justify-center space-x-2"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span class="text-sm tracking-wide">Scan AI</span></button>
             <input type="file" id="ai-scan-karkas" accept="image/*" capture="environment" class="hidden" onchange="processAiScan(event)">
         </div>
         <div class="flex-1 p-4 md:p-6 overflow-y-auto pb-24 page-enter-fade">
+            <!-- FOTO BUKTI KARKAS -->
+            <div class="mb-6 bg-white p-4 rounded-xl border shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-bold text-slate-700 text-sm flex items-center gap-1">📸 Galeri Foto Karkas</h4>
+                    <button onclick="promptPhoto('karkas')" class="text-[10px] bg-red-100 text-red-700 px-3 py-1.5 rounded font-bold uppercase active:scale-90 transition">+ Tambah Foto</button>
+                </div>
+                <div class="flex overflow-x-auto gap-3 pb-2 custom-scrollbar" id="karkas-photos"></div>
+            </div>
+
             <div id="karkas-container"></div>
         </div>
+        
         <div class="fixed bottom-6 right-6 z-30 flex flex-col items-end">
             <div id="export-menu-karkas" class="hidden flex-col items-end transform origin-bottom scale-95 opacity-0 transition-all duration-200">
                 <button onclick="reportExcelKarkas(event)" class="bg-emerald-600 text-white px-5 py-3 rounded-full shadow-lg font-bold text-sm flex items-center justify-center gap-2 mb-4 active:scale-95">📊 Excel</button>
@@ -271,7 +302,7 @@
             <button onclick="toggleExportMenu('export-menu-karkas')" class="bg-blue-600 text-white p-4 rounded-full shadow-xl active:scale-90 flex items-center justify-center transition-transform"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></button>
         </div>
 
-        <!-- MODAL MULTI-STEP KARKAS -->
+        <!-- MODAL MULTI-STEP KARKAS (TETAP SAMA) -->
         <div id="modal-karkas" class="hidden fixed inset-0 bg-slate-900/60 z-50 items-start pt-12 justify-center p-4 opacity-0 transition-opacity duration-300 overflow-y-auto">
             <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm transform scale-95 transition-transform duration-300 flex flex-col max-h-[85vh]">
                 <div class="px-5 py-4 border-b border-slate-100 flex flex-col items-center bg-slate-50 rounded-t-2xl shrink-0"><div class="w-full flex justify-between items-center"><h3 class="font-bold text-slate-700 text-base" id="karkas-step-title">Input Karkas</h3><button onclick="closeKarkasModal()" class="text-slate-400 bg-slate-200 rounded-full p-1">✕</button></div></div>
@@ -312,6 +343,16 @@
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Tgl Asal Prod.</label><input type="date" id="transaksi-tanggal" onchange="refreshDropdownTransaksi()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm"></div>
                  <div><label class="block text-xs font-semibold text-slate-600 mb-1">Mobil Asal</label><input type="number" id="transaksi-mobil" onchange="refreshDropdownTransaksi()" value="1" min="1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-center font-bold text-blue-700"></div>
             </div>
+            
+            <!-- FOTO BUKTI TRANSAKSI -->
+            <div class="mb-5 bg-white p-4 rounded-xl border shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-bold text-slate-700 text-sm flex items-center gap-1">📸 Foto Transaksi</h4>
+                    <button onclick="promptPhoto('transaksi')" class="text-[10px] bg-blue-100 text-blue-700 px-3 py-1.5 rounded font-bold uppercase active:scale-90 transition">+ Tambah Foto</button>
+                </div>
+                <div class="flex overflow-x-auto gap-3 pb-2 custom-scrollbar" id="transaksi-photos"></div>
+            </div>
+
             <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100 mb-6">
                 <div class="space-y-3">
                     <div><label class="block text-[11px] font-semibold text-slate-600 mb-1">Pilih Item dari Stok</label><select id="transaksi-item" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-800"></select></div>
@@ -345,10 +386,17 @@
 
 
     <!-- ==================== MODALS ==================== -->
+    <div id="modal-image-viewer" class="hidden fixed inset-0 bg-black/95 z-[300] flex-col justify-center items-center p-4 opacity-0 transition-opacity duration-300">
+        <button onclick="closeImageViewer()" class="absolute top-6 right-6 text-white bg-white/20 p-2 rounded-full hover:bg-white/40"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
+        <h3 id="image-viewer-title" class="absolute top-6 left-6 text-white font-bold text-lg drop-shadow-md">Foto Bukti</h3>
+        <img id="image-viewer-img" src="" class="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl">
+    </div>
+
+    <!-- Modals lainnya (Reset Counter, WA Choice, Crop, Loading AI, Cloud Sync, Settings) -->
     <div id="modal-reset-counter" class="hidden fixed inset-0 bg-slate-900/60 z-[100] justify-center items-center p-4 opacity-0 transition-opacity duration-300"><div class="bg-white rounded-[1.5rem] shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 flex flex-col text-center"><h3 class="font-black text-slate-800 text-xl mb-2">Reset Counter?</h3><p class="text-sm text-slate-500 mb-6">Yakin ingin mengatur ulang hitungan ayam gantung menjadi 0?</p><div class="flex gap-3"><button onclick="closeResetCounterModal()" class="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold">Batal</button><button onclick="confirmResetAyamCounter()" class="flex-1 py-3 bg-rose-500 text-white rounded-xl font-bold">Ya, Reset</button></div></div></div>
     <div id="modal-wa-choice" class="hidden fixed inset-0 bg-slate-900/60 z-[100] justify-center items-center p-4 opacity-0 transition-opacity duration-300"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 flex flex-col"><h3 class="font-bold text-slate-800 text-lg mb-2">Pilih Laporan WhatsApp</h3><p class="text-xs text-slate-500 mb-4">Pilih cakupan data karkas yang ingin dikirim.</p><div class="space-y-3"><button onclick="reportWaKarkas('current')" class="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm">Hanya Mobil Saat Ini</button><button onclick="reportWaKarkas('all')" class="w-full py-3 bg-emerald-700 text-white rounded-xl font-bold text-sm">Semua Mobil Disatukan</button><button onclick="closeWaExportModal()" class="w-full py-2 bg-slate-100 text-slate-600 rounded-xl font-semibold text-xs mt-2">Batal</button></div></div></div>
     <div id="modal-crop" class="hidden fixed inset-0 bg-slate-900/90 z-[100] flex-col justify-center items-center p-4 opacity-0 transition-opacity duration-300"><div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm flex flex-col overflow-hidden"><div class="px-5 py-4 border-b bg-slate-50 flex justify-between items-center"><h3 class="font-bold text-slate-700">Sesuaikan Background</h3><button onclick="closeCropModal()" class="text-slate-400">✕</button></div><div class="p-4 bg-slate-100"><div class="w-full h-[250px] bg-slate-200 rounded-xl overflow-hidden relative"><img id="crop-image-target" class="max-w-full block" src="" alt=""></div></div><div class="p-4 flex gap-3"><button onclick="closeCropModal()" class="flex-1 py-3 bg-slate-200 rounded-xl font-bold">Batal</button><button onclick="applyCrop()" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold">Simpan</button></div></div></div>
-    <div id="modal-ai-loading" class="hidden fixed inset-0 bg-slate-900/90 z-[200] flex-col justify-center items-center p-4"><div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-teal-500 mb-6"></div><p class="text-white font-bold text-lg animate-pulse text-center">AI Membaca Tulisan Tangan...</p><p class="text-slate-300 text-sm mt-2 text-center">Mohon tahan tunggu beberapa saat hingga selesai direkap.</p></div>
+    <div id="modal-ai-loading" class="hidden fixed inset-0 bg-slate-900/90 z-[200] flex-col justify-center items-center p-4"><div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-teal-500 mb-6"></div><p class="text-white font-bold text-lg animate-pulse text-center" id="loading-message-text">Memproses AI...</p></div>
 
     <!-- MODAL CLOUD SYNC -->
     <div id="modal-cloud-sync" class="hidden fixed inset-0 bg-slate-900/90 z-[200] flex-col justify-center items-center p-4 opacity-0 transition-opacity duration-300">
@@ -367,34 +415,20 @@
     <div id="modal-settings" class="hidden fixed inset-0 bg-slate-900/60 z-[150] justify-center items-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-[1.5rem] shadow-2xl w-full max-w-sm p-6 transform scale-95 transition-transform duration-300 flex flex-col">
             <div class="flex justify-between items-center mb-5">
-                <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> Pengaturan Sistem</h3>
+                <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">⚙️ Pengaturan</h3>
                 <button onclick="closeSettingsModal()" class="text-slate-400 bg-slate-100 rounded-full p-1 w-8 h-8 flex items-center justify-center">✕</button>
             </div>
-            
             <div class="space-y-4 mb-6">
                 <button onclick="triggerHeaderUpload()" class="w-full py-3 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl font-semibold text-sm flex items-center justify-between px-4 active:scale-95 transition-transform">
-                    <span class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg> Ganti Background Cover</span>
-                    <span class="text-slate-400">&rarr;</span>
+                    <span class="flex items-center gap-2">Ganti Background Cover</span><span class="text-slate-400">&rarr;</span>
                 </button>
-
                 <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-xs font-bold text-slate-600 flex items-center gap-1">☁️ URL Sheets API</span>
-                        <span id="status-gas" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Kosong</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold text-slate-600 flex items-center gap-1">🤖 AI Gemini Key</span>
-                        <span id="status-ai" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Kosong</span>
-                    </div>
+                    <div class="flex justify-between items-center mb-3"><span class="text-xs font-bold text-slate-600">☁️ URL Sheets API</span><span id="status-gas" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Kosong</span></div>
+                    <div class="flex justify-between items-center"><span class="text-xs font-bold text-slate-600">🤖 AI Gemini Key</span><span id="status-ai" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">Kosong</span></div>
                 </div>
             </div>
-
             <div class="border-t border-slate-200 pt-5">
-                <p class="text-[11px] text-slate-500 mb-3 text-center leading-relaxed">Undang perangkat HP lain (Karyawan) agar otomatis terhubung ke sistem Cloud tanpa repot ketik kode lagi.</p>
-                <button onclick="generateTeamLink()" class="w-full py-3.5 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl font-bold text-sm shadow-md shadow-green-200 active:scale-95 transition-transform flex justify-center items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                    Buat Link Akses Tim (WhatsApp)
-                </button>
+                <button onclick="generateTeamLink()" class="w-full py-3.5 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl font-bold text-sm shadow-md active:scale-95 transition-transform flex justify-center items-center gap-2">Buat Link Akses Tim (WhatsApp)</button>
             </div>
         </div>
     </div>
@@ -410,7 +444,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // DETEKSI AUTO-SETUP DARI LINK SAKTI
             const urlParams = new URLSearchParams(window.location.search);
             const token = urlParams.get('token');
             if (token) {
@@ -419,11 +452,8 @@
                     if (decoded.g) localStorage.setItem('kiper_gas_url', decoded.g);
                     if (decoded.a) localStorage.setItem('kiper_gemini_api_key', decoded.a);
                     alert("✅ SETUP PERANGKAT BERHASIL!\n\nPerangkat HP ini sudah terhubung ke sistem Cloud Google Sheets & AI Gemini secara otomatis.");
-                    // Bersihkan URL agar rapi kembali
                     window.history.replaceState({}, document.title, window.location.pathname);
-                } catch(e) {
-                    console.error("Token setup tidak valid");
-                }
+                } catch(e) {}
             }
 
             const today = new Date().toISOString().split('T')[0];
@@ -433,236 +463,184 @@
             const savedHeaderBg = localStorage.getItem('kiper_header_bg'); if (savedHeaderBg) applyHeaderBg(savedHeaderBg);
             ayamCounter = parseInt(localStorage.getItem('kiper_ayam_counter')) || 0; document.getElementById('ayam-counter-display').innerText = ayamCounter;
             const savedDb = localStorage.getItem('kiper_kedatangan_db'); if (savedDb) { try { appDatabase = JSON.parse(savedDb); } catch(e) {} }
-            loadDataTimbangan(); loadDataKarkas();
+            loadDataTimbangan(); loadDataKarkas(); loadBpData(); refreshDropdownTransaksi();
         });
 
         // ----------------------------------------------------------------------
-        // FUNGSI PENGATURAN & LINK SAKTI
+        // FUNGSI SISTEM FOTO BUKTI (GLOBAL CAMERA)
         // ----------------------------------------------------------------------
-        function openSettingsModal() {
-            const gas = localStorage.getItem('kiper_gas_url');
-            const ai = localStorage.getItem('kiper_gemini_api_key');
+        let currentPhotoTarget = null; // { module, tgl, mob, key, label }
+
+        function triggerCamera(module, key, label) {
+            let tgl, mob;
+            if (module === 'kedatangan') { tgl = document.getElementById('filter-tanggal').value; mob = document.getElementById('filter-mobil').value || "1"; }
+            else if (module === 'bp') { tgl = document.getElementById('bp-tanggal').value; mob = document.getElementById('bp-mobil').value || "1"; }
+            else if (module === 'karkas') { tgl = document.getElementById('filter-tanggal-karkas').value; mob = document.getElementById('filter-mobil-karkas').value || "1"; }
+            else if (module === 'transaksi') { tgl = document.getElementById('transaksi-tanggal').value; mob = document.getElementById('transaksi-mobil').value || "1"; }
             
-            const elGas = document.getElementById('status-gas');
-            if(gas) { elGas.innerText = "Terhubung"; elGas.className = "text-[10px] font-bold px-2 py-1 rounded bg-emerald-100 text-emerald-700 uppercase tracking-wide"; }
-            else { elGas.innerText = "Belum Ada"; elGas.className = "text-[10px] font-bold px-2 py-1 rounded bg-rose-100 text-rose-600 uppercase tracking-wide"; }
-
-            const elAi = document.getElementById('status-ai');
-            if(ai) { elAi.innerText = "Terhubung"; elAi.className = "text-[10px] font-bold px-2 py-1 rounded bg-emerald-100 text-emerald-700 uppercase tracking-wide"; }
-            else { elAi.innerText = "Belum Ada"; elAi.className = "text-[10px] font-bold px-2 py-1 rounded bg-rose-100 text-rose-600 uppercase tracking-wide"; }
-
-            showModalWindow('modal-settings');
-        }
-        function closeSettingsModal() { hideModalWindow('modal-settings'); }
-
-        function generateTeamLink() {
-            const gas = localStorage.getItem('kiper_gas_url') || '';
-            const ai = localStorage.getItem('kiper_gemini_api_key') || '';
+            if(!tgl || !mob) return alert("Pilih Tanggal dan Mobil terlebih dahulu!");
             
-            if(!gas && !ai) {
-                alert("Peringatan: HP Anda belum memiliki Kunci Google Sheets atau Kunci AI.\n\nSilakan Anda setel dulu dengan memencet tombol 'Sync' dan 'Scan AI' di halaman depan sebelum mengundang tim.");
-                return;
-            }
-
-            // Encode data ke base64 agar aman
-            const payload = btoa(JSON.stringify({ g: gas, a: ai }));
-            // Gunakan URL saat ini (GitHub Pages) ditambah token
-            const link = window.location.origin + window.location.pathname + "?token=" + payload;
-
-            const msg = "*UNDANGAN AKSES APLIKASI KIPER*\n\nSilakan klik link di bawah ini dari HP Anda untuk masuk ke sistem KIPER. Konfigurasi akan diatur otomatis tanpa perlu memasukkan kode apapun:\n\n" + link + "\n\n*(Peringatan: Jangan bagikan link ini ke orang luar)*";
-            
-            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+            currentPhotoTarget = { module, tgl, mob, key, label };
+            document.getElementById('global-camera-input').click();
         }
 
+        function promptPhoto(module) {
+            let label = prompt("Masukkan Label/Keterangan Foto ini:\n(Contoh: Kepala Utuh / Grade A / DO Retur)");
+            if (!label || label.trim() === "") return;
+            triggerCamera(module, 'dynamic', label.trim());
+        }
 
-        // ----------------------------------------------------------------------
-        // FUNGSI SINKRONISASI CLOUD (GOOGLE SHEETS)
-        // ----------------------------------------------------------------------
-        async function syncToCloud() {
-            if (!navigator.onLine) {
-                alert("⚠️ Sinyal Internet Tidak Ada!\n\nSilakan keluar ruangan dan cari sinyal/WiFi terlebih dahulu untuk mensinkronisasi data ke Cloud.");
-                return;
-            }
+        async function handleGlobalCamera(event) {
+            const file = event.target.files[0];
+            if(!file || !currentPhotoTarget) return;
+            event.target.value = ''; // reset
 
-            let gasUrl = localStorage.getItem('kiper_gas_url');
-            if (!gasUrl) {
-                gasUrl = prompt("☁️ SETUP GOOGLE SHEETS\n\nMasukkan 'URL Aplikasi Web' yang Anda dapatkan dari Google Apps Script.\n(URL ini akan disave di memori HP agar tidak perlu Anda ketik lagi besok):");
-                if (!gasUrl || !gasUrl.startsWith("https://script.google.com")) {
-                    alert("Aksi Dibatalkan: URL tidak valid.");
-                    return;
-                }
-                localStorage.setItem('kiper_gas_url', gasUrl.trim());
-            }
-
-            // Tampilkan Modal Loading
-            const m = document.getElementById('modal-cloud-sync');
-            m.classList.remove('hidden'); m.classList.add('flex');
-            
-            const lastSync = localStorage.getItem('kiper_last_sync');
-            const syncMsg = lastSync ? "Terakhir sukses: " + lastSync : "Merekap seluruh data offline ke Cloud...";
-            
-            document.getElementById('sync-title').innerText = "Menyiapkan Data...";
-            document.getElementById('sync-message').innerText = syncMsg;
-            document.getElementById('sync-progress').style.width = "10%";
-            document.getElementById('sync-close-btn').classList.add('hidden');
-            setTimeout(() => m.classList.remove('opacity-0'), 10);
+            const mLoading = document.getElementById('modal-ai-loading');
+            document.getElementById('loading-message-text').innerText = "Memproses & Mengompres Foto...";
+            mLoading.classList.remove('hidden'); mLoading.classList.add('flex');
 
             try {
-                // Kumpulkan & Rapikan Semua Data Offline
-                let payload = {
-                    "Karkas": [ ["Tanggal", "Mobil Ke", "Grade", "Rata-rata", "Ekor", "Netto (Kg)", "Keranjang"] ],
-                    "Kedatangan": [ ["Tanggal", "Mobil Ke", "Supplier", "No Polisi", "No Surat Jalan", "Ekor Timbangan", "Berat Timbangan (Kg)"] ],
-                    "ByProduct": [ ["Tanggal", "Mobil Ke", "Jenis Item", "Berat (Kg)"] ],
-                    "Distribusi": [ ["Tipe", "Tanggal", "Mobil", "Item", "Ekor", "Netto (Kg)"] ]
-                };
+                // Compress ke Base64 (Maks 800px, Quality 0.6 = Cepat & Hemat Memori)
+                const base64 = await compressImageFile(file, 800, 0.6);
 
-                let dbKarkas = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}');
-                for (let tgl in dbKarkas) { for (let mob in dbKarkas[tgl]) { dbKarkas[tgl][mob].forEach(i => {
-                    payload["Karkas"].push([tgl, mob, i.grade, i.rata, i.ekor, i.netto, i.jmlKeranjang || 0]);
-                });}}
-
-                let dbTiba = JSON.parse(localStorage.getItem('kiper_kedatangan_db') || '{}');
-                for (let tgl in dbTiba) { for (let mob in dbTiba[tgl]) { 
-                    let info = dbTiba[tgl][mob].info || {};
-                    (dbTiba[tgl][mob].tabel || []).forEach(i => {
-                        payload["Kedatangan"].push([tgl, mob, info.supplier || '', info.nopol || '', info.sj || '', i.ekor, i.berat]);
-                    });
-                }}
-
-                let dbBp = JSON.parse(localStorage.getItem('kiper_bp_db') || '{}');
-                for (let tgl in dbBp) { for (let mob in dbBp[tgl]) { dbBp[tgl][mob].forEach(i => {
-                    payload["ByProduct"].push([tgl, mob, i.jenis, i.berat]);
-                });}}
-
-                const distKeys = ['keluar_karkas', 'keluar_bp', 'retur_karkas', 'retur_bp'];
-                distKeys.forEach(type => {
-                    let db = JSON.parse(localStorage.getItem(`kiper_${type}_db`) || '{}');
-                    for (let tgl in db) { for (let mob in db[tgl]) { db[tgl][mob].forEach(i => {
-                        payload["Distribusi"].push([type.toUpperCase(), tgl, mob, i.item, i.ekor || 0, i.netto]);
-                    });}}
-                });
-
-                document.getElementById('sync-progress').style.width = "40%";
-                document.getElementById('sync-title').innerText = "Mengirim ke Google Sheets...";
-
-                // Tembak Data ke Google Sheets
-                const response = await fetch(gasUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-                document.getElementById('sync-progress').style.width = "100%";
-
-                if (result.status === "success") {
-                    document.getElementById('sync-title').innerText = "Sinkronisasi Berhasil!";
-                    document.getElementById('sync-message').innerText = "Semua data aman tersimpan di Google Sheets.";
-                    
-                    const now = new Date(); const timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-                    localStorage.setItem('kiper_last_sync', timeStr);
-                    document.getElementById('sync-close-btn').innerText = "Tutup";
-                } else { throw new Error(result.message); }
-
-            } catch (err) {
-                document.getElementById('sync-title').innerText = "Gagal Sinkronisasi";
-                document.getElementById('sync-message').innerText = "Silakan cek kembali URL atau koneksi. Pesan: " + err.message;
-                document.getElementById('sync-progress').classList.replace('bg-emerald-500', 'bg-rose-500');
+                let db = JSON.parse(localStorage.getItem('kiper_images') || '{}');
+                if(!db[currentPhotoTarget.module]) db[currentPhotoTarget.module] = {};
                 
-                // Beri opsi untuk reset URL jika error
-                const btn = document.getElementById('sync-close-btn');
-                btn.innerText = "Tutup & Hapus URL dari HP";
-                btn.classList.replace('bg-slate-800', 'bg-rose-600');
-                btn.onclick = function() {
-                    localStorage.removeItem('kiper_gas_url');
-                    closeSyncModal();
-                    // Kembalikan ke fungsi asal untuk berikutnya
-                    setTimeout(() => { btn.onclick = closeSyncModal; btn.classList.replace('bg-rose-600', 'bg-slate-800'); }, 500);
-                };
+                let sessionKey = `${currentPhotoTarget.tgl}_${currentPhotoTarget.mob}`;
+                if(currentPhotoTarget.module === 'transaksi') sessionKey = `${currentTransaksiType}_${sessionKey}`;
+
+                if(!db[currentPhotoTarget.module][sessionKey]) {
+                    db[currentPhotoTarget.module][sessionKey] = (currentPhotoTarget.module === 'kedatangan') ? {} : [];
+                }
+
+                if(currentPhotoTarget.module === 'kedatangan') {
+                    db[currentPhotoTarget.module][sessionKey][currentPhotoTarget.key] = base64;
+                } else {
+                    db[currentPhotoTarget.module][sessionKey].push({ id: Date.now(), label: currentPhotoTarget.label, base64: base64 });
+                }
+                
+                localStorage.setItem('kiper_images', JSON.stringify(db));
+                refreshPhotoUI(currentPhotoTarget.module);
+            } catch(e) {
+                alert("Gagal memproses foto: " + e.message);
             } finally {
-                document.getElementById('sync-close-btn').classList.remove('hidden');
+                mLoading.classList.add('hidden'); mLoading.classList.remove('flex');
+                currentPhotoTarget = null;
             }
         }
 
-        function closeSyncModal() {
-            const m = document.getElementById('modal-cloud-sync');
-            m.classList.add('opacity-0');
-            setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); 
-                document.getElementById('sync-progress').style.width = "0%";
-                document.getElementById('sync-progress').classList.replace('bg-rose-500', 'bg-emerald-500');
-            }, 300);
+        function compressImageFile(file, maxWidth, quality) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.src = e.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let w = img.width; let h = img.height;
+                        if(w > maxWidth) { h = Math.round((maxWidth / w) * h); w = maxWidth; }
+                        canvas.width = w; canvas.height = h;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, w, h);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                    img.onerror = () => reject(new Error("File bukan gambar valid."));
+                };
+            });
         }
 
-        // --- SISTEM UTILITAS & GLOBAL CORE TETAP SAMA ---
-        let appDatabase = {}; let dataTimbanganArr = []; let ayamCounter = 0; let karkasArr = [];
-        let currentKarkasStep = 1; let tempKarkas = {}; let currentPrintLabelIndex = 0;
-        let bluetoothDevice = null; let bluetoothCharacteristic = null; let trxArr = []; let currentTransaksiType = '';
+        function refreshPhotoUI(module) {
+            let tgl, mob, sessionKey, containerId;
+            let db = JSON.parse(localStorage.getItem('kiper_images') || '{}');
+            let mDb = db[module] || {};
 
-        function showModalWindow(id) { const m = document.getElementById(id); m.classList.remove('hidden'); m.classList.add('flex'); setTimeout(() => m.classList.remove('opacity-0'), 10); }
-        function hideModalWindow(id) { const m = document.getElementById(id); m.classList.add('opacity-0'); setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); }, 300); }
-
-        function navigateTo(viewId) {
-            document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active'); window.scrollTo(0, 0);
-            if(viewId === 'view-masterdata') renderMasterData(); if(viewId === 'view-byproduct') loadBpData(); if(viewId === 'view-karkas') loadDataKarkas();
-            history.pushState({ view: viewId }, '', '#' + viewId.replace('view-', ''));
+            if(module === 'kedatangan') {
+                tgl = document.getElementById('filter-tanggal').value; mob = document.getElementById('filter-mobil').value || "1";
+                sessionKey = `${tgl}_${mob}`;
+                let photos = mDb[sessionKey] || {};
+                const keys = [{k:'mobil', l:'Mobil'}, {k:'supir', l:'Supir'}, {k:'keranjang', l:'Keranjang'}, {k:'mati', l:'Ayam Mati'}];
+                let html = '';
+                keys.forEach(item => {
+                    if(photos[item.k]) {
+                        html += `<div class="relative aspect-square rounded-xl overflow-hidden border border-slate-200 shadow-sm"><img src="${photos[item.k]}" class="photo-thumbnail cursor-pointer" onclick="viewImage('${photos[item.k]}', '${item.l}')"><button onclick="deletePhoto('${module}', '${sessionKey}', '${item.k}')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md">✕</button><div class="absolute bottom-0 inset-x-0 bg-black/50 text-white text-[9px] font-bold text-center py-1 truncate px-1">${item.l}</div></div>`;
+                    } else {
+                        html += `<button onclick="triggerCamera('${module}', '${item.k}', '${item.l}')" class="aspect-square bg-slate-50 hover:bg-slate-100 border border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center text-slate-400 active:scale-95 transition"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-1"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg><span class="text-[10px] font-bold">+ ${item.l}</span></button>`;
+                    }
+                });
+                document.getElementById('kedatangan-photos').innerHTML = html;
+            } else {
+                if (module === 'bp') { tgl = document.getElementById('bp-tanggal').value; mob = document.getElementById('bp-mobil').value || "1"; containerId = 'bp-photos'; sessionKey = `${tgl}_${mob}`; }
+                else if (module === 'karkas') { tgl = document.getElementById('filter-tanggal-karkas').value; mob = document.getElementById('filter-mobil-karkas').value || "1"; containerId = 'karkas-photos'; sessionKey = `${tgl}_${mob}`; }
+                else if (module === 'transaksi') { tgl = document.getElementById('transaksi-tanggal').value; mob = document.getElementById('transaksi-mobil').value || "1"; containerId = 'transaksi-photos'; sessionKey = `${currentTransaksiType}_${tgl}_${mob}`; }
+                
+                let arr = mDb[sessionKey] || [];
+                let html = '';
+                if(arr.length === 0) {
+                    html = `<div class="w-full text-center text-xs text-slate-400 italic py-4">Belum ada foto bukti.</div>`;
+                } else {
+                    arr.forEach((p, index) => {
+                        html += `<div class="relative min-w-[90px] h-[90px] rounded-xl overflow-hidden border border-slate-200 shadow-sm flex-shrink-0"><img src="${p.base64}" class="photo-thumbnail cursor-pointer" onclick="viewImage('${p.base64}', '${p.label}')"><button onclick="deletePhoto('${module}', '${sessionKey}', ${index})" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-md">✕</button><div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[9px] font-bold text-center py-1 truncate px-1">${p.label}</div></div>`;
+                    });
+                }
+                document.getElementById(containerId).innerHTML = html;
+            }
         }
-        function goBack() { history.back(); }
-        window.addEventListener('popstate', (event) => {
-            document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
-            if (event.state && event.state.view) { document.getElementById(event.state.view).classList.add('active'); } else { document.getElementById('view-menu').classList.add('active'); }
-        });
+
+        function deletePhoto(module, sessionKey, keyOrIndex) {
+            if(!confirm("Hapus foto ini?")) return;
+            let db = JSON.parse(localStorage.getItem('kiper_images') || '{}');
+            if(module === 'kedatangan') { delete db[module][sessionKey][keyOrIndex]; }
+            else { db[module][sessionKey].splice(keyOrIndex, 1); }
+            localStorage.setItem('kiper_images', JSON.stringify(db));
+            refreshPhotoUI(module);
+        }
+
+        function viewImage(base64, title) {
+            document.getElementById('image-viewer-img').src = base64;
+            document.getElementById('image-viewer-title').innerText = title;
+            const m = document.getElementById('modal-image-viewer');
+            m.classList.remove('hidden'); m.classList.add('flex'); setTimeout(() => m.classList.remove('opacity-0'), 10);
+        }
+        function closeImageViewer() {
+            const m = document.getElementById('modal-image-viewer');
+            m.classList.add('opacity-0'); setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); document.getElementById('image-viewer-img').src=''; }, 300);
+        }
 
         // ================= KUMPULAN FUNGSI JS INTERNAL (KEDATANGAN, KARKAS, DLL) =================
+        function showModalWindow(id) { const m = document.getElementById(id); m.classList.remove('hidden'); m.classList.add('flex'); setTimeout(() => m.classList.remove('opacity-0'), 10); }
+        function hideModalWindow(id) { const m = document.getElementById(id); m.classList.add('opacity-0'); setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); }, 300); }
+        function navigateTo(viewId) { document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active')); document.getElementById(viewId).classList.add('active'); window.scrollTo(0, 0); if(viewId === 'view-masterdata') renderMasterData(); if(viewId === 'view-byproduct') { loadBpData(); refreshPhotoUI('bp'); } if(viewId === 'view-karkas') { loadDataKarkas(); refreshPhotoUI('karkas'); } if(viewId === 'view-kedatangan') { refreshPhotoUI('kedatangan'); } if(viewId === 'view-keluar') { refreshDropdownTransaksi(); } history.pushState({ view: viewId }, '', '#' + viewId.replace('view-', '')); }
+        function goBack() { history.back(); }
+        window.addEventListener('popstate', (event) => { document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active')); if (event.state && event.state.view) { document.getElementById(event.state.view).classList.add('active'); } else { document.getElementById('view-menu').classList.add('active'); } });
+
         let cropper = null;
-        function triggerHeaderUpload() { 
-            closeSettingsModal(); 
-            setTimeout(() => document.getElementById('header-upload').click(), 300); 
-        }
-        function handleHeaderUpload(event) {
-            const file = event.target.files[0]; if(file) { const reader = new FileReader(); reader.onload = function(e) { const img = document.getElementById('crop-image-target'); img.src = e.target.result; showModalWindow('modal-crop'); if(cropper) cropper.destroy(); cropper = new Cropper(img, { aspectRatio: 16/9, viewMode: 1 }); }; reader.readAsDataURL(file); event.target.value = ''; }
-        }
+        function triggerHeaderUpload() { closeSettingsModal(); setTimeout(() => document.getElementById('header-upload').click(), 300); }
+        function handleHeaderUpload(event) { const file = event.target.files[0]; if(file) { const reader = new FileReader(); reader.onload = function(e) { const img = document.getElementById('crop-image-target'); img.src = e.target.result; showModalWindow('modal-crop'); if(cropper) cropper.destroy(); cropper = new Cropper(img, { aspectRatio: 16/9, viewMode: 1 }); }; reader.readAsDataURL(file); event.target.value = ''; } }
         function closeCropModal() { hideModalWindow('modal-crop'); if(cropper) cropper.destroy(); }
         function applyCrop() { if(!cropper) return; const canvas = cropper.getCroppedCanvas({ width: 800, height: 450 }); const base64 = canvas.toDataURL('image/jpeg', 0.8); localStorage.setItem('kiper_header_bg', base64); applyHeaderBg(base64); closeCropModal(); }
+        function applyHeaderBg(base64) { const bgDiv = document.getElementById('header-bg'); if(base64 && bgDiv) { bgDiv.style.backgroundImage = `url(${base64})`; bgDiv.classList.remove('opacity-0'); document.getElementById('header-overlay').className = 'absolute inset-0 bg-black/40 backdrop-blur-[2px] z-[-10] transition-colors'; document.getElementById('header-title').className = 'text-[26px] font-extrabold text-white tracking-tight drop-shadow-md'; document.getElementById('header-subtitle').className = 'text-sm text-slate-100 mt-0.5 font-medium drop-shadow-sm'; const btnSet = document.getElementById('header-btn-settings'); if(btnSet) btnSet.className = 'w-11 h-11 flex items-center justify-center bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full shadow-sm border border-white/30 text-white transition-all active:scale-90'; const syncBtn = document.getElementById('header-btn-sync'); if(syncBtn) syncBtn.className = 'w-11 h-11 flex items-center justify-center bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full shadow-sm border border-emerald-400/50 text-emerald-400 transition-all active:scale-90'; } }
         
-        function applyHeaderBg(base64) { 
-            const bgDiv = document.getElementById('header-bg'); 
-            if(base64 && bgDiv) { 
-                bgDiv.style.backgroundImage = `url(${base64})`; 
-                bgDiv.classList.remove('opacity-0'); 
-                document.getElementById('header-overlay').className = 'absolute inset-0 bg-black/40 backdrop-blur-[2px] z-[-10] transition-colors'; 
-                document.getElementById('header-title').className = 'text-[26px] font-extrabold text-white tracking-tight drop-shadow-md'; 
-                document.getElementById('header-subtitle').className = 'text-sm text-slate-100 mt-0.5 font-medium drop-shadow-sm'; 
-                
-                const btnSet = document.getElementById('header-btn-settings');
-                if(btnSet) btnSet.className = 'w-11 h-11 flex items-center justify-center bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full shadow-sm border border-white/30 text-white transition-all active:scale-90'; 
-                
-                const syncBtn = document.getElementById('header-btn-sync');
-                if(syncBtn) syncBtn.className = 'w-11 h-11 flex items-center justify-center bg-black/20 hover:bg-black/40 backdrop-blur-md rounded-full shadow-sm border border-emerald-400/50 text-emerald-400 transition-all active:scale-90';
-            } 
-        }
-        
+        let appDatabase = {}; let dataTimbanganArr = []; let ayamCounter = 0; let karkasArr = []; let currentKarkasStep = 1; let tempKarkas = {}; let currentPrintLabelIndex = 0; let bluetoothDevice = null; let bluetoothCharacteristic = null; let trxArr = []; let currentTransaksiType = '';
+
         function updateAyamCounter(c) { ayamCounter += c; if(ayamCounter < 0) ayamCounter = 0; document.getElementById('ayam-counter-display').innerText = ayamCounter; localStorage.setItem('kiper_ayam_counter', ayamCounter); }
         function openResetCounterModal() { showModalWindow('modal-reset-counter'); }
         function closeResetCounterModal() { hideModalWindow('modal-reset-counter'); }
         function confirmResetAyamCounter() { ayamCounter = 0; document.getElementById('ayam-counter-display').innerText = 0; localStorage.setItem('kiper_ayam_counter', 0); closeResetCounterModal(); }
 
         /* KEDATANGAN */
-        function loadDataTimbangan() { const tgl = document.getElementById('filter-tanggal').value || new Date().toISOString().split('T')[0]; const mob = document.getElementById('filter-mobil').value || "1"; let rec = appDatabase[tgl]?.[mob] || { info: { supplier:'', nopol:'', sj:'' }, tabel: [] }; document.getElementById('form-supplier').value = rec.info.supplier; document.getElementById('form-nopol').value = rec.info.nopol; document.getElementById('form-sj').value = rec.info.sj; dataTimbanganArr = [...rec.tabel]; renderTimbanganRows(); }
+        function loadDataTimbangan() { const tgl = document.getElementById('filter-tanggal').value || new Date().toISOString().split('T')[0]; const mob = document.getElementById('filter-mobil').value || "1"; let rec = appDatabase[tgl]?.[mob] || { info: { supplier:'', nopol:'', sj:'' }, tabel: [] }; document.getElementById('form-supplier').value = rec.info.supplier; document.getElementById('form-nopol').value = rec.info.nopol; document.getElementById('form-sj').value = rec.info.sj; dataTimbanganArr = [...rec.tabel]; renderTimbanganRows(); refreshPhotoUI('kedatangan'); }
         function autoSaveData() { const tgl = document.getElementById('filter-tanggal').value; const mob = document.getElementById('filter-mobil').value; if(!tgl || !mob) return; if(!appDatabase[tgl]) appDatabase[tgl] = {}; appDatabase[tgl][mob] = { info: { supplier: document.getElementById('form-supplier').value, nopol: document.getElementById('form-nopol').value, sj: document.getElementById('form-sj').value }, tabel: dataTimbanganArr }; localStorage.setItem('kiper_kedatangan_db', JSON.stringify(appDatabase)); }
         function tambahDataTimbangan() { const ek = document.getElementById('form-ekor').value; const br = document.getElementById('form-berat').value; if(!br || parseFloat(br)<=0) { document.getElementById('form-berat').focus(); return; } dataTimbanganArr.push({ ekor: ek, berat: br }); document.getElementById('form-ekor').value = ''; document.getElementById('form-berat').value = ''; document.getElementById('form-ekor').focus(); renderTimbanganRows(); autoSaveData(); }
         function updateTimbanganCell(idx, f, val) { if(dataTimbanganArr[idx]) { dataTimbanganArr[idx][f] = val; hitungTotalTimbangan(); autoSaveData(); } }
         function hapusTimbanganCell(idx) { dataTimbanganArr.splice(idx, 1); renderTimbanganRows(); autoSaveData(); }
         function resetTimbangan() { dataTimbanganArr = []; renderTimbanganRows(); autoSaveData(); }
-        function renderTimbanganRows() {
-            const container = document.getElementById('timbangan-rows'); if(!container) return; document.getElementById('count-badge').innerText = dataTimbanganArr.length; let numTables = Math.ceil(dataTimbanganArr.length / 10) || 1; let html = '<div class="flex flex-nowrap overflow-x-auto gap-4 pb-2">';
-            for(let t=0; t<numTables; t++) { html += `<div class="min-w-[260px] flex-1 border rounded-lg bg-white overflow-hidden flex flex-col"><div class="flex bg-slate-100 px-1 py-2 text-[11px] font-bold text-slate-600 border-b"><div class="w-8 text-center">No</div><div class="flex-1 text-center border-l">Ekor</div><div class="flex-1 text-center border-l">Berat</div><div class="w-7"></div></div><div class="flex-1 flex flex-col">`; for(let i=0; i<10; i++) { let idx = t*10 + i, item = dataTimbanganArr[idx], borderB = (i===9)?'':'border-b'; if(item) { html += `<div class="flex items-center px-1 py-1 ${borderB} bg-amber-50/30"><div class="w-8 text-center text-[11px] font-bold text-slate-500">${idx+1}.</div><div class="flex-1 px-1"><input type="number" class="w-full bg-white border rounded px-1 py-1 text-xs text-center" value="${item.ekor}" oninput="updateTimbanganCell(${idx},'ekor',this.value)"></div><div class="flex-1 px-1"><input type="number" step="0.01" class="w-full bg-white border rounded px-1 py-1 text-xs text-center" value="${item.berat}" oninput="updateTimbanganCell(${idx},'berat',this.value)"></div><div class="w-7 flex justify-center"><button onclick="hapusTimbanganCell(${idx})" class="text-red-400 p-1">✕</button></div></div>`; } else { html += `<div class="flex items-center px-1 py-1.5 ${borderB} opacity-40"><div class="w-8 text-center text-[11px] font-bold">${idx+1}.</div><div class="flex-1 text-center text-xs">-</div><div class="flex-1 text-center text-xs">-</div><div class="w-7"></div></div>`; } } html += `</div><div class="flex items-center px-1 py-1.5 bg-teal-50 border-t"><div class="w-8 text-center text-[9px] font-bold text-teal-800">Tot:</div><div class="flex-1 text-center text-xs font-bold text-teal-700" id="subtot-ekor-${t}">0</div><div class="flex-1 text-center text-xs font-bold text-teal-700" id="subtot-berat-${t}">0.00</div><div class="w-7"></div></div></div>`; } container.innerHTML = html + '</div>'; hitungTotalTimbangan();
-        }
+        function renderTimbanganRows() { const container = document.getElementById('timbangan-rows'); if(!container) return; document.getElementById('count-badge').innerText = dataTimbanganArr.length; let numTables = Math.ceil(dataTimbanganArr.length / 10) || 1; let html = '<div class="flex flex-nowrap overflow-x-auto gap-4 pb-2">'; for(let t=0; t<numTables; t++) { html += `<div class="min-w-[260px] flex-1 border rounded-lg bg-white overflow-hidden flex flex-col"><div class="flex bg-slate-100 px-1 py-2 text-[11px] font-bold text-slate-600 border-b"><div class="w-8 text-center">No</div><div class="flex-1 text-center border-l">Ekor</div><div class="flex-1 text-center border-l">Berat</div><div class="w-7"></div></div><div class="flex-1 flex flex-col">`; for(let i=0; i<10; i++) { let idx = t*10 + i, item = dataTimbanganArr[idx], borderB = (i===9)?'':'border-b'; if(item) { html += `<div class="flex items-center px-1 py-1 ${borderB} bg-amber-50/30"><div class="w-8 text-center text-[11px] font-bold text-slate-500">${idx+1}.</div><div class="flex-1 px-1"><input type="number" class="w-full bg-white border rounded px-1 py-1 text-xs text-center" value="${item.ekor}" oninput="updateTimbanganCell(${idx},'ekor',this.value)"></div><div class="flex-1 px-1"><input type="number" step="0.01" class="w-full bg-white border rounded px-1 py-1 text-xs text-center" value="${item.berat}" oninput="updateTimbanganCell(${idx},'berat',this.value)"></div><div class="w-7 flex justify-center"><button onclick="hapusTimbanganCell(${idx})" class="text-red-400 p-1">✕</button></div></div>`; } else { html += `<div class="flex items-center px-1 py-1.5 ${borderB} opacity-40"><div class="w-8 text-center text-[11px] font-bold">${idx+1}.</div><div class="flex-1 text-center text-xs">-</div><div class="flex-1 text-center text-xs">-</div><div class="w-7"></div></div>`; } } html += `</div><div class="flex items-center px-1 py-1.5 bg-teal-50 border-t"><div class="w-8 text-center text-[9px] font-bold text-teal-800">Tot:</div><div class="flex-1 text-center text-xs font-bold text-teal-700" id="subtot-ekor-${t}">0</div><div class="flex-1 text-center text-xs font-bold text-teal-700" id="subtot-berat-${t}">0.00</div><div class="w-7"></div></div></div>`; } container.innerHTML = html + '</div>'; hitungTotalTimbangan(); }
         function hitungTotalTimbangan() { let gE=0, gB=0, numT = Math.ceil(dataTimbanganArr.length / 10) || 1; for(let t=0; t<numT; t++) { let bE=0, bB=0; for(let i=0; i<10; i++) { let it = dataTimbanganArr[t*10 + i]; if(it) { bE += parseInt(it.ekor)||0; bB += parseFloat(it.berat)||0; } } gE += bE; gB += bB; if(document.getElementById(`subtot-ekor-${t}`)) document.getElementById(`subtot-ekor-${t}`).innerText = bE; if(document.getElementById(`subtot-berat-${t}`)) document.getElementById(`subtot-berat-${t}`).innerText = bB.toFixed(2); } document.getElementById('tot-ekor').innerText = gE; document.getElementById('tot-berat').innerText = gB.toFixed(2); }
 
         /* BY PRODUCT */
         let bpArr = [];
-        function loadBpData() { let tgl = document.getElementById('bp-tanggal').value; let mob = document.getElementById('bp-mobil').value || "1"; let db = JSON.parse(localStorage.getItem('kiper_bp_db') || '{}'); bpArr = db[tgl]?.[mob] || []; renderBpList(); }
+        function loadBpData() { let tgl = document.getElementById('bp-tanggal').value; let mob = document.getElementById('bp-mobil').value || "1"; let db = JSON.parse(localStorage.getItem('kiper_bp_db') || '{}'); bpArr = db[tgl]?.[mob] || []; renderBpList(); refreshPhotoUI('bp'); }
         function saveBpData() { let tgl = document.getElementById('bp-tanggal').value; let mob = document.getElementById('bp-mobil').value || "1"; let db = JSON.parse(localStorage.getItem('kiper_bp_db') || '{}'); if(!db[tgl]) db[tgl] = {}; db[tgl][mob] = bpArr; localStorage.setItem('kiper_bp_db', JSON.stringify(db)); }
         function addByProduct() { let jns = document.getElementById('bp-jenis').value; let brt = parseFloat(document.getElementById('bp-berat').value) || 0; if(brt <= 0) return; let ex = bpArr.find(x => x.jenis === jns); if(ex) ex.berat += brt; else bpArr.push({ id: Date.now(), jenis: jns, berat: brt }); document.getElementById('bp-berat').value = ''; saveBpData(); renderBpList(); }
         function deleteBp(id) { bpArr = bpArr.filter(x => x.id !== id); saveBpData(); renderBpList(); }
@@ -672,7 +650,7 @@
         function reportWaBp(e) { if(e) e.preventDefault(); toggleExportMenu('export-menu-bp'); if(bpArr.length===0) return alert("Kosong!"); let tgl = document.getElementById('bp-tanggal').value; let mob = document.getElementById('bp-mobil').value || "1"; let text = `*LAPORAN BY PRODUCT* (Tgl: ${tgl} | Mobil: ${mob})\n\n`; let tot = 0; bpArr.forEach(i => { text += `- ${i.jenis}: ${i.berat.toFixed(2)} Kg\n`; tot += i.berat; }); text += `\n*TOTAL*: ${tot.toFixed(2)} Kg`; window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank'); }
 
         /* KARKAS */
-        function loadDataKarkas() { let tgl = document.getElementById('filter-tanggal-karkas').value; let mob = document.getElementById('filter-mobil-karkas').value || "1"; let db = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}'); karkasArr = db[tgl]?.[mob] || []; renderKarkasCards(); }
+        function loadDataKarkas() { let tgl = document.getElementById('filter-tanggal-karkas').value; let mob = document.getElementById('filter-mobil-karkas').value || "1"; let db = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}'); karkasArr = db[tgl]?.[mob] || []; renderKarkasCards(); refreshPhotoUI('karkas'); }
         function saveKarkasDataStorage() { let tgl = document.getElementById('filter-tanggal-karkas').value; let mob = document.getElementById('filter-mobil-karkas').value || "1"; let db = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}'); if(!db[tgl]) db[tgl] = {}; db[tgl][mob] = karkasArr; localStorage.setItem('kiper_karkas_db', JSON.stringify(db)); }
         function startKarkasInput() { currentKarkasStep = 1; tempKarkas = { grade: 'Grade A', rata: '1.0', ekor: '', kotor: '', jmlKeranjang: '', beratKeranjang: '2.00' }; showKarkasStep(1); showModalWindow('modal-karkas'); }
         function closeKarkasModal() { hideModalWindow('modal-karkas'); }
@@ -693,11 +671,11 @@
         function reportWaKarkas(mode) { closeWaExportModal(); let tgl = document.getElementById('filter-tanggal-karkas').value; let targetData = []; if(mode === 'current') { targetData = karkasArr; } else { let db = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}'); if(db[tgl]) { for(let m in db[tgl]) targetData = targetData.concat(db[tgl][m]); } } if(targetData.length === 0) return alert("Tidak ada data untuk dilaporkan!"); let grouped = {}; targetData.forEach(item => { let key = `${item.grade} - ${item.rata} Kg`; if(!grouped[key]) grouped[key] = { ekor: 0, netto: 0 }; grouped[key].ekor += parseInt(item.ekor) || 0; grouped[key].netto += parseFloat(item.netto) || 0; }); let text = `*LAPORAN REKAP KARKAS* (Tgl: ${tgl})\n\n`; let totE = 0, totN = 0; for(let k in grouped) { text += `- ${k} : *${grouped[k].ekor} Ekor* (${grouped[k].netto.toFixed(2)} Kg)\n`; totE += grouped[k].ekor; totN += grouped[k].netto; } text += `\n*TOTAL KESELURUHAN*:\n- Ekor: ${totE} Pcs\n- Netto: ${totN.toFixed(2)} Kg`; window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank'); }
 
         function checkApiKeyAndScan() { let apiKey = localStorage.getItem('kiper_gemini_api_key'); if (!apiKey) { apiKey = prompt("🤖 AI KIPER: \n\nSilakan masukkan API Key Gemini Anda di bawah ini.\n(Kunci ini hanya diminta SATU KALI SAJA dan akan disimpan selamanya di dalam HP Anda secara aman):"); if (!apiKey || apiKey.trim() === "") { alert("Aksi dibatalkan. API Key dibutuhkan untuk menggunakan fitur AI."); return; } localStorage.setItem('kiper_gemini_api_key', apiKey.trim()); } document.getElementById('ai-scan-karkas').click(); }
-        async function processAiScan(event) { const file = event.target.files[0]; if(!file) return; const apiKey = localStorage.getItem('kiper_gemini_api_key'); if (!apiKey) return; event.target.value = ''; const mLoading = document.getElementById('modal-ai-loading'); mLoading.classList.remove('hidden'); mLoading.classList.add('flex'); try { const base64Data = await new Promise((resolve, reject) => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); let w = img.width; let h = img.height; const maxDim = 1500; if (w > h && w > maxDim) { h *= maxDim / w; w = maxDim; } else if (h > maxDim) { w *= maxDim / h; h = maxDim; } canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h); resolve(canvas.toDataURL('image/jpeg', 0.7).split(',')[1]); }; img.onerror = () => reject(new Error("Gagal membaca file gambar")); img.src = URL.createObjectURL(file); }); const promptText = `Ekstrak data tabel laporan packing karkas dari gambar tulisan tangan ini. Tabel disusun berdasarkan Grade (misal GRADE A, GRADE B) dan Berat Rata-Rata (misal 1.2, 1.3, 1.4). Di bawah setiap rata-rata ada kolom Ekor dan Kg. Kembalikan HANYA array JSON dengan format: [{"grade": "Grade A", "rata": "1.2", "ekor": 12, "netto": 14.5}]. Abaikan baris Total.`; const payload = { contents: [{ role: "user", parts: [ { text: promptText }, { inlineData: { mimeType: "image/jpeg", data: base64Data } } ] }] }; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`; const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { const err = await response.json(); if(response.status === 400 || response.status === 403) { localStorage.removeItem('kiper_gemini_api_key'); throw new Error("API Key salah, dihapus, atau diblokir Google. Silakan klik Scan Kertas AI lagi untuk memasukkan kunci yang baru."); } throw new Error(err.error?.message || "Server Error " + response.status); } const result = await response.json(); if (result.candidates && result.candidates.length > 0) { let jsonText = result.candidates[0].content.parts[0].text; const match = jsonText.match(/\[[\s\S]*\]/); if (match) jsonText = match[0]; else jsonText = jsonText.replace(/```json/gi, '').replace(/```/g, '').trim(); const parsedData = JSON.parse(jsonText); if (Array.isArray(parsedData) && parsedData.length > 0) { parsedData.forEach(item => { karkasArr.push({ id: Date.now() + Math.random(), grade: item.grade || 'Grade A', rata: String(item.rata || '1.0'), ekor: parseInt(item.ekor) || 0, netto: parseFloat(item.netto) || 0, kotor: parseFloat(item.netto) || 0, jmlKeranjang: 0, beratKeranjang: 0 }); }); saveKarkasDataStorage(); renderKarkasCards(); alert(`AI Selesai! Berhasil merekap ${parsedData.length} baris data dari kertas.`); } else { alert("AI tidak menemukan format tabel data yang valid di gambar ini."); } } else { alert("Gagal membaca gambar dari server. Silakan coba lagi."); } } catch(e) { console.error(e); alert("Gagal memproses AI:\n" + e.message); } finally { mLoading.classList.add('hidden'); mLoading.classList.remove('flex'); } }
+        async function processAiScan(event) { const file = event.target.files[0]; if(!file) return; const apiKey = localStorage.getItem('kiper_gemini_api_key'); if (!apiKey) return; event.target.value = ''; const mLoading = document.getElementById('modal-ai-loading'); document.getElementById('loading-message-text').innerText = "AI Membaca Tulisan Tangan..."; mLoading.classList.remove('hidden'); mLoading.classList.add('flex'); try { const base64Data = await new Promise((resolve, reject) => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); let w = img.width; let h = img.height; const maxDim = 1500; if (w > h && w > maxDim) { h *= maxDim / w; w = maxDim; } else if (h > maxDim) { w *= maxDim / h; h = maxDim; } canvas.width = w; canvas.height = h; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, w, h); resolve(canvas.toDataURL('image/jpeg', 0.7).split(',')[1]); }; img.onerror = () => reject(new Error("Gagal membaca file gambar")); img.src = URL.createObjectURL(file); }); const promptText = `Ekstrak data tabel laporan packing karkas dari gambar tulisan tangan ini. Tabel disusun berdasarkan Grade (misal GRADE A, GRADE B) dan Berat Rata-Rata (misal 1.2, 1.3, 1.4). Di bawah setiap rata-rata ada kolom Ekor dan Kg. Kembalikan HANYA array JSON dengan format: [{"grade": "Grade A", "rata": "1.2", "ekor": 12, "netto": 14.5}]. Abaikan baris Total.`; const payload = { contents: [{ role: "user", parts: [ { text: promptText }, { inlineData: { mimeType: "image/jpeg", data: base64Data } } ] }] }; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`; const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { const err = await response.json(); if(response.status === 400 || response.status === 403) { localStorage.removeItem('kiper_gemini_api_key'); throw new Error("API Key salah, dihapus, atau diblokir Google. Silakan klik Scan Kertas AI lagi untuk memasukkan kunci yang baru."); } throw new Error(err.error?.message || "Server Error " + response.status); } const result = await response.json(); if (result.candidates && result.candidates.length > 0) { let jsonText = result.candidates[0].content.parts[0].text; const match = jsonText.match(/\[[\s\S]*\]/); if (match) jsonText = match[0]; else jsonText = jsonText.replace(/```json/gi, '').replace(/```/g, '').trim(); const parsedData = JSON.parse(jsonText); if (Array.isArray(parsedData) && parsedData.length > 0) { parsedData.forEach(item => { karkasArr.push({ id: Date.now() + Math.random(), grade: item.grade || 'Grade A', rata: String(item.rata || '1.0'), ekor: parseInt(item.ekor) || 0, netto: parseFloat(item.netto) || 0, kotor: parseFloat(item.netto) || 0, jmlKeranjang: 0, beratKeranjang: 0 }); }); saveKarkasDataStorage(); renderKarkasCards(); alert(`AI Selesai! Berhasil merekap ${parsedData.length} baris data dari kertas.`); } else { alert("AI tidak menemukan format tabel data yang valid di gambar ini."); } } else { alert("Gagal membaca gambar dari server. Silakan coba lagi."); } } catch(e) { console.error(e); alert("Gagal memproses AI:\n" + e.message); } finally { mLoading.classList.add('hidden'); mLoading.classList.remove('flex'); } }
 
         /* TRANSAKSI (KELUAR BARANG & RETUR) */
         function openKeluarForm(type) { currentTransaksiType = type; let titles = { 'keluar-karkas': 'Keluar Karkas', 'keluar-bp': 'Keluar By Product', 'retur-karkas': 'Retur Karkas', 'retur-bp': 'Retur By Product' }; document.getElementById('transaksi-title').innerText = titles[type]; if(type.includes('bp')) { document.getElementById('transaksi-ekor').parentElement.classList.add('hidden'); } else { document.getElementById('transaksi-ekor').parentElement.classList.remove('hidden'); } navigateTo('view-form-transaksi'); refreshDropdownTransaksi(); }
-        function refreshDropdownTransaksi() { let tgl = document.getElementById('transaksi-tanggal').value; let mob = document.getElementById('transaksi-mobil').value || "1"; let sel = document.getElementById('transaksi-item'); sel.innerHTML = '<option value="">Pilih Item dari Stok...</option>'; let mst = calculateMasterStock(tgl, mob); if(currentTransaksiType.includes('karkas')) { for(let k in mst.stockKarkas) sel.innerHTML += `<option value="${k}">${k} (Sisa: ${mst.stockKarkas[k].ekor} pcs | ${mst.stockKarkas[k].netto.toFixed(1)} kg)</option>`; } else { for(let k in mst.stockBp) sel.innerHTML += `<option value="${k}">${k} (Sisa: ${mst.stockBp[k].berat.toFixed(1)} kg)</option>`; if(currentTransaksiType === 'retur-bp') { ['Kepala Utuh','Kepala Saja','Ceker','Usus','Hati Ampela','Kerongkongan','Sayap','Sisa Jantung'].forEach(k => sel.innerHTML += `<option value="${k}">${k}</option>`); } } loadTransaksiData(); }
+        function refreshDropdownTransaksi() { let tgl = document.getElementById('transaksi-tanggal').value; let mob = document.getElementById('transaksi-mobil').value || "1"; let sel = document.getElementById('transaksi-item'); sel.innerHTML = '<option value="">Pilih Item dari Stok...</option>'; let mst = calculateMasterStock(tgl, mob); if(currentTransaksiType.includes('karkas')) { for(let k in mst.stockKarkas) sel.innerHTML += `<option value="${k}">${k} (Sisa: ${mst.stockKarkas[k].ekor} pcs | ${mst.stockKarkas[k].netto.toFixed(1)} kg)</option>`; } else { for(let k in mst.stockBp) sel.innerHTML += `<option value="${k}">${k} (Sisa: ${mst.stockBp[k].berat.toFixed(1)} kg)</option>`; if(currentTransaksiType === 'retur-bp') { ['Kepala Utuh','Kepala Saja','Ceker','Usus','Hati Ampela','Kerongkongan','Sayap','Sisa Jantung'].forEach(k => sel.innerHTML += `<option value="${k}">${k}</option>`); } } loadTransaksiData(); refreshPhotoUI('transaksi'); }
         function loadTransaksiData() { let tgl = document.getElementById('transaksi-tanggal').value; let mob = document.getElementById('transaksi-mobil').value || "1"; let db = JSON.parse(localStorage.getItem(`kiper_${currentTransaksiType.replace('-','_')}_db`) || '{}'); trxArr = db[tgl]?.[mob] || []; renderTransaksiList(); }
         function saveTransaksiData() { let tgl = document.getElementById('transaksi-tanggal').value; let mob = document.getElementById('transaksi-mobil').value || "1"; let dbName = `kiper_${currentTransaksiType.replace('-','_')}_db`; let db = JSON.parse(localStorage.getItem(dbName) || '{}'); if(!db[tgl]) db[tgl] = {}; db[tgl][mob] = trxArr; localStorage.setItem(dbName, JSON.stringify(db)); }
         function submitTransaksi() { let it = document.getElementById('transaksi-item').value; let nt = parseFloat(document.getElementById('transaksi-netto').value) || 0; let ek = parseInt(document.getElementById('transaksi-ekor').value) || 0; if(!it || nt <= 0) return alert("Lengkapi data!"); trxArr.push({ id: Date.now(), item: it, ekor: ek, netto: nt }); saveTransaksiData(); document.getElementById('transaksi-netto').value = ''; document.getElementById('transaksi-ekor').value = ''; refreshDropdownTransaksi(); }
@@ -707,6 +685,107 @@
         /* MASTER DATA */
         function calculateMasterStock(tgl, mob) { let kM = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}'); let kO = JSON.parse(localStorage.getItem('kiper_keluar_karkas_db') || '{}'); let kR = JSON.parse(localStorage.getItem('kiper_retur_karkas_db') || '{}'); let bM = JSON.parse(localStorage.getItem('kiper_bp_db') || '{}'); let bO = JSON.parse(localStorage.getItem('kiper_keluar_bp_db') || '{}'); let bR = JSON.parse(localStorage.getItem('kiper_retur_bp_db') || '{}'); let stockKarkas = {}, stockBp = {}; (kM[tgl]?.[mob] || []).forEach(k => { let key = `${k.grade} - ${k.rata}`; if(!stockKarkas[key]) stockKarkas[key] = { ekor: 0, netto: 0, ms_e:0, ms_n:0, kl_e:0, kl_n:0, rt_e:0, rt_n:0 }; stockKarkas[key].ekor += k.ekor; stockKarkas[key].netto += k.netto; stockKarkas[key].ms_e += k.ekor; stockKarkas[key].ms_n += k.netto; }); (kO[tgl]?.[mob] || []).forEach(k => { if(stockKarkas[k.item]) { stockKarkas[k.item].ekor -= k.ekor; stockKarkas[k.item].netto -= k.netto; stockKarkas[k.item].kl_e += k.ekor; stockKarkas[k.item].kl_n += k.netto; } }); (kR[tgl]?.[mob] || []).forEach(k => { if(!stockKarkas[k.item]) stockKarkas[k.item] = { ekor: 0, netto: 0, ms_e:0, ms_n:0, kl_e:0, kl_n:0, rt_e:0, rt_n:0 }; stockKarkas[k.item].ekor += k.ekor; stockKarkas[k.item].netto += k.netto; stockKarkas[k.item].rt_e += k.ekor; stockKarkas[k.item].rt_n += k.netto; }); (bM[tgl]?.[mob] || []).forEach(b => { if(!stockBp[b.jenis]) stockBp[b.jenis] = { berat: 0, ms: 0, kl: 0, rt: 0 }; stockBp[b.jenis].berat += b.berat; stockBp[b.jenis].ms += b.berat; }); (bO[tgl]?.[mob] || []).forEach(b => { if(stockBp[b.item]) { stockBp[b.item].berat -= b.netto; stockBp[b.item].kl += b.netto; } }); (bR[tgl]?.[mob] || []).forEach(b => { if(!stockBp[b.item]) stockBp[b.item] = { berat: 0, ms: 0, kl: 0, rt: 0 }; stockBp[b.item].berat += b.netto; stockBp[b.item].rt += b.netto; }); return { stockKarkas, stockBp }; }
         function renderMasterData() { let tgl = document.getElementById('md-tanggal').value; let mob = document.getElementById('md-mobil').value || "1"; let lK = document.getElementById('md-karkas-list'); let lB = document.getElementById('md-bp-list'); let mst = calculateMasterStock(tgl, mob); let htmlK = ''; for(let k in mst.stockKarkas) { let d = mst.stockKarkas[k]; htmlK += `<div class="p-3 border-b bg-white"><h4 class="font-bold text-sm">${k}</h4><div class="grid grid-cols-4 mt-2 gap-1 text-[10px] text-center font-semibold"><div class="bg-blue-50 text-blue-700 py-1 rounded">IN<br>${d.ms_e}p</div><div class="bg-red-50 text-red-700 py-1 rounded">OUT<br>${d.kl_e}p</div><div class="bg-purple-50 text-purple-700 py-1 rounded">RTR<br>${d.rt_e}p</div><div class="bg-emerald-100 text-emerald-800 py-1 rounded">SISA<br>${d.ekor}p</div></div></div>`; } lK.innerHTML = htmlK || `<div class="p-4 text-center text-slate-400 text-sm">Tidak ada stok karkas.</div>`; let htmlB = ''; for(let k in mst.stockBp) { let d = mst.stockBp[k]; htmlB += `<div class="p-3 border-b bg-white flex justify-between items-center"><h4 class="font-bold text-sm">${k}</h4><div class="flex gap-1 text-[10px] font-semibold text-center w-2/3 justify-end"><div class="w-10 text-blue-600">IN<br>${d.ms.toFixed(1)}</div><div class="w-10 text-red-600">OUT<br>${d.kl.toFixed(1)}</div><div class="w-10 text-purple-600">RTR<br>${d.rt.toFixed(1)}</div><div class="w-12 bg-amber-100 text-amber-800 py-1 rounded">SISA<br>${d.berat.toFixed(1)}</div></div></div>`; } lB.innerHTML = htmlB || `<div class="p-4 text-center text-slate-400 text-sm">Tidak ada stok by product.</div>`; }
+
+        // ----------------------------------------------------------------------
+        // FUNGSI PENGATURAN & SINKRONISASI
+        // ----------------------------------------------------------------------
+        function openSettingsModal() {
+            const gas = localStorage.getItem('kiper_gas_url'); const ai = localStorage.getItem('kiper_gemini_api_key');
+            const elGas = document.getElementById('status-gas');
+            if(gas) { elGas.innerText = "Terhubung"; elGas.className = "text-[10px] font-bold px-2 py-1 rounded bg-emerald-100 text-emerald-700 uppercase tracking-wide"; }
+            else { elGas.innerText = "Belum Ada"; elGas.className = "text-[10px] font-bold px-2 py-1 rounded bg-rose-100 text-rose-600 uppercase tracking-wide"; }
+            const elAi = document.getElementById('status-ai');
+            if(ai) { elAi.innerText = "Terhubung"; elAi.className = "text-[10px] font-bold px-2 py-1 rounded bg-emerald-100 text-emerald-700 uppercase tracking-wide"; }
+            else { elAi.innerText = "Belum Ada"; elAi.className = "text-[10px] font-bold px-2 py-1 rounded bg-rose-100 text-rose-600 uppercase tracking-wide"; }
+            showModalWindow('modal-settings');
+        }
+        function closeSettingsModal() { hideModalWindow('modal-settings'); }
+        function generateTeamLink() {
+            const gas = localStorage.getItem('kiper_gas_url') || ''; const ai = localStorage.getItem('kiper_gemini_api_key') || '';
+            if(!gas && !ai) { alert("Peringatan: HP Anda belum memiliki Kunci Google Sheets atau Kunci AI.\n\nSilakan Anda setel dulu dengan memencet tombol 'Sync' dan 'Scan AI' di halaman depan sebelum mengundang tim."); return; }
+            const payload = btoa(JSON.stringify({ g: gas, a: ai })); const link = window.location.origin + window.location.pathname + "?token=" + payload;
+            const msg = "*UNDANGAN AKSES APLIKASI KIPER*\n\nSilakan klik link di bawah ini dari HP Anda untuk masuk ke sistem KIPER. Konfigurasi akan diatur otomatis tanpa perlu memasukkan kode apapun:\n\n" + link + "\n\n*(Peringatan: Jangan bagikan link ini ke orang luar)*";
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        async function syncToCloud() {
+            if (!navigator.onLine) { alert("⚠️ Sinyal Internet Tidak Ada!\n\nSilakan keluar ruangan dan cari sinyal/WiFi terlebih dahulu untuk mensinkronisasi data ke Cloud."); return; }
+            let gasUrl = localStorage.getItem('kiper_gas_url');
+            if (!gasUrl) { gasUrl = prompt("☁️ SETUP GOOGLE SHEETS\n\nMasukkan 'URL Aplikasi Web' yang Anda dapatkan dari Google Apps Script.\n(URL ini akan disave di memori HP agar tidak perlu Anda ketik lagi besok):"); if (!gasUrl || !gasUrl.startsWith("https://script.google.com")) { alert("Aksi Dibatalkan: URL tidak valid."); return; } localStorage.setItem('kiper_gas_url', gasUrl.trim()); }
+
+            const m = document.getElementById('modal-cloud-sync'); m.classList.remove('hidden'); m.classList.add('flex');
+            const lastSync = localStorage.getItem('kiper_last_sync');
+            document.getElementById('sync-title').innerText = "Menyiapkan Data..."; document.getElementById('sync-message').innerText = lastSync ? "Terakhir sukses: " + lastSync : "Merekap seluruh data offline ke Cloud..."; document.getElementById('sync-progress').style.width = "10%"; document.getElementById('sync-close-btn').classList.add('hidden');
+            setTimeout(() => m.classList.remove('opacity-0'), 10);
+
+            try {
+                let payload = {
+                    "Karkas": [ ["Tanggal", "Mobil Ke", "Grade", "Rata-rata", "Ekor", "Netto (Kg)", "Keranjang"] ],
+                    "Kedatangan": [ ["Tanggal", "Mobil Ke", "Supplier", "No Polisi", "No Surat Jalan", "Ekor Timbangan", "Berat Timbangan (Kg)"] ],
+                    "ByProduct": [ ["Tanggal", "Mobil Ke", "Jenis Item", "Berat (Kg)"] ],
+                    "Distribusi": [ ["Tipe", "Tanggal", "Mobil", "Item", "Ekor", "Netto (Kg)"] ],
+                    "Dokumentasi_Foto": [ ["Modul", "Tanggal", "Mobil Ke", "Nama Bukti", "File Gambar Base64"] ]
+                };
+
+                let dbKarkas = JSON.parse(localStorage.getItem('kiper_karkas_db') || '{}');
+                for (let tgl in dbKarkas) { for (let mob in dbKarkas[tgl]) { dbKarkas[tgl][mob].forEach(i => { payload["Karkas"].push([tgl, mob, i.grade, i.rata, i.ekor, i.netto, i.jmlKeranjang || 0]); });}}
+
+                let dbTiba = JSON.parse(localStorage.getItem('kiper_kedatangan_db') || '{}');
+                for (let tgl in dbTiba) { for (let mob in dbTiba[tgl]) { let info = dbTiba[tgl][mob].info || {}; (dbTiba[tgl][mob].tabel || []).forEach(i => { payload["Kedatangan"].push([tgl, mob, info.supplier || '', info.nopol || '', info.sj || '', i.ekor, i.berat]); }); }}
+
+                let dbBp = JSON.parse(localStorage.getItem('kiper_bp_db') || '{}');
+                for (let tgl in dbBp) { for (let mob in dbBp[tgl]) { dbBp[tgl][mob].forEach(i => { payload["ByProduct"].push([tgl, mob, i.jenis, i.berat]); });}}
+
+                const distKeys = ['keluar_karkas', 'keluar_bp', 'retur_karkas', 'retur_bp'];
+                distKeys.forEach(type => { let db = JSON.parse(localStorage.getItem(`kiper_${type}_db`) || '{}'); for (let tgl in db) { for (let mob in db[tgl]) { db[tgl][mob].forEach(i => { payload["Distribusi"].push([type.toUpperCase(), tgl, mob, i.item, i.ekor || 0, i.netto]); });}}});
+
+                // Memasukkan Foto ke Payload Sync
+                let dbImg = JSON.parse(localStorage.getItem('kiper_images') || '{}');
+                for(let mod in dbImg) {
+                    for(let session in dbImg[mod]) {
+                        // Pecah tgl dan mob. Contoh: "2026-11-07_1" atau "keluar-karkas_2026-11-07_1"
+                        let parts = session.split('_'); let tgl="", mob="", modName = mod;
+                        if(parts.length >= 2 && !isNaN(parts[parts.length-1])) {
+                            mob = parts.pop(); tgl = parts.pop();
+                            if(parts.length > 0) modName = parts.join('_');
+                        }
+                        
+                        let items = dbImg[mod][session];
+                        if(Array.isArray(items)) {
+                            items.forEach(p => { payload["Dokumentasi_Foto"].push([modName, tgl, mob, p.label, p.base64]); });
+                        } else {
+                            // Object dari kedatangan (mobil, supir, dll)
+                            let labelMap = { mobil: 'Mobil', supir: 'Supir', keranjang: 'Keranjang', mati: 'Ayam Mati' };
+                            for(let k in items) { payload["Dokumentasi_Foto"].push([modName, tgl, mob, labelMap[k], items[k]]); }
+                        }
+                    }
+                }
+
+                document.getElementById('sync-progress').style.width = "40%";
+                document.getElementById('sync-title').innerText = "Mengirim ke Google Sheets...";
+
+                const response = await fetch(gasUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
+                const result = await response.json();
+                document.getElementById('sync-progress').style.width = "100%";
+
+                if (result.status === "success") {
+                    document.getElementById('sync-title').innerText = "Sinkronisasi Berhasil!"; document.getElementById('sync-message').innerText = "Semua data & foto aman tersimpan di Server.";
+                    const now = new Date(); const timeStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+                    localStorage.setItem('kiper_last_sync', timeStr); document.getElementById('sync-close-btn').innerText = "Tutup";
+                } else { throw new Error(result.message); }
+
+            } catch (err) {
+                document.getElementById('sync-title').innerText = "Gagal Sinkronisasi"; document.getElementById('sync-message').innerText = "Cek kembali URL atau koneksi. Pesan: " + err.message; document.getElementById('sync-progress').classList.replace('bg-emerald-500', 'bg-rose-500');
+                const btn = document.getElementById('sync-close-btn'); btn.innerText = "Tutup & Hapus URL dari HP"; btn.classList.replace('bg-slate-800', 'bg-rose-600');
+                btn.onclick = function() { localStorage.removeItem('kiper_gas_url'); closeSyncModal(); setTimeout(() => { btn.onclick = closeSyncModal; btn.classList.replace('bg-rose-600', 'bg-slate-800'); }, 500); };
+            } finally {
+                document.getElementById('sync-close-btn').classList.remove('hidden');
+            }
+        }
+        function closeSyncModal() {
+            const m = document.getElementById('modal-cloud-sync'); m.classList.add('opacity-0');
+            setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); document.getElementById('sync-progress').style.width = "0%"; document.getElementById('sync-progress').classList.replace('bg-rose-500', 'bg-emerald-500'); }, 300);
+        }
     </script>
 </body>
 </html>
